@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Graduate History</title>
+  <meta name="description" content="卒業・引退したVTuberの活動記録をみんなで残すサイト">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Graduate History</p>
+      <h1>Graduate History</h1>
+      <p class="subtitle">- あの日あの時の思い出をもう一度 -</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Precious Memories</p>
+          <h2>思い出の動画</h2>
+        </div>
+        <button id="randomVideoBtn" class="button primary" type="button">ランダム視聴</button>
+      </div>
+      <div id="videoSlider" class="video-grid">
+        <p class="muted">動画を読み込んでいます。</p>
+      </div>
+    </section>
+
+    <section id="graduationMemory" class="panel hidden">
+      <p class="eyebrow">Today's Graduation Memory</p>
+      <h2 id="graduationTitle">今日は卒業記念日です</h2>
+      <p id="graduationText" class="lead"></p>
+      <div class="actions">
+        <a id="graduationVideoBtn" class="button primary" target="_blank" rel="noopener">あの日の思い出を見る</a>
+        <button id="graduationNextBtn" class="button ghost" type="button">別の記録を見る</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Search</p>
+      <h2>VTuberを探す</h2>
+      <div class="search-row">
+        <input id="searchInput" type="search" placeholder="活動名・読み方・所属などで検索">
+        <button id="searchBtn" class="button primary" type="button">検索</button>
+      </div>
+      <div id="profileList" class="profile-list">
+        <p class="muted">プロフィールを読み込んでいます。</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Registration Form</p>
+      <h2>みんなで記録を完成させる</h2>
+      <p>
+        こちらは登録フォームとなります。あなたの好きだったVTuberさんの情報を登録できます。
+        分からない内容は空白のままお進めください。分かる方の追記が可能となります。
+        皆さんで完成を目指しましょう。
+      </p>
+      <div class="notice">
+        登録可能なのは、卒業・引退・活動終了を正式に発表されたVTuberさんのみです。
+        現役活動中、休止中、療養中、復帰予定のある方の情報は登録しないでください。
+        噂、推測、転生先、非公開の個人情報は登録禁止です。
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-form="new" type="button">新規登録</button>
+        <button class="tab" data-form="add" type="button">追記</button>
+        <button class="tab" data-form="fix" type="button">修正申請</button>
+        <button class="tab" data-form="video" type="button">動画追加</button>
+        <button class="tab" data-form="letter" type="button">思い出投稿</button>
+      </div>
+
+      <form id="registrationForm">
+        <input type="hidden" name="type" id="formType" value="new">
+
+        <div class="form-grid">
+          <label>活動名<input name="activityName" required></label>
+          <label>読み方<input name="reading"></label>
+          <label>愛称<input name="nickname"></label>
+          <label>ファンネーム<input name="fanName"></label>
+          <label>ファンマーク<input name="fanMark"></label>
+          <label>X（旧Twitter）<input name="xUrl" type="url"></label>
+          <label>YouTube<input name="youtubeUrl" type="url"></label>
+          <label>配信サイト（YouTube以外）<input name="streamUrl" type="url"></label>
+          <label>ママ（イラストレーター様）<input name="mama"></label>
+          <label>パパ（2D・3Dモデラー様）<input name="papa"></label>
+          <label>おすすめ動画リンク<input name="recommendedVideoUrl" type="url"></label>
+          <label>思い出動画リンク<input name="memoryVideoUrl" type="url"></label>
+          <label>卒業配信・卒業ライブ配信のリンク<input name="graduationVideoUrl" type="url"></label>
+          <label>所属企業名または個人<input name="affiliation"></label>
+          <label>モデルモチーフ<input name="modelMotif"></label>
+          <label>配信スタイル<input name="streamStyle"></label>
+          <label>公式サイト<input name="officialSite" type="url"></label>
+          <label>FANBOX<input name="fanboxUrl" type="url"></label>
+          <label>BOOTH<input name="boothUrl" type="url"></label>
+          <label>マシュマロ<input name="marshmallowUrl" type="url"></label>
+          <label>活動開始日<input name="activityStartDate" type="date"></label>
+          <label>初配信日<input name="firstStreamDate" type="date"></label>
+          <label>卒業・引退日<input name="graduationDate" type="date"></label>
+          <label>卒業・引退の区分
+            <select name="graduationType">
+              <option value=""></option>
+              <option>卒業</option>
+              <option>引退</option>
+              <option>活動終了</option>
+              <option>契約終了</option>
+              <option>詳細不明</option>
+            </select>
+          </label>
+        </div>
+
+        <label>追記・修正・補足内容
+          <textarea name="details" rows="7" placeholder="分かる内容だけ入力してください"></textarea>
+        </label>
+        <label>情報元URL
+          <input name="sourceUrl" type="url">
+        </label>
+        <label>動画の該当時間・補足
+          <input name="sourceNote" placeholder="例：14分25秒ごろ">
+        </label>
+
+        <button class="button primary submit" type="submit">匿名ユーザーとして送信</button>
+        <p id="formMessage" class="form-message"></p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">About</p>
+      <h2>Graduate Historyについて</h2>
+      <p>
+        このサイトは、卒業・引退したVTuberさんのプロフィール、活動年表、動画、
+        そしてファンの思い出を、みんなで少しずつ残していく共同記録サイトです。
+      </p>
+      <p class="muted">投稿者名は公開ページ上ですべて「匿名ユーザー」と表示されます。</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Graduate History</div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
