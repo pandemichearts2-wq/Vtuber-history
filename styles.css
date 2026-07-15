@@ -1,13 +1,21 @@
-# Graduate History
+# Graduate History 修正版
 
-GitHubリポジトリ直下へ、このフォルダの中身をそのまま上書きしてください。
+GitHubリポジトリ直下へ、このフォルダの中身を配置してください。
 
 - `index.html`: 公開・閲覧専用ページ
 - `register/index.html`: 情報登録専用ページ
-- `styles.css`: 両ページ共通（既存デザイン維持）
-- `app.js`: 公開ページ専用
-- `register/register.js`: 登録ページ専用
+- `styles.css`: 両ページ共通スタイル
+- `app.js`: 公開ページ専用JavaScript（構文エラー修正済み）
+- `register/register.js`: 登録ページ専用JavaScript
 - `config.js`: Apps Script接続設定
-- `Milky_way.mp3`: BGM（中身は「追憶」）
+- `Milky_way.mp3`: BGM
 
-公開ページの「情報登録ページを開く」から登録ページへ移動できます。
+## 主な修正
+
+- 公開ページ用 `app.js` に混入していた不正なコードを削除
+- APIレスポンス、HTTPエラー、API URL未設定時の処理を追加
+- 外部リンクをHTTPSに限定
+- 検索欄でEnter検索に対応
+- BGMボタンの状態表示と例外処理を改善
+- 欠落していた `styles.css` を公開ページ・登録ページ共通で再作成
+- スマートフォン表示、フォーカス表示、フォームUIを調整
