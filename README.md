@@ -6,6 +6,7 @@
 - styles.css
 - app.js
 - config.js
+- Milky_way.mp3
 
 config.jsにはApps ScriptのウェブアプリURLを設定済みです。
 
@@ -20,3 +21,6 @@ config.jsにはApps ScriptのウェブアプリURLを設定済みです。
 公開URLは通常、次の形式です。
 
 https://GitHubユーザー名.github.io/graduate-history/
+
+
+BGMはループ再生されます。ブラウザが音付き自動再生を止めた場合は、右下の「BGMを再生」を押してください。

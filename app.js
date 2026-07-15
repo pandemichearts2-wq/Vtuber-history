@@ -172,3 +172,54 @@ qs("registrationForm").addEventListener("submit", async event => {
 });
 
 loadInitialData();
+
+
+const bgmAudio = document.getElementById("bgmAudio");
+const bgmToggle = document.getElementById("bgmToggle");
+
+if (bgmAudio && bgmToggle) {
+  bgmAudio.volume = 0.28;
+
+  function updateBgmButton() {
+    const playing = !bgmAudio.paused;
+    bgmToggle.textContent = playing ? "BGMを停止" : "BGMを再生";
+    bgmToggle.setAttribute("aria-label", playing ? "BGMを停止" : "BGMを再生");
+    bgmToggle.classList.toggle("is-playing", playing);
+  }
+
+  async function playBgm() {
+    try {
+      await bgmAudio.play();
+    } catch (_) {
+      // 音付き自動再生はブラウザに止められる場合があります。
+    }
+    updateBgmButton();
+  }
+
+  bgmToggle.addEventListener("click", async () => {
+    if (bgmAudio.paused) {
+      await playBgm();
+    } else {
+      bgmAudio.pause();
+      updateBgmButton();
+    }
+  });
+
+  // 自動再生を試し、拒否された場合は最初の操作で再生します。
+  playBgm();
+
+  const startOnFirstInteraction = async () => {
+    if (bgmAudio.paused) {
+      await playBgm();
+    }
+    document.removeEventListener("pointerdown", startOnFirstInteraction);
+    document.removeEventListener("keydown", startOnFirstInteraction);
+  };
+
+  document.addEventListener("pointerdown", startOnFirstInteraction, { once: true });
+  document.addEventListener("keydown", startOnFirstInteraction, { once: true });
+
+  bgmAudio.addEventListener("play", updateBgmButton);
+  bgmAudio.addEventListener("pause", updateBgmButton);
+  updateBgmButton();
+}
