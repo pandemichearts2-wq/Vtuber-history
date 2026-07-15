@@ -1,21 +1,13 @@
 # Graduate History
 
-GitHub Pages 公開用の完成版です。
+GitHubリポジトリ直下へ、このフォルダ内のファイルと `register` フォルダをそのまま上書きアップロードしてください。
 
-## 一括上書きするファイル
+- index.html
+- styles.css
+- app.js
+- config.js
+- Milky_way.mp3
+- register/index.html
+- register/register.js
 
-リポジトリ直下へ、このフォルダの中身を構成ごとアップロードしてください。
-
-- `index.html`
-- `styles.css`
-- `app.js`
-- `config.js`
-- `Milky_way.mp3`
-- `register/index.html`
-- `register/register.js`
-
-GitHub上に同名ファイルがある場合は、すべて置き換えて構いません。
-
-## GitHub Pages
-
-Settings → Pages → Deploy from a branch → `main` / `/root` を選択して保存します。
+BGMファイル名はサイト側の参照を変えないため `Milky_way.mp3` のままですが、中身は「追憶.mp3」です。
