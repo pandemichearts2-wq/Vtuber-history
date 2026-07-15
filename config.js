@@ -1,1 +1,24 @@
-window.GH_CONFIG = { API_URL: "https://script.google.com/macros/s/AKfycbyvGSj0BnabQ1NoaSmkPalIacuaXDkUBtR4RrH9MilE2wFZ3Lhm_Mz4n7zDv6lFUuYI8g/exec" };
+const API_URL=window.GH_CONFIG?.API_URL||"";
+const state={profiles:[],videos:[],graduationMemories:[]};
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+async function getData(){const u=new URL(API_URL);u.searchParams.set("action","publicData");const r=await fetch(u);if(!r.ok)throw Error("データを取得できませんでした");return r.json()}
+function emptyMarkup(text){return `<div class="clean-empty"><span class="empty-mark"></span><p>${text}</p></div>`}
+function renderVideos(a){
+  $("videoSlider").innerHTML=a.length
+    ?a.slice(0,3).map(v=>`<article class="video-card clean-card"><p class="card-index">Memory</p><h3>${esc(v.title||v.activityName||"思い出の動画")}</h3><p>${esc(v.activityName||"")}</p><a href="${esc(v.url)}" target="_blank" rel="noopener">動画を見る</a></article>`).join("")
+    :emptyMarkup("動画はまだ登録されていません。");
+}
+function renderProfiles(a){
+  $("profileList").innerHTML=a.length
+    ?a.map(v=>`<article class="profile-card clean-card"><p class="card-index">Archive</p><h3>${esc(v.activityName||"名称未登録")}</h3><p>${esc(v.reading||"")}</p><p>${esc(v.affiliation||"")}</p><a class="profile-contribute" href="register/?mode=add&vtuber=${encodeURIComponent(v.activityName||"")}">この記録に情報を添える</a></article>`).join("")
+    :emptyMarkup("プロフィールはまだ登録されていません。");
+}
+function showMemory(i=0){const a=state.graduationMemories,s=$("graduationMemory");if(!a.length){s.classList.add("hidden");return}const v=a[i%a.length];s.classList.remove("hidden");$("graduationTitle").textContent=`${v.yearsAgo?`${v.yearsAgo}年前の今日、`:"今日は"}${v.activityName}さんが卒業しました`;$("graduationText").textContent="あの日の配信や思い出を、もう一度振り返ってみませんか。";const b=$("graduationVideoBtn");v.videoUrl?(b.href=v.videoUrl,b.classList.remove("hidden")):b.classList.add("hidden");$("graduationNextBtn").dataset.index=(i+1)%a.length}
+async function init(){try{const d=await getData();state.profiles=d.profiles||[];state.videos=d.videos||[];state.graduationMemories=d.graduationMemories||[];renderVideos(state.videos);renderProfiles(state.profiles);showMemory()}catch(e){$("videoSlider").innerHTML=emptyMarkup("動画を読み込めませんでした。");$("profileList").innerHTML=emptyMarkup("プロフィールを読み込めませんでした。")}}
+$("randomVideoBtn").onclick=()=>{if(state.videos.length){const v=state.videos[Math.floor(Math.random()*state.videos.length)];window.open(v.url,"_blank","noopener")}};
+$("graduationNextBtn").onclick=e=>showMemory(Number(e.currentTarget.dataset.index||0));
+$("searchBtn").onclick=()=>{const q=$("searchInput").value.toLowerCase().trim();renderProfiles(!q?state.profiles:state.profiles.filter(v=>[v.activityName,v.reading,v.affiliation,v.nickname,v.streamStyle].some(x=>String(x||"").toLowerCase().includes(q))))};
+$("searchInput").addEventListener("keydown",e=>{if(e.key==="Enter"){$("searchBtn").click()}});
+const audio=$("bgmAudio"),toggle=$("bgmToggle");if(audio&&toggle){audio.volume=.28;function ub(){toggle.textContent=audio.paused?"BGMを再生":"BGMを停止"}toggle.onclick=async()=>{audio.paused?await audio.play():audio.pause();ub()};audio.play().catch(()=>{});document.addEventListener("pointerdown",()=>{if(audio.paused)audio.play().catch(()=>{})},{once:true});audio.onplay=audio.onpause=ub;ub()}
+init();
