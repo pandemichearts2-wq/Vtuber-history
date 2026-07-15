@@ -570,26 +570,157 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
 }
 
 
-/* ===== Public / Registration split ===== */
-.contribution-panel{padding-top:64px;padding-bottom:64px;text-align:center;background:linear-gradient(145deg,rgba(9,42,36,.96),rgba(32,99,83,.91));color:#fff}
-.contribution-panel::before{border-color:rgba(255,255,255,.12)}
-.contribution-panel .eyebrow,.contribution-panel h2,.contribution-panel .lead{color:#fff}
-.contribution-panel .lead{max-width:720px;margin:0 auto 28px;color:rgba(255,255,255,.82)}
-.contribution-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
-.contribution-panel .ghost{color:#fff;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25)}
-.contribution-main{box-shadow:0 18px 42px rgba(0,0,0,.22)}
-.contribution-note{margin-top:20px;color:rgba(255,255,255,.58)}
-.profile-contribute{display:inline-block;margin-top:12px;color:var(--aoi-700);font-size:13px;font-weight:800;text-decoration:none;border-bottom:1px solid rgba(36,99,84,.28)}
-
-.register-page{background:linear-gradient(180deg,#ecf4f1 0%,#f8f9f6 36%,#eef4f1 100%)}
-.register-hero{position:relative;overflow:hidden;min-height:54vh;display:grid;align-items:end;color:#fff;background:linear-gradient(125deg,#071f1b 0%,#0d3029 55%,#246354 100%)}
-.register-hero::after{content:"CONTRIBUTION";position:absolute;right:-20px;top:40px;color:rgba(255,255,255,.055);font-family:Georgia,serif;font-size:clamp(74px,15vw,210px);letter-spacing:.02em}
-.register-hero-inner{padding:72px 0 64px}
-.register-hero h1{position:relative;z-index:1;margin:20px 0 18px;font-family:Georgia,"Yu Mincho",serif;font-weight:400;font-size:clamp(50px,8vw,100px);line-height:.98;letter-spacing:-.03em}
-.register-hero .subtitle{margin:0}
-.back-link{position:relative;z-index:2;color:#d7e7e2;text-decoration:none;font-size:13px;font-weight:800;letter-spacing:.08em}
-.register-main{padding-top:18px;padding-bottom:80px}
-.register-panel{margin-top:-34px;position:relative;z-index:4}
-.register-panel>p:not(.eyebrow){max-width:760px}
-.register-page .panel:nth-of-type(even),.register-page .panel:nth-of-type(odd){margin-left:0;margin-right:0}
-@media(max-width:720px){.contribution-actions{flex-direction:column}.contribution-actions .button{width:100%}.register-hero{min-height:45vh}.register-panel{margin-top:-18px}}
+/* ===== Stylish memories & search sections ===== */
+.panel-feature{
+  border-radius:38px;
+  background:
+    linear-gradient(135deg,rgba(251,252,249,.90),rgba(237,245,242,.70)),
+    radial-gradient(circle at top right,rgba(183,160,106,.12),transparent 30%);
+}
+.split-head{align-items:flex-end;gap:24px}
+.section-copy{
+  max-width:700px;
+  margin:14px 0 0;
+  color:#48635b;
+  font-size:15px;
+  line-height:1.95;
+}
+.curation-band{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin:22px 0 24px;
+}
+.curation-band span,
+.search-tags span,
+.empty-tags span{
+  display:inline-flex;
+  align-items:center;
+  padding:8px 14px;
+  border-radius:999px;
+  border:1px solid rgba(36,99,84,.15);
+  background:rgba(255,255,255,.65);
+  color:var(--aoi-700);
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.search-tags{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;max-width:360px}
+.search-tags span{cursor:pointer;transition:transform .2s ease, background .2s ease, border-color .2s ease}
+.search-tags span:hover{transform:translateY(-2px);background:var(--aoi-100);border-color:rgba(36,99,84,.26)}
+.video-grid-premium{grid-template-columns:repeat(3,1fr)}
+.search-headline{
+  display:flex;
+  justify-content:space-between;
+  gap:24px;
+  align-items:flex-end;
+  margin-bottom:16px;
+}
+.search-shell{
+  position:relative;
+  padding:18px;
+  border-radius:30px;
+  background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(237,245,242,.58));
+  border:1px solid rgba(36,99,84,.10);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.92),0 16px 40px rgba(12,55,46,.05);
+}
+.search-row-premium{
+  position:relative;
+  padding:10px 10px 10px 54px;
+  background:rgba(255,255,255,.85);
+  border:1px solid rgba(36,99,84,.12);
+  box-shadow:0 12px 34px rgba(12,55,46,.06);
+}
+.search-icon{
+  position:absolute;
+  left:22px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--aoi-700);
+  font-size:22px;
+  opacity:.8;
+}
+.search-note{
+  margin:14px 6px 0;
+  color:#6a7d76;
+  font-size:13px;
+}
+.profile-list-premium{margin-top:22px}
+.premium-card{
+  min-height:220px;
+  padding:26px;
+  border-radius:30px;
+  background:
+    linear-gradient(160deg,rgba(255,255,255,.96),rgba(241,247,244,.82));
+}
+.card-label{
+  margin:0 0 14px;
+  color:#8c7a4f;
+  font-family:Georgia,serif;
+  font-size:11px;
+  letter-spacing:.20em;
+  text-transform:uppercase;
+}
+.card-sub{color:#537067}
+.empty-state{
+  position:relative;
+  overflow:hidden;
+  min-height:300px;
+  padding:34px;
+  border:1px solid rgba(36,99,84,.12);
+  border-radius:32px;
+  background:
+    radial-gradient(circle at top right,rgba(183,160,106,.12),transparent 25%),
+    linear-gradient(160deg,rgba(255,255,255,.97),rgba(239,246,243,.82));
+  box-shadow:0 20px 50px rgba(12,55,46,.08);
+}
+.empty-state h3{
+  margin:8px 0 14px;
+  color:var(--aoi-950);
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:32px;
+  font-weight:500;
+  line-height:1.25;
+}
+.empty-state p{
+  max-width:720px;
+  margin:0;
+  color:#4f6b63;
+}
+.empty-kicker{
+  margin:0 0 8px;
+  color:#8c7a4f !important;
+  font-family:Georgia,serif;
+  font-size:11px;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+}
+.empty-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:26px;
+}
+.empty-ornament{
+  position:absolute;
+  right:-40px;
+  top:-30px;
+  width:210px;
+  height:210px;
+  border-radius:50%;
+  border:1px solid rgba(36,99,84,.10);
+  box-shadow:0 0 0 28px rgba(36,99,84,.04),0 0 0 56px rgba(36,99,84,.025);
+}
+.wide-empty{grid-column:1/-1}
+@media(max-width:900px){
+  .search-headline{flex-direction:column;align-items:flex-start}
+  .search-tags{justify-content:flex-start;max-width:none}
+}
+@media(max-width:720px){
+  .split-head{align-items:stretch}
+  .search-shell{padding:12px;border-radius:24px}
+  .search-row-premium{padding-left:46px}
+  .search-icon{left:16px}
+  .empty-state{padding:26px 22px;min-height:260px}
+  .empty-state h3{font-size:26px}
+}
