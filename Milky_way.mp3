@@ -5,74 +5,68 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Graduate History</title>
   <meta name="description" content="卒業・引退したVTuberの活動記録をみんなで残すサイト">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260715-final">
 </head>
 <body>
-<header class="hero">
-  <div class="wrap">
-    <p class="eyebrow">A community archive of graduated VTubers</p>
-    <h1>Graduate<br>History</h1>
-    <p class="subtitle">あの日、あの時の思い出をもう一度</p>
-  </div>
-</header>
+  <header class="hero">
+    <div class="wrap hero-inner">
+      <p class="eyebrow">A community archive of graduated VTubers</p>
+      <h1>Graduate<br>History</h1>
+      <p class="subtitle">あの日、あの時の思い出をもう一度</p>
+    </div>
+  </header>
 
-<main class="wrap public-main">
-  <section class="panel public-panel memories-clean">
-    <div class="clean-heading">
-      <div>
-        <p class="eyebrow">Precious Memories</p>
-        <h2>思い出の動画</h2>
+  <main class="wrap main-content">
+    <section class="panel memories-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Precious Memories</p>
+          <h2>思い出の動画</h2>
+        </div>
+        <button id="randomVideoBtn" class="button primary" type="button">ランダム視聴</button>
       </div>
-      <button class="button primary" id="randomVideoBtn" type="button">ランダム視聴</button>
-    </div>
-    <div class="video-grid clean-grid" id="videoSlider">
-      <div class="clean-empty"><span class="empty-mark"></span><p>動画はまだ登録されていません。</p></div>
-    </div>
-  </section>
-
-  <section class="panel hidden graduation-clean" id="graduationMemory">
-    <p class="eyebrow">Today's Graduation Memory</p>
-    <h2 id="graduationTitle"></h2>
-    <p class="lead" id="graduationText"></p>
-    <div class="actions">
-      <a class="button primary" id="graduationVideoBtn" rel="noopener" target="_blank">あの日の思い出を見る</a>
-      <button class="button ghost" id="graduationNextBtn" type="button">別の記録を見る</button>
-    </div>
-  </section>
-
-  <section class="panel public-panel search-clean">
-    <div class="clean-heading search-heading">
-      <div>
-        <p class="eyebrow">Search</p>
-        <h2>VTuberを探す</h2>
+      <div id="videoSlider" class="video-grid">
+        <div class="empty-state">公開中の動画はまだありません。</div>
       </div>
-    </div>
-    <div class="search-frame">
-      <div class="search-row clean-search-row">
+    </section>
+
+    <section id="graduationMemory" class="panel hidden">
+      <p class="eyebrow">Today's Graduation Memory</p>
+      <h2 id="graduationTitle"></h2>
+      <p id="graduationText" class="lead"></p>
+      <div class="actions">
+        <a id="graduationVideoBtn" class="button primary" target="_blank" rel="noopener">あの日の思い出を見る</a>
+        <button id="graduationNextBtn" class="button ghost" type="button">別の記録を見る</button>
+      </div>
+    </section>
+
+    <section class="panel search-panel">
+      <p class="eyebrow">Search</p>
+      <h2>VTuberを探す</h2>
+      <div class="search-row">
         <input id="searchInput" type="search" placeholder="活動名・読み方・所属などで検索">
-        <button class="button primary" id="searchBtn" type="button">検索</button>
+        <button id="searchBtn" class="button primary" type="button">検索</button>
       </div>
-    </div>
-    <div class="profile-list clean-profile-list" id="profileList">
-      <div class="clean-empty"><span class="empty-mark"></span><p>プロフィールはまだ登録されていません。</p></div>
-    </div>
-  </section>
+      <div id="profileList" class="profile-list">
+        <div class="empty-state">登録されているプロフィールはまだありません。</div>
+      </div>
+    </section>
 
-  <section class="panel contribution-panel clean-contribution">
-    <p class="eyebrow">Contribute to the Archive</p>
-    <h2>あなたの記憶を、記録へ。</h2>
-    <p class="lead">覚えていることを、一つだけでも。</p>
-    <div class="contribution-actions">
-      <a class="button primary contribution-main" href="register/">情報を登録・追記する</a>
-      <a class="button ghost" href="register/?mode=letter">思い出を投稿する</a>
-    </div>
-  </section>
-</main>
+    <section class="panel contribute-panel">
+      <p class="eyebrow">Contribute</p>
+      <h2>記憶を、記録へ。</h2>
+      <p class="lead">プロフィール、動画、思い出の追記はこちらから。</p>
+      <div class="actions">
+        <a class="button primary" href="register/">情報を登録・追記する</a>
+        <a class="button ghost" href="register/?mode=letter">思い出を投稿する</a>
+      </div>
+    </section>
+  </main>
 
-<footer><div class="wrap">Graduate History</div></footer>
-<audio id="bgmAudio" loop preload="auto" src="Milky_way.mp3"></audio>
-<button class="bgm-toggle" id="bgmToggle" type="button">BGMを再生</button>
-<script src="config.js"></script>
-<script src="app.js"></script>
+  <footer><div class="wrap">Graduate History</div></footer>
+  <audio id="bgmAudio" src="Milky_way.mp3" loop preload="auto"></audio>
+  <button id="bgmToggle" class="bgm-toggle" type="button">BGMを再生</button>
+  <script src="config.js?v=20260715-final"></script>
+  <script src="app.js?v=20260715-final"></script>
 </body>
 </html>

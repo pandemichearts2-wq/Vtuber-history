@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>情報登録 | Graduate History</title>
   <meta name="description" content="Graduate Historyへの新規登録・追記・修正・動画・思い出投稿フォーム">
-  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../styles.css?v=20260715-final">
 </head>
 <body class="register-page">
 <header class="register-hero">
