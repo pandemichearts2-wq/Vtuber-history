@@ -19,7 +19,8 @@ rulesCheckbox?.addEventListener("change",syncSubmitState);
 
 form.onsubmit=async e=>{
   e.preventDefault();
-  const btn=submitButton||e.currentTarget.querySelector('[type="submit"]'),msg=$("formMessage");
+  const submittedForm=e.currentTarget;
+  const btn=submitButton||submittedForm.querySelector('[type="submit"]'),msg=$("formMessage");
   if(!rulesCheckbox?.checked){
     msg.textContent="登録ルールへの同意が必要です。";
     syncSubmitState();
@@ -30,14 +31,14 @@ form.onsubmit=async e=>{
   btn.setAttribute("aria-disabled","true");
   btn.textContent="送信中…";
   msg.textContent="";
-  const data=Object.fromEntries(new FormData(e.currentTarget).entries());
+  const data=Object.fromEntries(new FormData(submittedForm).entries());
   data.action="submit";
   data.author="匿名ユーザー";
   try{
     const r=await postData(data);
     if(!r.ok)throw Error(r.message||"送信できませんでした");
     msg.textContent="送信しました。管理者の確認後に反映されます。";
-    e.currentTarget.reset();
+    submittedForm.reset();
     $("formType").value=document.querySelector(".tab.active").dataset.form;
     window.scrollTo({top:msg.getBoundingClientRect().top+scrollY-140,behavior:"smooth"});
   }catch(x){
