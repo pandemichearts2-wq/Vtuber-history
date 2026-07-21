@@ -5,14 +5,28 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Graduate History VTuberプロフィール詳細">
   <title>プロフィール詳細 | Graduate History</title>
-  <link rel="stylesheet" href="styles.css?v=20260721-sync2">
+  <link rel="stylesheet" href="styles.css?v=20260721-profile-fa1">
 </head>
 <body class="profile-detail-page">
 <header class="profile-detail-hero">
-  <div class="wrap">
-    <p class="eyebrow">Profile Archive</p>
-    <h1 id="profileHeroName">記録を読み込んでいます</h1>
-    <p id="profileHeroReading" class="subtitle"></p>
+  <div class="wrap profile-detail-hero-layout">
+    <div class="profile-detail-hero-copy">
+      <p class="eyebrow">Profile Archive</p>
+      <h1 id="profileHeroName">記録を読み込んでいます</h1>
+      <p id="profileHeroReading" class="subtitle"></p>
+    </div>
+    <figure id="profileHeroFanArt" class="profile-hero-fanart protected-media" hidden>
+      <div class="profile-hero-fanart-image">
+        <img id="profileHeroFanArtImage" src="" alt="" draggable="false" fetchpriority="high">
+        <span class="fanart-save-shield" aria-hidden="true"></span>
+        <span class="fanart-watermark" aria-hidden="true"><b>Graduate History</b><em id="profileHeroFanArtWatermark"></em></span>
+      </div>
+      <figcaption>
+        <span>Random Fan Art</span>
+        <strong id="profileHeroFanArtTitle"></strong>
+        <small id="profileHeroFanArtAuthor"></small>
+      </figcaption>
+    </figure>
   </div>
 </header>
 <main class="wrap profile-detail-main">
@@ -48,6 +62,6 @@
 </main>
 <footer><div class="wrap">Graduate History</div></footer>
 <script src="config.js"></script>
-<script src="profile.js?v=20260721-sync2"></script>
+<script src="profile.js?v=20260721-profile-fa1"></script>
 </body>
 </html>

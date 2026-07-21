@@ -17,6 +17,29 @@ const GROUPS=[
   ["卒業・引退情報",[["graduationType","卒業・引退の区分"],["graduationAnnouncementDate","卒業発表日"],["lastActivityDate","最終活動日"],["graduationStreamDate","卒業配信日"],["graduationReason","卒業・引退理由"],["archiveStatus","アーカイブ公開状況"]]]
 ];
 const LINKS=[["youtubeUrl","YouTube"],["xUrl","X（旧Twitter）"],["streamUrl","配信サイト"],["officialSite","公式サイト"],["fanboxUrl","FANBOX"],["boothUrl","BOOTH"],["marshmallowUrl","マシュマロ"]];
+function pickRandom(items){
+  if(!Array.isArray(items)||!items.length)return null;
+  return items[Math.floor(Math.random()*items.length)]||null;
+}
+function renderHeroFanArt(arts,activityName){
+  const root=$("profileHeroFanArt");
+  if(!root)return;
+  const candidates=(Array.isArray(arts)?arts:[]).filter(art=>safeUrl(art.thumbnailUrl||art.imageUrl));
+  const art=pickRandom(candidates);
+  if(!art){root.hidden=true;return;}
+  const imageUrl=safeUrl(art.thumbnailUrl||art.imageUrl);
+  const title=text(art.title)||`${activityName||"VTuber"}のファンアート`;
+  const author=text(art.authorName)||"匿名";
+  $("profileHeroFanArtImage").src=imageUrl;
+  $("profileHeroFanArtImage").alt=title;
+  $("profileHeroFanArtTitle").textContent=title;
+  $("profileHeroFanArtAuthor").textContent=`作者：${author}`;
+  $("profileHeroFanArtWatermark").textContent=author;
+  root.hidden=false;
+  root.addEventListener("click",()=>document.getElementById("profileFanArts")?.scrollIntoView({behavior:"smooth",block:"start"}),{once:true});
+  root.addEventListener("contextmenu",event=>event.preventDefault());
+  root.addEventListener("dragstart",event=>event.preventDefault());
+}
 function render(data){
   const p=data.profile||{};
   document.title=`${p.activityName||"プロフィール"} | Graduate History`;
@@ -32,7 +55,8 @@ function render(data){
   const videos=Array.isArray(data.videos)?data.videos:[];
   $("profileVideos").innerHTML=videos.length?videos.map(v=>{const u=safeUrl(v.url);return `<article class="video-card premium-card"><p class="card-label">${esc(v.videoType||"動画")}</p><h3>${esc(v.title||"思い出の動画")}</h3>${u?`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">動画を見る</a>`:""}</article>`;}).join(""):'<p class="muted">登録動画はまだありません。</p>';
   const arts=Array.isArray(data.fanArts)?data.fanArts:[];
-  $("profileFanArts").innerHTML=arts.length?arts.map(f=>`<article class="fanart-gallery-card"><div class="fanart-thumb-frame protected-media"><img src="${esc(safeUrl(f.thumbnailUrl))}" alt="${esc(f.title||p.activityName+"のファンアート")}" loading="lazy"><span class="fanart-save-shield" aria-hidden="true"></span></div><div class="fanart-gallery-meta"><strong>${esc(f.title||"無題のFA")}</strong><span>作者：${esc(f.authorName||"匿名")}</span></div></article>`).join(""):'<p class="muted">登録ファンアートはまだありません。</p>';
+  renderHeroFanArt(arts,p.activityName||"");
+  $("profileFanArts").innerHTML=arts.length?arts.map(f=>`<article class="fanart-gallery-card"><div class="fanart-thumb-frame protected-media"><img src="${esc(safeUrl(f.thumbnailUrl||f.imageUrl))}" alt="${esc(f.title||p.activityName+"のファンアート")}" loading="lazy" draggable="false"><span class="fanart-save-shield" aria-hidden="true"></span></div><div class="fanart-gallery-meta"><strong>${esc(f.title||"無題のFA")}</strong><span>作者：${esc(f.authorName||"匿名")}</span></div></article>`).join(""):'<p class="muted">登録ファンアートはまだありません。</p>';
   const letters=Array.isArray(data.letters)?data.letters:[];
   $("profileLetters").innerHTML=letters.length?letters.map(l=>`<article class="profile-letter"><p>${esc(l.message||"")}</p><small>${esc(l.authorName||"匿名ユーザー")}</small></article>`).join(""):'<p class="muted">思い出メッセージはまだありません。</p>';
   $("profileDetailStatus").hidden=true;$("profileDetailContent").hidden=false;
