@@ -3180,3 +3180,46 @@ body.feedback-dialog-open{overflow:hidden}
   .profile-detail-hero-layout{grid-template-columns:1fr}
   .profile-hero-fanart{width:min(100%,520px)}
 }
+
+
+/* Admin submission readability */
+.admin-submission-details,.admin-current-details{border:1px solid rgba(29,45,41,.14);border-radius:16px;background:#fbfaf6;overflow:hidden}
+.admin-current-details{margin-bottom:14px;background:#f3f5f1}
+.admin-submission-details>summary,.admin-current-details>summary{cursor:pointer;padding:14px 18px;font-weight:700;letter-spacing:.04em;background:rgba(49,95,84,.07);list-style-position:inside}
+.admin-current-details>summary{background:rgba(49,95,84,.12)}
+.admin-profile-summary{padding:18px}
+.admin-summary-note{margin:0 0 14px;color:rgba(29,45,41,.62);font-size:12px}
+.admin-submission-author{margin:0 0 16px;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid rgba(29,45,41,.1)}
+.admin-profile-section+.admin-profile-section{margin-top:20px}
+.admin-profile-section h4{margin:0 0 9px;padding-bottom:7px;border-bottom:2px solid rgba(49,95,84,.22);font-family:Georgia,"Yu Mincho",serif;font-size:17px;color:#244e43}
+.admin-profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:0;background:rgba(29,45,41,.1);border:1px solid rgba(29,45,41,.1);border-radius:10px;overflow:hidden}
+.admin-profile-grid>div{display:grid;grid-template-columns:minmax(120px,.42fr) minmax(0,1fr);gap:12px;padding:10px 12px;background:#fff;min-width:0}
+.admin-profile-grid dt{font-weight:700;color:rgba(29,45,41,.72)}
+.admin-profile-grid dd{margin:0;overflow-wrap:anywhere;white-space:normal}
+.admin-profile-grid a{color:#315f54;text-decoration:underline;text-underline-offset:3px}
+.admin-empty-inline{margin:0;padding:12px;background:#fff;border-radius:10px;color:rgba(29,45,41,.65)}
+.admin-simple-list{margin:0;padding:18px}
+.admin-simple-list>div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px solid rgba(29,45,41,.1)}
+.admin-simple-list dt{font-weight:700}.admin-simple-list dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:900px){.admin-profile-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.admin-profile-summary{padding:13px}.admin-profile-grid>div,.admin-simple-list>div{grid-template-columns:1fr;gap:4px}.admin-submission-details>summary,.admin-current-details>summary{padding:12px 14px}}
+
+
+/* Admin readable profile editor */
+.admin-edit-panel{width:min(1120px,100%)}
+.admin-edit-fields:has(.admin-edit-section){display:block}
+.admin-edit-section+.admin-edit-section{margin-top:30px;padding-top:28px;border-top:1px solid rgba(29,45,41,.16)}
+.admin-edit-section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:18px}
+.admin-edit-section-heading h3{margin:2px 0 0;font-family:Georgia,"Yu Mincho",serif;font-size:22px;color:#244e43}
+.admin-edit-help{margin:7px 0 0;color:rgba(29,45,41,.64);font-size:13px;line-height:1.7}
+.admin-edit-main-grid{display:grid}
+.admin-edit-profile-groups{display:grid;gap:18px}
+.admin-edit-profile-group{min-width:0;margin:0;padding:18px;border:1px solid rgba(29,45,41,.14);border-radius:15px;background:#fbfaf6}
+.admin-edit-profile-group legend{padding:0 9px;font-family:Georgia,"Yu Mincho",serif;font-size:17px;font-weight:700;color:#244e43}
+.admin-edit-profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.admin-profile-edit-field{min-width:0}
+.admin-profile-edit-field textarea{min-height:86px;resize:vertical}
+.admin-edit-profile-details:not(.show-empty) .is-empty-group,
+.admin-edit-profile-details:not(.show-empty) .is-empty-field{display:none}
+.admin-empty-toggle{flex:0 0 auto}
+@media(max-width:760px){.admin-edit-section-heading{align-items:flex-start;flex-direction:column}.admin-edit-profile-grid{grid-template-columns:1fr}.admin-empty-toggle{width:100%}}
