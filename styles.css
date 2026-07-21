@@ -2807,3 +2807,13 @@ body.fanart-lightbox-open{overflow:hidden}
   .selected-profile-card{grid-template-columns:1fr}
   .selected-profile-card button{grid-column:1;grid-row:auto;justify-self:start;margin-top:10px}
 }
+
+/* ===== Standalone site statement above the contribution block ===== */
+.home .site-introduction-standalone{
+  margin:clamp(58px,8vw,104px) 0 clamp(34px,5vw,64px);
+}
+@media(max-width:720px){
+  .home .site-introduction-standalone{
+    margin:42px 0 28px;
+  }
+}
