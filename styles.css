@@ -3530,3 +3530,95 @@ body.feedback-dialog-open{overflow:hidden}
   grid-column:1 / -1;
   width:100%;
 }
+
+/* ===== 思い出の動画：本文を左、サムネイルを右へ大きく配置 ===== */
+.home .memories-panel .video-grid-premium{
+  grid-template-columns:1fr;
+}
+.home .memories-panel .video-card,
+.home .memories-panel .video-card + .video-card{
+  width:100%;
+  min-height:330px;
+  padding:38px 0 42px;
+  border-right:0;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+.home .memories-panel .video-card:last-child{
+  border-bottom:0;
+}
+.home .memories-panel .video-card.has-thumbnail{
+  display:grid;
+  grid-template-columns:minmax(230px,.78fr) minmax(390px,1.22fr);
+  grid-template-rows:auto 1fr;
+  column-gap:clamp(44px,7vw,110px);
+  row-gap:0;
+  align-items:center;
+}
+.home .memories-panel .video-card.has-thumbnail::before{
+  grid-column:1;
+  grid-row:1;
+  align-self:start;
+  margin:0 0 38px;
+}
+.home .memories-panel .video-card.has-thumbnail .video-card-copy{
+  grid-column:1;
+  grid-row:2;
+  align-self:end;
+}
+.home .memories-panel .video-card.has-thumbnail .video-thumbnail-link{
+  grid-column:2;
+  grid-row:1 / span 2;
+  align-self:center;
+  justify-self:stretch;
+  width:100%;
+  max-width:680px;
+  margin:0 0 0 auto;
+}
+.home .memories-panel .video-card.has-thumbnail .video-thumbnail-frame{
+  width:100%;
+  border-color:rgba(255,255,255,.22);
+  box-shadow:0 22px 55px rgba(0,0,0,.22);
+}
+.home .memories-panel .video-card.has-thumbnail .video-thumbnail-play{
+  width:58px;
+  height:58px;
+  font-size:17px;
+}
+
+@media(max-width:900px) and (min-width:721px){
+  .home .memories-panel .video-card.has-thumbnail{
+    grid-template-columns:minmax(210px,.82fr) minmax(300px,1.18fr);
+    column-gap:34px;
+  }
+  .home .memories-panel .video-card.has-thumbnail .video-thumbnail-link{
+    width:100%;
+  }
+}
+
+@media(max-width:720px){
+  .home .memories-panel .video-card,
+  .home .memories-panel .video-card + .video-card{
+    min-height:0;
+    padding:32px 0;
+  }
+  .home .memories-panel .video-card.has-thumbnail{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    row-gap:22px;
+  }
+  .home .memories-panel .video-card.has-thumbnail::before{
+    grid-column:1;
+    grid-row:1;
+    margin:0;
+  }
+  .home .memories-panel .video-card.has-thumbnail .video-card-copy{
+    grid-column:1;
+    grid-row:2;
+  }
+  .home .memories-panel .video-card.has-thumbnail .video-thumbnail-link{
+    grid-column:1;
+    grid-row:3;
+    width:100%;
+    max-width:none;
+  }
+}
