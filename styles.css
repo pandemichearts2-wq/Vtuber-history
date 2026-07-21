@@ -3332,80 +3332,201 @@ body.feedback-dialog-open{overflow:hidden}
 }
 
 
-/* 本日のおすすめVTuber：説明文とCommunity Contributionの間に置く小型カード */
+/* 本日のおすすめVTuber：小型エディトリアルカード */
 .home .daily-recommendation{
-  width:min(680px,calc(100% - 32px));
-  margin:18px auto 24px;
+  width:min(700px,calc(100% - 32px));
+  margin:20px auto 27px;
 }
 .home .daily-recommendation[hidden]{display:none}
-.home .daily-recommendation-label{
-  margin:0 0 7px 3px;
-  color:var(--muted,#716b67);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.13em;
-}
-.home .daily-recommendation-card{
+.home .daily-recommendation-heading{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:18px;
-  min-height:64px;
-  padding:12px 16px;
-  border:1px solid rgba(102,83,70,.17);
-  border-radius:14px;
-  background:rgba(255,255,255,.66);
-  box-shadow:0 7px 22px rgba(68,49,37,.055);
+  margin:0 5px 8px;
+}
+.home .daily-recommendation-label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  color:var(--muted,#716b67);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.14em;
+}
+.home .daily-recommendation-spark{
+  color:#a98a4f;
+  font-size:12px;
+  line-height:1;
+}
+.home .daily-recommendation-date{
+  color:rgba(83,72,65,.58);
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:11px;
+  letter-spacing:.06em;
+}
+.home .daily-recommendation-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) auto;
+  align-items:center;
+  gap:16px;
+  min-height:78px;
+  padding:13px 15px;
+  overflow:hidden;
+  border:1px solid rgba(100,82,65,.18);
+  border-radius:17px;
+  background:
+    radial-gradient(circle at 8% 20%,rgba(211,190,135,.18),transparent 30%),
+    linear-gradient(112deg,rgba(255,255,255,.92),rgba(247,244,235,.78));
+  box-shadow:0 10px 30px rgba(61,47,37,.07),inset 0 1px 0 rgba(255,255,255,.84);
   color:inherit;
   text-decoration:none;
-  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+  isolation:isolate;
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+.home .daily-recommendation-card::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(169,138,79,.12);
+  border-radius:12px;
+  pointer-events:none;
+}
+.home .daily-recommendation-card::after{
+  content:"";
+  position:absolute;
+  top:-44px;
+  right:55px;
+  width:128px;
+  height:128px;
+  border:1px solid rgba(169,138,79,.11);
+  border-radius:50%;
+  pointer-events:none;
 }
 .home .daily-recommendation-card:hover{
-  transform:translateY(-1px);
-  border-color:rgba(102,83,70,.34);
-  box-shadow:0 9px 26px rgba(68,49,37,.09);
+  transform:translateY(-2px);
+  border-color:rgba(126,99,67,.34);
+  box-shadow:0 15px 36px rgba(61,47,37,.11),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.home .daily-recommendation-card:focus-visible{
+  outline:2px solid rgba(128,100,52,.65);
+  outline-offset:4px;
+}
+.home .daily-recommendation-seal{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:46px;
+  height:46px;
+  border:1px solid rgba(106,84,50,.26);
+  border-radius:50%;
+  background:rgba(255,255,255,.54);
+  box-shadow:inset 0 0 0 4px rgba(169,138,79,.055);
+}
+.home .daily-recommendation-seal span{
+  color:#826c42;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.08em;
 }
 .home .daily-recommendation-copy{
+  position:relative;
+  z-index:1;
   display:grid;
   min-width:0;
-  gap:2px;
+  gap:1px;
+}
+.home .daily-recommendation-kicker{
+  margin-bottom:1px;
+  color:#a1844d!important;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:9px!important;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
 }
 .home .daily-recommendation-copy strong{
   overflow:hidden;
   color:var(--ink,#292522);
-  font-size:17px;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:18px;
   line-height:1.35;
+  letter-spacing:.025em;
   text-overflow:ellipsis;
   white-space:nowrap;
 }
-.home .daily-recommendation-copy span{
+.home .daily-recommendation-copy>span:last-child{
   overflow:hidden;
   color:var(--muted,#716b67);
-  font-size:12px;
+  font-size:11px;
   line-height:1.45;
   text-overflow:ellipsis;
   white-space:nowrap;
 }
 .home .daily-recommendation-action{
+  position:relative;
+  z-index:1;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
   flex:0 0 auto;
+  padding:8px 11px;
+  border:1px solid rgba(90,72,59,.14);
+  border-radius:999px;
+  background:rgba(255,255,255,.48);
   color:var(--ink,#292522);
-  font-size:12px;
+  font-size:11px;
   font-weight:700;
   white-space:nowrap;
 }
 .home .daily-recommendation-action::after{
-  content:"  →";
+  content:"→";
+  color:#9b7e47;
+  transition:transform .2s ease;
+}
+.home .daily-recommendation-card:hover .daily-recommendation-action::after{
+  transform:translateX(3px);
 }
 @media (max-width:600px){
   .home .daily-recommendation{
     width:calc(100% - 24px);
-    margin:14px auto 20px;
+    margin:16px auto 22px;
   }
+  .home .daily-recommendation-heading{margin-inline:3px}
   .home .daily-recommendation-card{
-    min-height:58px;
-    padding:10px 13px;
-    gap:10px;
+    grid-template-columns:42px minmax(0,1fr);
+    min-height:72px;
+    padding:12px 13px;
+    gap:12px;
   }
-  .home .daily-recommendation-copy strong{font-size:15px}
-  .home .daily-recommendation-action{font-size:11px}
+  .home .daily-recommendation-seal{width:40px;height:40px}
+  .home .daily-recommendation-copy strong{font-size:16px}
+  .home .daily-recommendation-action{
+    grid-column:2;
+    justify-self:start;
+    margin-top:5px;
+    padding:0;
+    border:0;
+    background:transparent;
+    font-size:10px;
+  }
+  .home .daily-recommendation-card::after{right:-22px}
+}
+
+/* ===== VTuber search results: always one column ===== */
+.home #profileList.profile-list,
+.home #profileList.profile-list-premium{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) !important;
+  width:100%;
+}
+
+.home #profileList > .profile-card,
+.home #profileList > .empty-state{
+  grid-column:1 / -1;
+  width:100%;
 }

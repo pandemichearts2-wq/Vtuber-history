@@ -402,6 +402,7 @@ function renderDailyRecommendation(profiles) {
   const link = $("dailyRecommendationLink");
   const name = $("dailyRecommendationName");
   const meta = $("dailyRecommendationMeta");
+  const date = $("dailyRecommendationDate");
   if (!root || !link || !name || !meta) return;
 
   const available = [...profiles]
@@ -423,6 +424,15 @@ function renderDailyRecommendation(profiles) {
   const profile = available[(hash >>> 0) % available.length];
   name.textContent = profile.activityName;
   meta.textContent = [profile.reading, profile.affiliation].filter(Boolean).join(" / ") || "登録プロフィール";
+  if (date) {
+    date.textContent = new Intl.DateTimeFormat("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      month: "long",
+      day: "numeric",
+      weekday: "short"
+    }).format(new Date());
+    date.setAttribute("datetime", japanDateKey());
+  }
   link.href = `profile.html?id=${encodeURIComponent(String(profile.profileId))}`;
   link.setAttribute("aria-label", `本日のおすすめVTuber、${profile.activityName}のプロフィールを見る`);
   root.hidden = false;
