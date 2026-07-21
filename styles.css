@@ -726,8 +726,14 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
 }
 
 /* ===== Home editorial redesign: keep the hero untouched ===== */
+.home{
+  --home-page-width:min(1280px,calc(100vw - 64px));
+  --home-page-gutter:calc((100vw - var(--home-page-width))/2);
+  --home-content-inset:calc(var(--home-page-width) * .08333);
+}
+
 .home main.wrap{
-  width:min(1280px,calc(100% - 64px));
+  width:var(--home-page-width);
   padding:0 0 120px;
 }
 
@@ -833,7 +839,7 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
   left:50%;
   width:100vw;
   margin-left:-50vw;
-  padding:120px max(8.333vw,calc((100vw - 1280px)/2 + 8.333%));
+  padding:120px calc(var(--home-page-gutter) + var(--home-content-inset));
   color:#eff6f3;
   background:
     radial-gradient(circle at 84% 18%,rgba(183,160,106,.16),transparent 28%),
@@ -882,7 +888,7 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
 
 .home .curation-band{
   gap:28px;
-  margin:28px 0 60px;
+  margin:28px 0 32px;
 }
 
 .home .curation-band span{
@@ -1126,11 +1132,14 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
 }
 
 .home .memories-panel .empty-state{
-  border-top:1px solid rgba(255,255,255,.16);
+  padding-top:42px;
+  padding-bottom:42px;
+  border-top:0;
   border-bottom:1px solid rgba(255,255,255,.16);
 }
 
 .home .memories-panel .empty-state h3{color:#fff}
+.home .memories-panel .empty-kicker{color:#b8d2ca!important}
 .home .memories-panel .empty-state p{color:#aac0b9}
 .home .empty-ornament{display:none}
 .home .empty-tags span{border-radius:0;background:transparent}
@@ -1140,7 +1149,8 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
 }
 
 @media(max-width:900px){
-  .home main.wrap{width:min(100% - 36px,1280px)}
+  .home{--home-page-width:calc(100vw - 36px)}
+  .home main.wrap{width:var(--home-page-width)}
   .home .home-intro,
   .home .graduation-memory{grid-template-columns:1fr;gap:34px}
   .home .home-intro .actions,
@@ -1148,7 +1158,6 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
   .home .graduation-memory .lead,
   .home .graduation-memory .actions{grid-column:1}
   .home .home-intro .eyebrow::after{font-size:54px}
-  .home .memories-panel{padding-left:7vw;padding-right:7vw}
   .home .video-grid{grid-template-columns:1fr}
   .home .video-card,
   .home .video-card + .video-card{
@@ -1162,13 +1171,17 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
 }
 
 @media(max-width:720px){
-  .home main.wrap{width:min(100% - 24px,1280px)}
+  .home{
+    --home-page-width:calc(100vw - 24px);
+    --home-content-inset:0px;
+  }
+  .home main.wrap{width:var(--home-page-width)}
   .home main::before{height:48px;margin-left:0}
   .home .panel{padding:72px 0}
   .home .home-intro{padding-top:28px;padding-bottom:76px}
   .home .home-intro h2{font-size:44px}
   .home .home-intro .eyebrow::after{margin-top:16px;font-size:42px}
-  .home .memories-panel{padding:84px 24px}
+  .home .memories-panel{padding-top:84px;padding-bottom:84px}
   .home .memories-panel .split-head{grid-template-columns:1fr;gap:28px;align-items:start}
   .home .memories-panel::after{top:46px;right:12px;font-size:64px}
   .home .curation-band{gap:14px 22px;margin-bottom:38px}
