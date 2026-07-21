@@ -1,14 +1,23 @@
 const API_URL = window.GH_CONFIG?.API_URL || "";
-const state = { profiles: [], videos: [], graduationMemories: [], fanArts: [], currentFanArtIndex: -1 };
+const PAGE_SIZE = 20;
+const state = {
+  profiles: [],
+  videos: [],
+  graduationMemories: [],
+  profileOffset: 0,
+  videoOffset: 0,
+  profileHasMore: false,
+  videoHasMore: false,
+  profileQuery: "",
+  profileLoading: false,
+  videoLoading: false,
+  homeFanArt: null
+};
 const $ = (id) => document.getElementById(id);
 
 function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   })[char]);
 }
 
@@ -21,15 +30,38 @@ function safeHttpsUrl(value) {
   }
 }
 
-async function getData() {
-  if (!API_URL) throw new Error("API URLが設定されていません。");
-  const url = new URL(API_URL);
-  url.searchParams.set("action", "publicData");
-  const response = await fetch(url.toString(), { method: "GET" });
+async function requestJson(url, options = {}) {
+  const response = await fetch(url, options);
   if (!response.ok) throw new Error(`データ取得に失敗しました（${response.status}）`);
   const data = await response.json();
   if (!data.ok) throw new Error(data.message || "公開データを取得できませんでした。");
   return data;
+}
+
+async function getInitialData() {
+  if (!API_URL) throw new Error("API URLが設定されていません。");
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "publicData");
+  url.searchParams.set("profileLimit", String(PAGE_SIZE));
+  url.searchParams.set("videoLimit", String(PAGE_SIZE));
+  return requestJson(url.toString(), { method: "GET" });
+}
+
+async function getProfilePage(query, offset) {
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "profiles");
+  url.searchParams.set("q", query || "");
+  url.searchParams.set("offset", String(offset || 0));
+  url.searchParams.set("limit", String(PAGE_SIZE));
+  return requestJson(url.toString(), { method: "GET" });
+}
+
+async function getVideoPage(offset) {
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "videos");
+  url.searchParams.set("offset", String(offset || 0));
+  url.searchParams.set("limit", String(PAGE_SIZE));
+  return requestJson(url.toString(), { method: "GET" });
 }
 
 async function getHomeFanArtData() {
@@ -37,11 +69,10 @@ async function getHomeFanArtData() {
   const url = new URL(API_URL);
   url.searchParams.set("action", "fanArtData");
   url.searchParams.set("category", "general");
-  const response = await fetch(url.toString(), { method: "GET" });
-  if (!response.ok) throw new Error(`FA画像の取得に失敗しました（${response.status}）`);
-  const data = await response.json();
-  if (!data.ok) throw new Error(data.message || "FA画像を取得できませんでした。");
-  return Array.isArray(data.fanArts) ? data.fanArts : [];
+  url.searchParams.set("limit", "1");
+  url.searchParams.set("nonce", String(Date.now()));
+  const data = await requestJson(url.toString(), { method: "GET", cache: "no-store" });
+  return Array.isArray(data.fanArts) ? data.fanArts[0] || null : null;
 }
 
 function renderHomeFanArtEmpty(message) {
@@ -55,32 +86,23 @@ function renderHomeFanArtEmpty(message) {
     </div>`;
 }
 
-function showRandomHomeFanArt() {
+function renderHomeFanArt(art) {
   const viewer = $("homeFanArtViewer");
   if (!viewer) return;
-  if (!state.fanArts.length) {
+  if (!art) {
     renderHomeFanArtEmpty("承認されたFA画像はまだありません。");
     return;
   }
-
-  let nextIndex = Math.floor(Math.random() * state.fanArts.length);
-  if (state.fanArts.length > 1 && nextIndex === state.currentFanArtIndex) {
-    nextIndex = (nextIndex + 1) % state.fanArts.length;
-  }
-  state.currentFanArtIndex = nextIndex;
-
-  const art = state.fanArts[nextIndex];
-  const imageUrl = safeHttpsUrl(art.imageUrl);
+  const imageUrl = safeHttpsUrl(art.thumbnailUrl || art.imageUrl);
   if (!imageUrl) {
     renderHomeFanArtEmpty("画像を表示できませんでした。別の作品を表示してください。");
     return;
   }
-
   const displayAuthor = art.authorName || "匿名";
   viewer.innerHTML = `
     <figure class="fanart-display-card">
       <div class="fanart-image-frame protected-media" data-protected-media>
-        <img src="${esc(imageUrl)}" alt="${esc(art.title || `${art.activityName || "VTuber"}のファンアート`)}" loading="eager" draggable="false">
+        <img src="${esc(imageUrl)}" alt="${esc(art.title || `${art.activityName || "VTuber"}のファンアート`)}" loading="eager" decoding="async" draggable="false">
         <span class="fanart-save-shield" aria-hidden="true"></span>
         <span class="fanart-watermark" aria-hidden="true"><b>Graduate History</b><em>${esc(displayAuthor)}</em></span>
       </div>
@@ -93,28 +115,43 @@ function showRandomHomeFanArt() {
     </figure>`;
 }
 
-async function loadHomeFanArts() {
-  if (!$("homeFanArtViewer")) return;
-  state.fanArts = await getHomeFanArtData();
-  showRandomHomeFanArt();
+async function refreshHomeFanArt() {
+  try {
+    state.homeFanArt = await getHomeFanArtData();
+    renderHomeFanArt(state.homeFanArt);
+  } catch (error) {
+    console.error(error);
+    renderHomeFanArtEmpty(error.message || "FA画像を取得できませんでした。");
+  }
 }
 
 function installHomeFanArtSaveDeterrence() {
-  const isProtectedTarget = (target) => target instanceof Element && Boolean(target.closest("[data-protected-media]"));
+  const protectedTarget = (target) => target instanceof Element && Boolean(target.closest("[data-protected-media]"));
   document.addEventListener("contextmenu", (event) => {
-    if (isProtectedTarget(event.target)) event.preventDefault();
+    if (protectedTarget(event.target)) event.preventDefault();
   });
   document.addEventListener("dragstart", (event) => {
-    if (isProtectedTarget(event.target)) event.preventDefault();
+    if (protectedTarget(event.target)) event.preventDefault();
   });
 }
 
-function renderVideos(videos) {
+function videoCard(video) {
+  const url = safeHttpsUrl(video.url);
+  if (!url) return "";
+  return `
+    <article class="video-card premium-card">
+      <p class="card-label">${esc(video.videoType || "Precious Memories")}</p>
+      <h3>${esc(video.title || video.activityName || "思い出の動画")}</h3>
+      <p class="card-sub">${esc(video.activityName || "")}</p>
+      <a href="${esc(url)}" target="_blank" rel="noopener noreferrer">動画を見る</a>
+    </article>`;
+}
+
+function renderVideos(videos, append = false) {
   const root = $("videoSlider");
   if (!root) return;
-
-  const available = videos.filter((video) => safeHttpsUrl(video.url));
-  if (!available.length) {
+  const cards = videos.map(videoCard).filter(Boolean).join("");
+  if (!append && !cards) {
     root.innerHTML = `
       <article class="empty-state empty-state-memories wide-empty">
         <div class="empty-ornament"></div>
@@ -123,61 +160,118 @@ function renderVideos(videos) {
         <p>まだ動画は登録されていません。卒業配信、忘れられない歌枠、切り抜きなどが集まると、ここが静かな展示室のように育っていきます。</p>
         <div class="empty-tags"><span>卒業配信</span><span>思い出動画</span><span>歌ってみた</span></div>
       </article>`;
-    return;
+  } else if (append) {
+    root.insertAdjacentHTML("beforeend", cards);
+  } else {
+    root.innerHTML = cards;
   }
-
-  root.innerHTML = available.slice(0, 3).map((video) => {
-    const url = safeHttpsUrl(video.url);
-    return `
-      <article class="video-card premium-card">
-        <p class="card-label">Precious Memories</p>
-        <h3>${esc(video.title || video.activityName || "思い出の動画")}</h3>
-        <p class="card-sub">${esc(video.activityName || "")}</p>
-        <a href="${esc(url)}" target="_blank" rel="noopener noreferrer">動画を見る</a>
-      </article>`;
-  }).join("");
+  syncPaginationButtons();
 }
 
-function renderProfiles(profiles) {
-  const root = $("profileList");
-  if (!root) return;
-
-  if (!profiles.length) {
-    root.innerHTML = `
-      <article class="empty-state empty-state-search wide-empty">
-        <div class="empty-ornament"></div>
-        <p class="empty-kicker">Archive search</p>
-        <h3>まだ記録は静かです</h3>
-        <p>今はプロフィールが登録されていません。名前の一部や所属、配信スタイルから探せるようになるので、記録が集まるのを待っていてね。</p>
-        <div class="empty-tags"><span>活動名</span><span>読み方</span><span>所属</span><span>配信スタイル</span></div>
-      </article>`;
-    return;
-  }
-
-  root.innerHTML = profiles.map((profile) => `
+function profileCard(profile) {
+  return `
     <article class="profile-card premium-card">
       <p class="card-label">Profile archive</p>
       <h3>${esc(profile.activityName)}</h3>
       <p class="card-sub">${esc(profile.reading || "")}</p>
       <p>${esc(profile.affiliation || "所属情報なし")}</p>
-    </article>`).join("");
+    </article>`;
+}
+
+function renderProfiles(profiles, append = false) {
+  const root = $("profileList");
+  if (!root) return;
+  const cards = profiles.map(profileCard).join("");
+  if (!append && !profiles.length) {
+    root.innerHTML = `
+      <article class="empty-state empty-state-search wide-empty">
+        <div class="empty-ornament"></div>
+        <p class="empty-kicker">Archive search</p>
+        <h3>該当する記録が見つかりません</h3>
+        <p>表記を変えるか、活動名の一部で検索してみてください。</p>
+        <div class="empty-tags"><span>活動名</span><span>読み方</span><span>所属</span><span>配信スタイル</span></div>
+      </article>`;
+  } else if (append) {
+    root.insertAdjacentHTML("beforeend", cards);
+  } else {
+    root.innerHTML = cards;
+  }
+  syncPaginationButtons();
+}
+
+function syncPaginationButtons() {
+  const moreVideos = $("loadMoreVideosBtn");
+  const moreProfiles = $("loadMoreProfilesBtn");
+  if (moreVideos) {
+    moreVideos.hidden = !state.videoHasMore;
+    moreVideos.disabled = state.videoLoading;
+    moreVideos.textContent = state.videoLoading ? "読み込み中…" : "動画をもっと見る";
+  }
+  if (moreProfiles) {
+    moreProfiles.hidden = !state.profileHasMore;
+    moreProfiles.disabled = state.profileLoading;
+    moreProfiles.textContent = state.profileLoading ? "読み込み中…" : "プロフィールをもっと見る";
+  }
+}
+
+async function loadMoreVideos() {
+  if (state.videoLoading || !state.videoHasMore) return;
+  state.videoLoading = true;
+  syncPaginationButtons();
+  try {
+    const data = await getVideoPage(state.videoOffset);
+    const items = Array.isArray(data.videos) ? data.videos : [];
+    state.videos.push(...items);
+    state.videoOffset = Number(data.nextOffset || state.videoOffset + items.length);
+    state.videoHasMore = Boolean(data.hasMore);
+    renderVideos(items, true);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    state.videoLoading = false;
+    syncPaginationButtons();
+  }
+}
+
+async function runProfileSearch(query, append = false) {
+  if (state.profileLoading) return;
+  const normalizedQuery = String(query || "").trim();
+  if (!append) {
+    state.profileQuery = normalizedQuery;
+    state.profileOffset = 0;
+    state.profiles = [];
+  }
+  state.profileLoading = true;
+  syncPaginationButtons();
+  try {
+    const data = await getProfilePage(state.profileQuery, state.profileOffset);
+    const items = Array.isArray(data.profiles) ? data.profiles : [];
+    if (append) state.profiles.push(...items);
+    else state.profiles = items;
+    state.profileOffset = Number(data.nextOffset || state.profileOffset + items.length);
+    state.profileHasMore = Boolean(data.hasMore);
+    renderProfiles(items, append);
+  } catch (error) {
+    console.error(error);
+    if (!append) $("profileList").innerHTML = `<p class="error-message">${esc(error.message)}</p>`;
+  } finally {
+    state.profileLoading = false;
+    syncPaginationButtons();
+  }
 }
 
 function showMemory(index = 0) {
   const section = $("graduationMemory");
   if (!section) return;
-
   const memories = state.graduationMemories;
   if (!memories.length) {
     section.classList.add("hidden");
     return;
   }
-
   const memory = memories[index % memories.length];
   section.classList.remove("hidden");
   $("graduationTitle").textContent = `${memory.yearsAgo ? `${memory.yearsAgo}年前の今日、` : "今日は"}${memory.activityName}さんが卒業しました`;
   $("graduationText").textContent = "あの日の配信や思い出を、もう一度振り返ってみませんか。";
-
   const videoButton = $("graduationVideoBtn");
   const videoUrl = safeHttpsUrl(memory.videoUrl);
   if (videoUrl) {
@@ -187,38 +281,21 @@ function showMemory(index = 0) {
     videoButton.removeAttribute("href");
     videoButton.classList.add("hidden");
   }
-
   $("graduationNextBtn").dataset.index = String((index + 1) % memories.length);
-}
-
-function searchProfiles() {
-  const query = $("searchInput").value.toLowerCase().trim();
-  if (!query) {
-    renderProfiles(state.profiles);
-    return;
-  }
-
-  renderProfiles(state.profiles.filter((profile) => [
-    profile.activityName,
-    profile.reading,
-    profile.affiliation,
-    profile.nickname,
-    profile.streamStyle,
-  ].some((value) => String(value || "").toLowerCase().includes(query))));
 }
 
 async function init() {
   installHomeFanArtSaveDeterrence();
-  loadHomeFanArts().catch((error) => {
-    console.error(error);
-    renderHomeFanArtEmpty(error.message || "FA画像を取得できませんでした。");
-  });
-
+  refreshHomeFanArt();
   try {
-    const data = await getData();
+    const data = await getInitialData();
     state.profiles = Array.isArray(data.profiles) ? data.profiles : [];
     state.videos = Array.isArray(data.videos) ? data.videos : [];
     state.graduationMemories = Array.isArray(data.graduationMemories) ? data.graduationMemories : [];
+    state.profileOffset = Number(data.profileNextOffset || state.profiles.length);
+    state.videoOffset = Number(data.videoNextOffset || state.videos.length);
+    state.profileHasMore = Boolean(data.profileHasMore);
+    state.videoHasMore = Boolean(data.videoHasMore);
     renderVideos(state.videos);
     renderProfiles(state.profiles);
     showMemory();
@@ -230,7 +307,9 @@ async function init() {
   }
 }
 
-$("nextHomeFanArtButton")?.addEventListener("click", showRandomHomeFanArt);
+$("nextHomeFanArtButton")?.addEventListener("click", refreshHomeFanArt);
+$("loadMoreVideosBtn")?.addEventListener("click", loadMoreVideos);
+$("loadMoreProfilesBtn")?.addEventListener("click", () => runProfileSearch(state.profileQuery, true));
 
 $("randomVideoBtn")?.addEventListener("click", () => {
   const available = state.videos.filter((video) => safeHttpsUrl(video.url));
@@ -243,15 +322,15 @@ $("graduationNextBtn")?.addEventListener("click", (event) => {
   showMemory(Number(event.currentTarget.dataset.index || 0));
 });
 
-$("searchBtn")?.addEventListener("click", searchProfiles);
+$("searchBtn")?.addEventListener("click", () => runProfileSearch($("searchInput").value, false));
 $("searchInput")?.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") searchProfiles();
+  if (event.key === "Enter") runProfileSearch(event.currentTarget.value, false);
 });
 
 document.querySelectorAll(".search-tags span").forEach((tag) => {
   tag.addEventListener("click", () => {
     $("searchInput").value = tag.textContent;
-    searchProfiles();
+    runProfileSearch(tag.textContent, false);
   });
 });
 
@@ -263,7 +342,6 @@ if (audio && toggle) {
     toggle.textContent = audio.paused ? "BGMを再生" : "BGMを停止";
     toggle.setAttribute("aria-pressed", String(!audio.paused));
   };
-
   toggle.addEventListener("click", async () => {
     try {
       if (audio.paused) await audio.play();
@@ -273,11 +351,9 @@ if (audio && toggle) {
     }
     updateBgmButton();
   });
-
   document.addEventListener("pointerdown", () => {
     if (audio.paused) audio.play().catch(() => {});
   }, { once: true });
-
   audio.addEventListener("play", updateBgmButton);
   audio.addEventListener("pause", updateBgmButton);
   updateBgmButton();

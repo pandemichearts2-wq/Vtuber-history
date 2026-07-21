@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>動画リンク登録 | Graduate History</title>
   <meta name="description" content="Graduate Historyへ思い出の動画リンクを申請するページ">
-  <link rel="stylesheet" href="styles.css?v=20260721-video1">
+  <link rel="stylesheet" href="styles.css?v=20260721-opt1">
 </head>
 <body class="video-register-page">
 <header class="hero video-register-hero">
@@ -44,7 +44,7 @@
         <div class="profile-picker" id="profilePicker">
           <label for="vtuberSearchInput">VTuber名を検索</label>
           <input id="vtuberSearchInput" type="search" autocomplete="off" placeholder="活動名や読み方を入力">
-          <div id="profileSearchStatus" class="profile-search-status" aria-live="polite">登録済みVTuberを読み込んでいます。</div>
+          <div id="profileSearchStatus" class="profile-search-status" aria-live="polite">名前を入力すると、一致する登録済みVTuberを最大20件表示します。</div>
           <div id="profileSearchResults" class="profile-search-results hidden" role="listbox" aria-label="VTuber検索結果"></div>
         </div>
         <div id="selectedProfileCard" class="selected-profile-card hidden" aria-live="polite"></div>
@@ -100,6 +100,6 @@
 </main>
 <footer><div class="wrap">Graduate History Video Registration</div></footer>
 <script src="config.js"></script>
-<script src="video-register.js?v=20260721-video1"></script>
+<script src="video-register.js?v=20260721-opt1"></script>
 </body>
 </html>

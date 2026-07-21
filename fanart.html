@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>FA画像 | Graduate History</title>
   <meta name="description" content="Graduate Historyのファンアート閲覧・登録ページ">
-  <link rel="stylesheet" href="styles.css?v=20260721-fa7">
+  <link rel="stylesheet" href="styles.css?v=20260721-opt1">
 </head>
 <body class="fanart-page" data-fanart-category="general">
 <header class="hero">
@@ -61,7 +61,7 @@
           <label><input type="radio" name="authorMode" value="named"> 記入した名前で表示</label>
         </fieldset>
         <label id="authorNameField" class="wide fanart-conditional-field hidden">表示する作者名<input name="authorName" type="text" maxlength="80" placeholder="作者名・ハンドルネーム"></label>
-        <label class="wide">FA画像<input id="fanArtFile" name="fanArtFile" type="file" accept="image/jpeg,image/png,image/webp" required><span class="field-help">JPEG・PNG・WebP、5MBまで</span></label>
+        <label class="wide">FA画像<input id="fanArtFile" name="fanArtFile" type="file" accept="image/jpeg,image/png,image/webp" required><span class="field-help">JPEG・PNG・WebP、選択時5MBまで。送信前に長辺2000px以下・約2MB以下へ自動圧縮します</span></label>
         <div id="fanArtPreview" class="fanart-upload-preview wide hidden"></div>
         <label class="wide">作品について・補足<textarea name="note" rows="4" maxlength="500"></textarea></label>
       </div>
@@ -73,6 +73,6 @@
 </main>
 <footer><div class="wrap">Graduate History Fan Art</div></footer>
 <script src="config.js"></script>
-<script src="fanart.js?v=20260721-fa7"></script>
+<script src="fanart.js?v=20260721-opt1"></script>
 </body>
 </html>

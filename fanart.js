@@ -1,10 +1,12 @@
 const API_URL = window.GH_CONFIG?.API_URL || "";
 const category = document.body.dataset.fanartCategory === "adult" ? "adult" : "general";
 const isAdult = category === "adult";
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_INPUT_BYTES = 5 * 1024 * 1024;
+const TARGET_BYTES = 2 * 1024 * 1024;
+const MAX_LONG_EDGE = 2000;
 const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const GALLERY_SIZE = 10;
-const state = { fanArts: [], currentSelection: [], loaded: false };
+const state = { fanArts: [], selectedImage: null, previewUrl: "" };
 const $ = (id) => document.getElementById(id);
 
 function esc(value) {
@@ -31,16 +33,16 @@ async function requestJson(url, options) {
 }
 
 async function loadFanArts() {
-  if (state.loaded) return;
   if (!API_URL) throw new Error("API URLが設定されていません。");
   const url = new URL(API_URL);
   url.searchParams.set("action", "fanArtData");
   url.searchParams.set("category", category);
+  url.searchParams.set("limit", String(GALLERY_SIZE));
+  url.searchParams.set("nonce", String(Date.now()));
   if (isAdult) url.searchParams.set("adultConfirmed", "yes");
-  const data = await requestJson(url.toString(), { method: "GET" });
+  const data = await requestJson(url.toString(), { method: "GET", cache: "no-store" });
   state.fanArts = Array.isArray(data.fanArts) ? data.fanArts : [];
-  state.loaded = true;
-  showRandomFanArts();
+  renderFanArts();
 }
 
 function renderEmpty(message) {
@@ -49,18 +51,9 @@ function renderEmpty(message) {
   viewer.innerHTML = `<div class="fanart-empty"><p class="empty-kicker">Fan Art Archive</p><h3>最初の作品を迎える準備中</h3><p>${esc(message)}</p></div>`;
 }
 
-function shuffledIndexes(length) {
-  const indexes = Array.from({ length }, (_, index) => index);
-  for (let i = indexes.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
-  }
-  return indexes;
-}
-
 function galleryCard(art, index) {
-  const imageUrl = safeHttpsUrl(art.imageUrl);
-  if (!imageUrl) return "";
+  const thumbnailUrl = safeHttpsUrl(art.thumbnailUrl || art.imageUrl);
+  if (!thumbnailUrl) return "";
   const displayAuthor = art.authorName || "匿名";
   const title = art.title || "無題のファンアート";
   const activityName = art.activityName || "活動名未設定";
@@ -68,7 +61,7 @@ function galleryCard(art, index) {
     <article class="fanart-gallery-card">
       <button class="fanart-thumb-button" type="button" data-fanart-index="${index}" aria-label="${esc(title)}を拡大表示">
         <span class="fanart-thumb-frame protected-media" data-protected-media>
-          <img src="${esc(imageUrl)}" alt="${esc(art.title || `${activityName}のファンアート`)}" loading="lazy" draggable="false">
+          <img src="${esc(thumbnailUrl)}" alt="${esc(art.title || `${activityName}のファンアート`)}" loading="lazy" decoding="async" draggable="false">
           <span class="fanart-save-shield" aria-hidden="true"></span>
           <span class="fanart-watermark fanart-watermark-small" aria-hidden="true"><b>Graduate History</b><em>${esc(displayAuthor)}</em></span>
         </span>
@@ -81,25 +74,18 @@ function galleryCard(art, index) {
     </article>`;
 }
 
-function showRandomFanArts() {
+function renderFanArts() {
   const viewer = $("fanArtViewer");
   if (!viewer) return;
   if (!state.fanArts.length) {
     renderEmpty(isAdult ? "承認された成人向けFAはまだありません。" : "承認されたFA画像はまだありません。");
     return;
   }
-
-  state.currentSelection = shuffledIndexes(state.fanArts.length).slice(0, GALLERY_SIZE);
-  const cards = state.currentSelection
-    .map((artIndex) => galleryCard(state.fanArts[artIndex], artIndex))
-    .filter(Boolean)
-    .join("");
-
+  const cards = state.fanArts.map((art, index) => galleryCard(art, index)).filter(Boolean).join("");
   if (!cards) {
     renderEmpty("画像を表示できませんでした。作品を入れ替えてください。");
     return;
   }
-
   viewer.innerHTML = `<div class="fanart-gallery-grid">${cards}</div>`;
 }
 
@@ -128,7 +114,7 @@ function ensureLightbox() {
 function openLightbox(index) {
   const art = state.fanArts[index];
   if (!art) return;
-  const imageUrl = safeHttpsUrl(art.imageUrl);
+  const imageUrl = safeHttpsUrl(art.imageUrl || art.thumbnailUrl);
   if (!imageUrl) return;
   const displayAuthor = art.authorName || "匿名";
   const title = art.title || "無題のファンアート";
@@ -164,8 +150,7 @@ function closeLightbox() {
 function setupGalleryInteraction() {
   $("fanArtViewer")?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-fanart-index]");
-    if (!button) return;
-    openLightbox(Number(button.dataset.fanartIndex));
+    if (button) openLightbox(Number(button.dataset.fanartIndex));
   });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeLightbox();
@@ -173,14 +158,12 @@ function setupGalleryInteraction() {
 }
 
 function installSaveDeterrence() {
-  const isProtectedTarget = (target) => target instanceof Element && Boolean(target.closest("[data-protected-media], .fanart-upload-preview"));
-
+  const protectedTarget = (target) => target instanceof Element && Boolean(target.closest("[data-protected-media], .fanart-upload-preview"));
   document.addEventListener("contextmenu", (event) => {
-    if (isProtectedTarget(event.target)) event.preventDefault();
+    if (protectedTarget(event.target)) event.preventDefault();
   });
-
   document.addEventListener("dragstart", (event) => {
-    if (isProtectedTarget(event.target)) event.preventDefault();
+    if (protectedTarget(event.target)) event.preventDefault();
   });
 }
 
@@ -213,40 +196,98 @@ function setRegistrationOpen(open, shouldScroll = false) {
   const section = registrationSection();
   const toggle = $("fanArtFormToggle");
   if (!section || !toggle) return;
-
   section.classList.toggle("hidden", !open);
   section.hidden = !open;
   toggle.setAttribute("aria-expanded", String(open));
-  toggle.textContent = open
-    ? "画像登録フォームを閉じる"
-    : (isAdult ? "成人向けFA画像を登録する" : "FA画像を登録する");
-
-  if (open && shouldScroll) {
-    window.setTimeout(() => section.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
-  }
+  toggle.textContent = open ? "画像登録フォームを閉じる" : (isAdult ? "成人向けFA画像を登録する" : "FA画像を登録する");
+  if (open && shouldScroll) window.setTimeout(() => section.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
 }
 
 function toggleRegistrationForm() {
   const section = registrationSection();
-  if (!section) return;
-  setRegistrationOpen(section.classList.contains("hidden"), true);
+  if (section) setRegistrationOpen(section.classList.contains("hidden"), true);
 }
 
-function readImage(file) {
+function formatMb(bytes) {
+  return `${(Number(bytes || 0) / 1024 / 1024).toFixed(2)}MB`;
+}
+
+function canvasToBlob(canvas, type, quality) {
   return new Promise((resolve, reject) => {
-    if (!file) return reject(new Error("画像を選択してください。"));
-    if (!ALLOWED_IMAGE_TYPES.has(file.type)) return reject(new Error("JPEG・PNG・WebPの画像を選択してください。"));
-    if (file.size > MAX_IMAGE_BYTES) return reject(new Error("画像サイズは5MB以下にしてください。"));
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("画像を読み込めませんでした。"));
-    reader.onload = () => {
-      const result = String(reader.result || "");
-      const comma = result.indexOf(",");
-      if (comma < 0) return reject(new Error("画像データを読み込めませんでした。"));
-      resolve({ base64: result.slice(comma + 1), dataUrl: result });
-    };
-    reader.readAsDataURL(file);
+    canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("画像を圧縮できませんでした。")), type, quality);
   });
+}
+
+async function decodeImage(file) {
+  if ("createImageBitmap" in window) return createImageBitmap(file);
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("画像を読み込めませんでした。"));
+    };
+    image.src = url;
+  });
+}
+
+async function compressImage(file) {
+  if (!file) throw new Error("画像を選択してください。");
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) throw new Error("JPEG・PNG・WebPの画像を選択してください。");
+  if (file.size > MAX_INPUT_BYTES) throw new Error("選択できる画像は5MB以下です。");
+
+  const source = await decodeImage(file);
+  const originalWidth = source.width || source.naturalWidth;
+  const originalHeight = source.height || source.naturalHeight;
+  if (!originalWidth || !originalHeight) throw new Error("画像サイズを確認できませんでした。");
+
+  let scale = Math.min(1, MAX_LONG_EDGE / Math.max(originalWidth, originalHeight));
+  let width = Math.max(1, Math.round(originalWidth * scale));
+  let height = Math.max(1, Math.round(originalHeight * scale));
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d", { alpha: true });
+  if (!context) throw new Error("このブラウザでは画像を圧縮できません。");
+
+  const outputType = "image/webp";
+  let blob = null;
+  for (let resizePass = 0; resizePass < 5; resizePass += 1) {
+    canvas.width = width;
+    canvas.height = height;
+    context.clearRect(0, 0, width, height);
+    context.drawImage(source, 0, 0, width, height);
+    for (const quality of [0.9, 0.82, 0.74, 0.66, 0.58]) {
+      blob = await canvasToBlob(canvas, outputType, quality);
+      if (blob.size <= TARGET_BYTES) break;
+    }
+    if (blob && blob.size <= TARGET_BYTES) break;
+    width = Math.max(1, Math.round(width * 0.85));
+    height = Math.max(1, Math.round(height * 0.85));
+  }
+
+  if (typeof source.close === "function") source.close();
+  if (!blob) throw new Error("画像を圧縮できませんでした。");
+  if (blob.size > MAX_INPUT_BYTES) throw new Error("圧縮後も画像が大きすぎます。別の画像を選択してください。");
+
+  const baseName = file.name.replace(/\.[^.]+$/, "") || "fanart";
+  return {
+    blob,
+    name: `${baseName}.webp`,
+    mime: blob.type || outputType,
+    originalBytes: file.size,
+    compressedBytes: blob.size,
+    width,
+    height
+  };
+}
+
+function clearSelectedImage() {
+  if (state.previewUrl) URL.revokeObjectURL(state.previewUrl);
+  state.previewUrl = "";
+  state.selectedImage = null;
 }
 
 function setupPreview() {
@@ -254,21 +295,39 @@ function setupPreview() {
     const preview = $("fanArtPreview");
     const file = event.currentTarget.files?.[0];
     if (!preview) return;
-    if (!file) {
-      preview.classList.add("hidden");
-      preview.innerHTML = "";
-      return;
-    }
+    clearSelectedImage();
+    preview.classList.add("hidden");
+    preview.innerHTML = "";
+    if (!file) return;
+    preview.innerHTML = "<p>画像を圧縮しています…</p>";
+    preview.classList.remove("hidden");
     try {
-      const image = await readImage(file);
-      preview.innerHTML = `<img src="${image.dataUrl}" alt="選択した画像のプレビュー"><p>${esc(file.name)} / ${(file.size / 1024 / 1024).toFixed(2)}MB</p>`;
-      preview.classList.remove("hidden");
+      state.selectedImage = await compressImage(file);
+      state.previewUrl = URL.createObjectURL(state.selectedImage.blob);
+      preview.innerHTML = `
+        <img src="${esc(state.previewUrl)}" alt="圧縮後の画像プレビュー">
+        <p>${esc(file.name)}：${formatMb(state.selectedImage.originalBytes)} → ${formatMb(state.selectedImage.compressedBytes)} / ${state.selectedImage.width}×${state.selectedImage.height}px</p>`;
     } catch (error) {
       event.currentTarget.value = "";
+      clearSelectedImage();
       preview.classList.add("hidden");
       preview.innerHTML = "";
       $("fanArtFormMessage").textContent = error.message;
     }
+  });
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("画像データを準備できませんでした。"));
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const comma = result.indexOf(",");
+      if (comma < 0) reject(new Error("画像データを準備できませんでした。"));
+      else resolve(result.slice(comma + 1));
+    };
+    reader.readAsDataURL(blob);
   });
 }
 
@@ -285,17 +344,21 @@ async function submitFanArt(event) {
     message.textContent = "年齢確認が必要です。";
     return;
   }
-  const file = $("fanArtFile")?.files?.[0];
+  if (!state.selectedImage) {
+    message.textContent = "画像を選択してください。";
+    return;
+  }
+
   button.disabled = true;
   button.setAttribute("aria-disabled", "true");
   button.textContent = "画像を送信中…";
   message.textContent = "";
   try {
-    const image = await readImage(file);
     const formData = new FormData(form);
     const authorMode = formData.get("authorMode") === "named" ? "named" : "anonymous";
     const authorName = authorMode === "named" ? String(formData.get("authorName") || "").trim() : "";
     if (authorMode === "named" && !authorName) throw new Error("表示する作者名を入力してください。");
+    const imageBase64 = await blobToBase64(state.selectedImage.blob);
     const payload = {
       action: "submitFanArt",
       category,
@@ -304,11 +367,11 @@ async function submitFanArt(event) {
       authorMode,
       authorName,
       note: String(formData.get("note") || "").trim(),
-      imageName: file.name,
-      imageMime: file.type,
-      imageBase64: image.base64,
+      imageName: state.selectedImage.name,
+      imageMime: state.selectedImage.mime,
+      imageBase64,
       rulesAccepted: true,
-      adultConfirmed: isAdult ? true : false
+      adultConfirmed: isAdult
     };
     const data = await requestJson(API_URL, {
       method: "POST",
@@ -317,6 +380,7 @@ async function submitFanArt(event) {
     });
     message.textContent = `送信しました。管理者の確認後に公開されます。（受付番号：${data.submissionId}）`;
     form.reset();
+    clearSelectedImage();
     $("fanArtPreview")?.classList.add("hidden");
     if ($("fanArtPreview")) $("fanArtPreview").innerHTML = "";
     syncAuthorField();
@@ -332,11 +396,8 @@ function revealAdultContent() {
   const confirmed = Boolean($("adultConfirm")?.checked);
   $("adultContent")?.classList.toggle("hidden", !confirmed);
   syncSubmitState();
-  if (confirmed) {
-    loadFanArts().catch((error) => renderEmpty(error.message));
-  } else {
-    setRegistrationOpen(false);
-  }
+  if (confirmed) loadFanArts().catch((error) => renderEmpty(error.message));
+  else setRegistrationOpen(false);
 }
 
 function init() {
@@ -344,7 +405,7 @@ function init() {
   document.querySelectorAll('input[name="authorMode"]').forEach((radio) => radio.addEventListener("change", syncAuthorField));
   $("fanArtRulesAccepted")?.addEventListener("change", syncSubmitState);
   $("fanArtForm")?.addEventListener("submit", submitFanArt);
-  $("nextFanArtButton")?.addEventListener("click", showRandomFanArts);
+  $("nextFanArtButton")?.addEventListener("click", () => loadFanArts().catch((error) => renderEmpty(error.message)));
   setupGalleryInteraction();
   $("fanArtFormToggle")?.addEventListener("click", toggleRegistrationForm);
   setupPreview();

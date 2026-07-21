@@ -2854,3 +2854,12 @@ body.fanart-lightbox-open{overflow:hidden}
     min-height:56px;
   }
 }
+
+/* 2026-07 scalability update */
+.pagination-actions{
+  justify-content:center;
+  margin-top:2rem;
+}
+.pagination-actions .button[hidden]{display:none!important}
+.pagination-actions .button:disabled{opacity:.55;cursor:wait}
+.fanart-upload-preview p{line-height:1.7}
