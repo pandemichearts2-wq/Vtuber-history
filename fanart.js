@@ -3,7 +3,8 @@ const category = document.body.dataset.fanartCategory === "adult" ? "adult" : "g
 const isAdult = category === "adult";
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const state = { fanArts: [], currentIndex: -1, loaded: false };
+const GALLERY_SIZE = 10;
+const state = { fanArts: [], currentSelection: [], loaded: false };
 const $ = (id) => document.getElementById(id);
 
 function esc(value) {
@@ -39,7 +40,7 @@ async function loadFanArts() {
   const data = await requestJson(url.toString(), { method: "GET" });
   state.fanArts = Array.isArray(data.fanArts) ? data.fanArts : [];
   state.loaded = true;
-  showRandomFanArt();
+  showRandomFanArts();
 }
 
 function renderEmpty(message) {
@@ -48,39 +49,127 @@ function renderEmpty(message) {
   viewer.innerHTML = `<div class="fanart-empty"><p class="empty-kicker">Fan Art Archive</p><h3>最初の作品を迎える準備中</h3><p>${esc(message)}</p></div>`;
 }
 
-function showRandomFanArt() {
+function shuffledIndexes(length) {
+  const indexes = Array.from({ length }, (_, index) => index);
+  for (let i = indexes.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+  }
+  return indexes;
+}
+
+function galleryCard(art, index) {
+  const imageUrl = safeHttpsUrl(art.imageUrl);
+  if (!imageUrl) return "";
+  const displayAuthor = art.authorName || "匿名";
+  const title = art.title || "無題のファンアート";
+  const activityName = art.activityName || "活動名未設定";
+  return `
+    <article class="fanart-gallery-card">
+      <button class="fanart-thumb-button" type="button" data-fanart-index="${index}" aria-label="${esc(title)}を拡大表示">
+        <span class="fanart-thumb-frame protected-media" data-protected-media>
+          <img src="${esc(imageUrl)}" alt="${esc(art.title || `${activityName}のファンアート`)}" loading="lazy" draggable="false">
+          <span class="fanart-save-shield" aria-hidden="true"></span>
+          <span class="fanart-watermark fanart-watermark-small" aria-hidden="true"><b>Graduate History</b><em>${esc(displayAuthor)}</em></span>
+        </span>
+      </button>
+      <div class="fanart-gallery-meta">
+        <p class="fanart-activity">${esc(activityName)}</p>
+        <h3>${esc(title)}</h3>
+        <p class="fanart-author">作者：${esc(displayAuthor)}</p>
+      </div>
+    </article>`;
+}
+
+function showRandomFanArts() {
   const viewer = $("fanArtViewer");
   if (!viewer) return;
   if (!state.fanArts.length) {
     renderEmpty(isAdult ? "承認された成人向けFAはまだありません。" : "承認されたFA画像はまだありません。");
     return;
   }
-  let nextIndex = Math.floor(Math.random() * state.fanArts.length);
-  if (state.fanArts.length > 1 && nextIndex === state.currentIndex) {
-    nextIndex = (nextIndex + 1) % state.fanArts.length;
-  }
-  state.currentIndex = nextIndex;
-  const art = state.fanArts[nextIndex];
-  const imageUrl = safeHttpsUrl(art.imageUrl);
-  if (!imageUrl) {
-    renderEmpty("画像を表示できませんでした。別の作品を表示してください。");
+
+  state.currentSelection = shuffledIndexes(state.fanArts.length).slice(0, GALLERY_SIZE);
+  const cards = state.currentSelection
+    .map((artIndex) => galleryCard(state.fanArts[artIndex], artIndex))
+    .filter(Boolean)
+    .join("");
+
+  if (!cards) {
+    renderEmpty("画像を表示できませんでした。作品を入れ替えてください。");
     return;
   }
+
+  viewer.innerHTML = `<div class="fanart-gallery-grid">${cards}</div>`;
+}
+
+function ensureLightbox() {
+  let lightbox = $("fanArtLightbox");
+  if (lightbox) return lightbox;
+  lightbox = document.createElement("div");
+  lightbox.id = "fanArtLightbox";
+  lightbox.className = "fanart-lightbox hidden";
+  lightbox.setAttribute("role", "dialog");
+  lightbox.setAttribute("aria-modal", "true");
+  lightbox.setAttribute("aria-label", "ファンアート拡大表示");
+  lightbox.innerHTML = `
+    <div class="fanart-lightbox-backdrop" data-lightbox-close></div>
+    <div class="fanart-lightbox-panel" role="document">
+      <button class="fanart-lightbox-close" type="button" data-lightbox-close aria-label="拡大表示を閉じる">×</button>
+      <div id="fanArtLightboxContent"></div>
+    </div>`;
+  document.body.appendChild(lightbox);
+  lightbox.addEventListener("click", (event) => {
+    if (event.target.closest("[data-lightbox-close]")) closeLightbox();
+  });
+  return lightbox;
+}
+
+function openLightbox(index) {
+  const art = state.fanArts[index];
+  if (!art) return;
+  const imageUrl = safeHttpsUrl(art.imageUrl);
+  if (!imageUrl) return;
   const displayAuthor = art.authorName || "匿名";
-  viewer.innerHTML = `
-    <figure class="fanart-display-card">
-      <div class="fanart-image-frame protected-media" data-protected-media>
-        <img src="${esc(imageUrl)}" alt="${esc(art.title || `${art.activityName || "VTuber"}のファンアート`)}" loading="eager" draggable="false">
+  const title = art.title || "無題のファンアート";
+  const activityName = art.activityName || "活動名未設定";
+  const lightbox = ensureLightbox();
+  const content = $("fanArtLightboxContent");
+  content.innerHTML = `
+    <figure class="fanart-lightbox-figure">
+      <div class="fanart-lightbox-image protected-media" data-protected-media>
+        <img src="${esc(imageUrl)}" alt="${esc(art.title || `${activityName}のファンアート`)}" draggable="false">
         <span class="fanart-save-shield" aria-hidden="true"></span>
         <span class="fanart-watermark" aria-hidden="true"><b>Graduate History</b><em>${esc(displayAuthor)}</em></span>
       </div>
       <figcaption>
-        <p class="fanart-activity">${esc(art.activityName || "活動名未設定")}</p>
-        <h3>${esc(art.title || "無題のファンアート")}</h3>
+        <p class="fanart-activity">${esc(activityName)}</p>
+        <h3>${esc(title)}</h3>
         <p class="fanart-author">作者：${esc(displayAuthor)}</p>
         ${art.note ? `<p class="fanart-note">${esc(art.note)}</p>` : ""}
       </figcaption>
     </figure>`;
+  lightbox.classList.remove("hidden");
+  document.body.classList.add("fanart-lightbox-open");
+  lightbox.querySelector(".fanart-lightbox-close")?.focus();
+}
+
+function closeLightbox() {
+  const lightbox = $("fanArtLightbox");
+  if (!lightbox || lightbox.classList.contains("hidden")) return;
+  lightbox.classList.add("hidden");
+  document.body.classList.remove("fanart-lightbox-open");
+}
+
+function setupGalleryInteraction() {
+  $("fanArtViewer")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-fanart-index]");
+    if (!button) return;
+    openLightbox(Number(button.dataset.fanartIndex));
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeLightbox();
+  });
 }
 
 function installSaveDeterrence() {
@@ -257,7 +346,8 @@ function init() {
   document.querySelectorAll('input[name="authorMode"]').forEach((radio) => radio.addEventListener("change", syncAuthorField));
   $("fanArtRulesAccepted")?.addEventListener("change", syncSubmitState);
   $("fanArtForm")?.addEventListener("submit", submitFanArt);
-  $("nextFanArtButton")?.addEventListener("click", showRandomFanArt);
+  $("nextFanArtButton")?.addEventListener("click", showRandomFanArts);
+  setupGalleryInteraction();
   $("fanArtFormToggle")?.addEventListener("click", toggleRegistrationForm);
   setupPreview();
   syncAuthorField();

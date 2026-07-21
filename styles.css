@@ -2527,3 +2527,188 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
     text-align:center;
   }
 }
+
+
+/* ===== 2026-07-21 fan-art 10-image random gallery + lightbox ===== */
+.fanart-page .fanart-viewer{
+  min-height:0;
+  display:block;
+  padding:26px;
+}
+.fanart-gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:18px;
+  width:100%;
+}
+.fanart-gallery-card{
+  min-width:0;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.fanart-thumb-button{
+  display:block;
+  width:100%;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  text-align:inherit;
+  cursor:zoom-in;
+}
+.fanart-thumb-frame{
+  position:relative;
+  display:block;
+  width:100%;
+  aspect-ratio:1 / 1;
+  overflow:hidden;
+  background:rgba(0,0,0,.22);
+}
+.fanart-thumb-frame img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .35s ease,filter .35s ease;
+}
+.fanart-thumb-button:hover .fanart-thumb-frame img,
+.fanart-thumb-button:focus-visible .fanart-thumb-frame img{
+  transform:scale(1.045);
+  filter:brightness(1.06);
+}
+.fanart-thumb-button:focus-visible{
+  outline:2px solid #d9bd7f;
+  outline-offset:3px;
+}
+.fanart-gallery-meta{
+  padding:14px 14px 16px;
+  color:#f5f7f3;
+}
+.fanart-gallery-meta .fanart-activity{
+  margin:0 0 6px;
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.72;
+}
+.fanart-gallery-meta h3{
+  display:-webkit-box;
+  min-height:2.8em;
+  margin:0 0 8px;
+  overflow:hidden;
+  font-family:"Yu Mincho",serif;
+  font-size:15px;
+  font-weight:500;
+  line-height:1.4;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+}
+.fanart-gallery-meta .fanart-author{
+  margin:0;
+  font-size:11px;
+  opacity:.72;
+}
+.fanart-watermark-small{
+  left:7px;
+  right:7px;
+  bottom:6px;
+  font-size:7px;
+  gap:8px;
+}
+.fanart-lightbox{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  display:grid;
+  place-items:center;
+  padding:30px;
+}
+.fanart-lightbox.hidden{display:none}
+.fanart-lightbox-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(5,13,11,.88);
+  backdrop-filter:blur(9px);
+}
+.fanart-lightbox-panel{
+  position:relative;
+  z-index:1;
+  width:min(1180px,96vw);
+  max-height:92vh;
+  overflow:auto;
+  background:#102b26;
+  box-shadow:0 34px 120px rgba(0,0,0,.48);
+}
+.adult-fanart-page .fanart-lightbox-panel{background:#32141f}
+.fanart-lightbox-close{
+  position:sticky;
+  top:12px;
+  z-index:5;
+  float:right;
+  width:44px;
+  height:44px;
+  margin:12px 12px -56px 0;
+  border:1px solid rgba(255,255,255,.32);
+  border-radius:50%;
+  background:rgba(0,0,0,.52);
+  color:#fff;
+  font-size:29px;
+  line-height:1;
+  cursor:pointer;
+}
+.fanart-lightbox-figure{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(260px,.45fr);
+  gap:0;
+  min-height:min(760px,86vh);
+  margin:0;
+}
+.fanart-lightbox-image{
+  position:relative;
+  display:grid;
+  place-items:center;
+  min-height:520px;
+  padding:30px;
+  overflow:hidden;
+  background:rgba(0,0,0,.28);
+}
+.fanart-lightbox-image img{
+  display:block;
+  max-width:100%;
+  max-height:80vh;
+  object-fit:contain;
+}
+.fanart-lightbox-figure figcaption{
+  align-self:center;
+  padding:46px 38px;
+  color:#f7f7f3;
+}
+.fanart-lightbox-figure h3{
+  margin:9px 0 16px;
+  font-family:"Yu Mincho",serif;
+  font-size:clamp(26px,3vw,42px);
+  font-weight:500;
+  line-height:1.35;
+}
+.fanart-lightbox-figure .fanart-note{margin-top:26px;line-height:1.85;opacity:.82}
+body.fanart-lightbox-open{overflow:hidden}
+
+@media(max-width:1000px){
+  .fanart-gallery-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .fanart-page .fanart-viewer{padding:16px}
+  .fanart-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .fanart-lightbox{padding:10px}
+  .fanart-lightbox-panel{width:100%;max-height:96vh}
+  .fanart-lightbox-figure{grid-template-columns:1fr;min-height:0}
+  .fanart-lightbox-image{min-height:320px;padding:16px}
+  .fanart-lightbox-image img{max-height:68vh}
+  .fanart-lightbox-figure figcaption{padding:26px 22px 32px}
+}
+@media(max-width:420px){
+  .fanart-gallery-meta{padding:10px 10px 12px}
+  .fanart-gallery-meta h3{font-size:13px}
+  .fanart-watermark-small{font-size:6px}
+}
