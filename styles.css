@@ -2091,3 +2091,121 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
     margin-bottom:42px;
   }
 }
+
+
+/* ===== Registration page refinement ===== */
+.register-page main{
+  padding-top:30px;
+}
+
+.register-page .register-back{
+  display:flex;
+  justify-content:flex-start;
+  margin:0 0 42px;
+}
+
+.register-page .register-back .button{
+  width:auto;
+}
+
+.register-page .registration-content{
+  position:relative;
+  margin:0;
+  padding:12px 0 70px;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  overflow:visible;
+}
+
+.register-page .registration-content::before{
+  content:"REGISTRATION / COMMUNITY ARCHIVE";
+  display:block;
+  margin:0 0 34px;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(36,99,84,.16);
+  color:rgba(36,99,84,.52);
+  font-family:Georgia,serif;
+  font-size:10px;
+  letter-spacing:.30em;
+}
+
+.register-page .registration-content > .eyebrow,
+.register-page .registration-content > h2,
+.register-page .registration-content > p,
+.register-page .registration-content > .notice,
+.register-page .registration-content > .tabs,
+.register-page .registration-content > form{
+  max-width:1060px;
+}
+
+.register-page .registration-content > h2{
+  margin-bottom:12px;
+}
+
+.register-page .registration-content > p{
+  margin-top:0;
+  color:#4b625b;
+}
+
+.register-page .registration-rules{
+  position:relative;
+  margin:34px 0 30px;
+  padding:26px 28px 24px;
+  border:0;
+  border-left:3px solid var(--gold);
+  border-radius:0;
+  background:linear-gradient(90deg,rgba(237,245,242,.88),rgba(247,249,246,.28));
+  box-shadow:none;
+}
+
+.register-page .registration-rules .notice-title{
+  margin:0 0 10px;
+  color:var(--aoi-900);
+  font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+  font-size:19px;
+  font-weight:700;
+  letter-spacing:.12em;
+}
+
+.register-page .registration-rules p:last-child{
+  margin:0;
+}
+
+.register-page #registrationForm .submit:disabled{
+  cursor:not-allowed;
+  opacity:.42;
+  filter:grayscale(.28);
+  box-shadow:none;
+  transform:none;
+}
+
+.register-page #registrationForm .submit:disabled::after{
+  display:none;
+}
+
+.register-page #registrationForm .submit:not(:disabled){
+  opacity:1;
+}
+
+@media(max-width:720px){
+  .register-page .register-back{
+    margin-bottom:30px;
+  }
+  .register-page .register-back .button{
+    width:auto;
+    padding:12px 18px;
+  }
+  .register-page .registration-content{
+    padding-top:4px;
+  }
+  .register-page .registration-content::before{
+    margin-bottom:24px;
+    letter-spacing:.20em;
+  }
+  .register-page .registration-rules{
+    padding:22px 20px;
+  }
+}
