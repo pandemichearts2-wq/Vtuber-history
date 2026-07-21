@@ -297,6 +297,12 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
   .video-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:720px){
+  #registrationForm .detail-registration-title{
+    margin:42px 0 16px;
+    padding-top:18px;
+    font-size:23px;
+    letter-spacing:.08em;
+  }
   .wrap{width:min(100% - 24px,1180px)}
   .hero .wrap{padding:72px 0}
   .hero::after{display:none}
@@ -316,6 +322,17 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
   --field-line:rgba(20,76,64,.16);
   --field-focus:rgba(58,127,109,.18);
   counter-reset:field;
+}
+
+#registrationForm .detail-registration-title{
+  margin:58px 0 20px;
+  padding-top:22px;
+  border-top:1px solid rgba(36,99,84,.16);
+  color:var(--aoi-900);
+  font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+  font-size:clamp(24px,3vw,34px);
+  font-weight:600;
+  letter-spacing:.12em;
 }
 
 #registrationForm .form-section{
@@ -344,18 +361,6 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
 #registrationForm .form-section[open] summary{
   border-radius:30px 30px 0 0;
   border-bottom-color:transparent;
-}
-
-#registrationForm .form-section summary::before{
-  content:"ARCHIVE";
-  margin-right:18px;
-  padding:5px 9px;
-  border:1px solid rgba(183,160,106,.42);
-  border-radius:999px;
-  color:#8b7747;
-  font-family:Georgia,serif;
-  font-size:9px;
-  letter-spacing:.22em;
 }
 
 #registrationForm .form-section summary::after{
@@ -561,7 +566,6 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
     font-size:17px;
     letter-spacing:.04em;
   }
-  #registrationForm .form-section summary::before{display:none}
   #registrationForm .form-grid{padding:14px;gap:14px}
   #registrationForm .form-grid > label{min-height:104px;padding:18px 16px 14px;border-radius:18px}
   #registrationForm .form-grid > label::before{font-size:34px}
