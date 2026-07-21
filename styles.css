@@ -2871,3 +2871,14 @@ body.fanart-lightbox-open{overflow:hidden}
     padding-bottom:0;
   }
 }
+
+/* Fix: keep the video registration button label visible. */
+.home .memories-panel a.video-register-link{
+  font-size:15px!important;
+  line-height:1.4;
+  color:#173a32!important;
+}
+.home .memories-panel a.video-register-link::before{
+  content:none!important;
+  display:none!important;
+}
