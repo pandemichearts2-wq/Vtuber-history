@@ -75,6 +75,94 @@ async function getHomeFanArtData() {
   return Array.isArray(data.fanArts) ? data.fanArts[0] || null : null;
 }
 
+
+async function submitFeedback(payload) {
+  if (!API_URL) throw new Error("API URLが設定されていません。");
+  return requestJson(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
+}
+
+function setupFeedbackForm() {
+  const dialog = $("feedbackDialog");
+  const openButton = $("feedbackToggle");
+  const form = $("feedbackForm");
+  const message = $("feedbackMessage");
+  const count = $("feedbackCount");
+  const submit = $("feedbackSubmit");
+  const status = $("feedbackStatus");
+  if (!dialog || !openButton || !form || !message || !count || !submit || !status) return;
+
+  let lastFocusedElement = null;
+
+  const setDialogOpen = (open) => {
+    if (open) {
+      lastFocusedElement = document.activeElement;
+      dialog.hidden = false;
+      document.body.classList.add("feedback-dialog-open");
+      openButton.setAttribute("aria-expanded", "true");
+      requestAnimationFrame(() => message.focus());
+    } else {
+      dialog.hidden = true;
+      document.body.classList.remove("feedback-dialog-open");
+      openButton.setAttribute("aria-expanded", "false");
+      if (lastFocusedElement instanceof HTMLElement) lastFocusedElement.focus();
+    }
+  };
+
+  const sync = () => {
+    const length = message.value.length;
+    count.textContent = `${length} / 3000`;
+    submit.disabled = message.value.trim().length < 5;
+  };
+
+  openButton.addEventListener("click", () => setDialogOpen(true));
+  dialog.querySelectorAll("[data-feedback-close]").forEach((button) => {
+    button.addEventListener("click", () => setDialogOpen(false));
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !dialog.hidden) setDialogOpen(false);
+  });
+
+  message.addEventListener("input", sync);
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const text = message.value.trim();
+    if (text.length < 5) {
+      status.textContent = "5文字以上でご記入ください。";
+      message.focus();
+      return;
+    }
+
+    submit.disabled = true;
+    submit.textContent = "送信中…";
+    status.textContent = "";
+    const formData = new FormData(form);
+
+    try {
+      await submitFeedback({
+        action: "submitFeedback",
+        message: text,
+        website: String(formData.get("website") || ""),
+        pageUrl: location.href,
+        userAgent: navigator.userAgent
+      });
+      form.reset();
+      status.textContent = "送信しました。ご協力ありがとうございます。";
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || "送信できませんでした。時間をおいて再度お試しください。";
+    } finally {
+      submit.textContent = "送信する";
+      sync();
+    }
+  });
+
+  sync();
+}
+
 function renderHomeFanArtEmpty(message) {
   const viewer = $("homeFanArtViewer");
   if (!viewer) return;
@@ -286,6 +374,7 @@ function showMemory(index = 0) {
 
 async function init() {
   installHomeFanArtSaveDeterrence();
+  setupFeedbackForm();
   refreshHomeFanArt();
   try {
     const data = await getInitialData();
