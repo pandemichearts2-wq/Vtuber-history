@@ -1,13 +1,9 @@
-# Graduate History GitHubアップロード版
+# Graduate History GitHubアップロード用（1階層版）
 
-このフォルダは、GitHubのリポジトリ直下へそのままアップロードするための1階層版です。
+ZIPを解凍し、中のファイルをGitHubリポジトリ直下へアップロードしてください。
 
-フォルダは使わず、ページ名を次のように分けています。
+追加機能：
+- `video-register.html`：動画リンク登録ページ
+- `video-register.js`：登録済みVTuber検索・動画申請処理
 
-- index.html: トップページ
-- register.html: 情報登録ページ
-- fanart.html: 通常FAページ
-- adult-fanart.html: 成人向けFAページ
-
-GitHubの Add file > Upload files から、このフォルダ内のファイルをすべて選択してアップロードしてください。
-ZIPファイルそのものはアップロードしません。
+動画申請を公開へ反映するには、別添の `AppsScript-Code-video.gs` でApps Scriptを更新し、新しいバージョンとして再デプロイしてください。

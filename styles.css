@@ -2748,3 +2748,62 @@ body.fanart-lightbox-open{overflow:hidden}
     margin-top:9px;
   }
 }
+
+
+/* ===== Video registration page ===== */
+.memories-copy-actions{margin-top:24px}
+.video-register-link{display:inline-flex}
+.video-register-page{background:#f3f0e8;color:#173a32}
+.video-register-page .video-register-hero{min-height:72vh}
+.video-register-main{padding-top:52px;padding-bottom:110px}
+.video-register-back{margin-bottom:72px}
+.video-register-intro{display:grid;grid-template-columns:minmax(180px,.42fr) minmax(0,1fr);column-gap:70px;align-items:start;padding:0 0 58px;border-bottom:1px solid rgba(20,58,50,.18)}
+.video-register-intro .eyebrow{margin-top:10px}
+.video-register-intro h2{grid-column:2;margin:0 0 22px;font-family:"Yu Mincho",serif;font-size:clamp(38px,6vw,74px);font-weight:500;line-height:1.13;letter-spacing:.02em}
+.video-register-intro>p:last-child{grid-column:2;max-width:760px;margin:0;color:#557068;font-size:16px;line-height:1.95}
+.video-register-rules{max-width:920px;margin:60px 0 76px;padding:26px 0 26px 30px;border-left:2px solid #b7a06a}
+.video-register-rules p:last-child{margin:10px 0 0;color:#516b64;line-height:1.9}
+.video-registration-form{max-width:1080px;margin:0 auto}
+.video-form-section{display:grid;grid-template-columns:140px minmax(0,1fr);gap:50px;padding:52px 0;border-top:1px solid rgba(20,58,50,.18)}
+.video-form-step{margin:0;color:#b7a06a;font-family:Georgia,serif;font-size:clamp(54px,7vw,92px);line-height:.85}
+.video-form-content h3{margin:0 0 12px;font-family:"Yu Mincho",serif;font-size:clamp(28px,4vw,46px);font-weight:500}
+.video-field-help{max-width:740px;margin:0 0 30px;color:#5a706a;line-height:1.8}
+.profile-picker{position:relative;max-width:760px}
+.profile-picker>label,.video-form-grid label{display:grid;gap:10px;color:#203f37;font-size:13px;font-weight:700;letter-spacing:.06em}
+.profile-picker input,.video-form-grid input,.video-form-grid select,.video-form-grid textarea{width:100%;border:0;border-bottom:1px solid rgba(20,58,50,.34);border-radius:0;background:rgba(255,255,255,.48);padding:16px 15px;color:#173a32;font:inherit;outline:none;transition:border-color .2s,background .2s}
+.profile-picker input:focus,.video-form-grid input:focus,.video-form-grid select:focus,.video-form-grid textarea:focus{border-color:#b08d42;background:#fff}
+.profile-search-status{margin-top:10px;color:#687b76;font-size:12px}
+.profile-search-results{position:absolute;z-index:30;top:100%;left:0;right:0;max-height:370px;overflow:auto;background:#fff;box-shadow:0 22px 70px rgba(17,48,41,.2);border-top:2px solid #b7a06a}
+.profile-result-button{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,.55fr);gap:4px 20px;width:100%;padding:17px 20px;border:0;border-bottom:1px solid rgba(20,58,50,.1);background:#fff;color:#173a32;text-align:left;cursor:pointer}
+.profile-result-button:hover,.profile-result-button:focus-visible{background:#f1eee5;outline:none}
+.profile-result-button strong{font-family:"Yu Mincho",serif;font-size:17px;font-weight:600}
+.profile-result-button span{align-self:center;color:#62756f;font-size:12px}
+.profile-result-button small{grid-column:1/-1;color:#7b8884;font-size:11px}
+.profile-search-empty{margin:0;padding:22px;color:#657872}
+.selected-profile-card{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px;max-width:760px;margin-top:24px;padding:24px 26px;border-left:3px solid #b7a06a;background:#173a32;color:#fff}
+.selected-profile-card .selected-profile-label{grid-column:1/-1;margin:0 0 6px;color:#d8c58f;font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.selected-profile-card strong{font-family:"Yu Mincho",serif;font-size:25px;font-weight:500}
+.selected-profile-card span,.selected-profile-card small{grid-column:1;color:rgba(255,255,255,.7)}
+.selected-profile-card button{grid-column:2;grid-row:2/5;align-self:center;padding:9px 13px;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer}
+.video-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 26px;max-width:880px}
+.video-form-grid .wide{grid-column:1/-1}
+.video-form-grid textarea{resize:vertical;line-height:1.7}
+.video-submit-rules{max-width:880px;margin:40px auto 24px}
+.video-registration-form>.submit{display:block;min-width:280px;margin:0 auto;padding:18px 32px;font-size:16px}
+.video-registration-form>.submit:disabled{cursor:not-allowed;opacity:.42;filter:grayscale(.25)}
+.video-registration-form .form-message{max-width:880px;margin:22px auto 0;text-align:center}
+@media(max-width:780px){
+  .video-register-page .video-register-hero{min-height:62vh}
+  .video-register-main{padding-top:34px}
+  .video-register-back{margin-bottom:48px}
+  .video-register-intro{grid-template-columns:1fr;gap:12px;padding-bottom:42px}
+  .video-register-intro h2,.video-register-intro>p:last-child{grid-column:1}
+  .video-form-section{grid-template-columns:1fr;gap:22px;padding:42px 0}
+  .video-form-step{font-size:50px}
+  .video-form-grid{grid-template-columns:1fr}
+  .video-form-grid .wide{grid-column:1}
+  .profile-result-button{grid-template-columns:1fr}
+  .profile-result-button small{grid-column:1}
+  .selected-profile-card{grid-template-columns:1fr}
+  .selected-profile-card button{grid-column:1;grid-row:auto;justify-self:start;margin-top:10px}
+}

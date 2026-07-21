@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>動画リンク登録 | Graduate History</title>
+  <meta name="description" content="Graduate Historyへ思い出の動画リンクを申請するページ">
+  <link rel="stylesheet" href="styles.css?v=20260721-video1">
+</head>
+<body class="video-register-page">
+<header class="hero video-register-hero">
+  <div class="wrap">
+    <p class="eyebrow">Video Contribution</p>
+    <h1>思い出を、<br>動画で残す。</h1>
+    <p class="subtitle">登録済みのVTuberを選び、記憶につながる動画を申請できます。</p>
+  </div>
+</header>
+<main class="wrap video-register-main">
+  <nav class="video-register-back" aria-label="ページ移動">
+    <a class="button ghost" href="index.html">Graduate Historyへ戻る</a>
+  </nav>
+
+  <section class="video-register-intro">
+    <p class="eyebrow">Video Registration</p>
+    <h2>動画リンクを登録する</h2>
+    <p>登録済みのVTuberを名前で検索して選び、動画の種類とリンクを送信してください。申請内容は管理者の確認後に公開されます。</p>
+  </section>
+
+  <section class="video-register-rules" aria-labelledby="videoRulesTitle">
+    <p class="eyebrow" id="videoRulesTitle">登録ルール</p>
+    <p>対象VTuber本人や権利者が公開している動画、または掲載が認められている動画のみ申請してください。無断転載、違法アップロード、非公開動画、権利者が掲載を禁止している動画は登録できません。</p>
+  </section>
+
+  <form id="videoRegistrationForm" class="video-registration-form" novalidate>
+    <input type="hidden" name="submissionType" value="video">
+    <input type="hidden" name="profileId" id="selectedProfileId">
+    <input type="hidden" name="activityName" id="selectedActivityName">
+
+    <div class="video-form-section">
+      <p class="video-form-step">01</p>
+      <div class="video-form-content">
+        <h3>VTuberを選ぶ</h3>
+        <p class="video-field-help">すでに情報登録されているVTuberを、活動名・読み方・所属から検索できます。</p>
+        <div class="profile-picker" id="profilePicker">
+          <label for="vtuberSearchInput">VTuber名を検索</label>
+          <input id="vtuberSearchInput" type="search" autocomplete="off" placeholder="活動名や読み方を入力">
+          <div id="profileSearchStatus" class="profile-search-status" aria-live="polite">登録済みVTuberを読み込んでいます。</div>
+          <div id="profileSearchResults" class="profile-search-results hidden" role="listbox" aria-label="VTuber検索結果"></div>
+        </div>
+        <div id="selectedProfileCard" class="selected-profile-card hidden" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="video-form-section">
+      <p class="video-form-step">02</p>
+      <div class="video-form-content">
+        <h3>動画情報を入力する</h3>
+        <div class="video-form-grid">
+          <label>動画の種類
+            <select name="videoCategory" id="videoCategory" required>
+              <option value="">選択してください</option>
+              <option>雑談</option>
+              <option>歌枠</option>
+              <option>ゲーム実況</option>
+              <option>お絵描き</option>
+              <option>ASMR</option>
+              <option>料理</option>
+              <option>開封</option>
+              <option>旅行・旅</option>
+              <option>作業</option>
+              <option>企画</option>
+              <option>耐久</option>
+              <option>コラボ</option>
+              <option>案件</option>
+              <option>ニュース</option>
+              <option>読書・朗読</option>
+              <option>その他</option>
+            </select>
+          </label>
+          <label>動画リンク
+            <input name="videoUrl" id="videoUrl" type="url" inputmode="url" placeholder="https://..." required>
+          </label>
+          <label class="wide">動画タイトル（任意）
+            <input name="videoTitle" id="videoTitle" type="text" maxlength="150" placeholder="動画ページに表示されているタイトル">
+          </label>
+          <label class="wide">補足（任意）
+            <textarea name="note" id="videoNote" rows="4" maxlength="500" placeholder="おすすめの場面や、この動画を残したい理由など"></textarea>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <label class="rules video-submit-rules">
+      <input id="videoRulesAccepted" type="checkbox" name="rulesAccepted" required>
+      登録ルールを確認し、公開が認められている動画のみを送信します。
+    </label>
+    <button id="videoSubmitButton" class="button primary submit" type="submit" disabled aria-disabled="true">動画の登録を申請する</button>
+    <p id="videoFormMessage" class="form-message" aria-live="polite"></p>
+  </form>
+</main>
+<footer><div class="wrap">Graduate History Video Registration</div></footer>
+<script src="config.js"></script>
+<script src="video-register.js?v=20260721-video1"></script>
+</body>
+</html>
