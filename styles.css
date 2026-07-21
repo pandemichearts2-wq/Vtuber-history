@@ -2230,3 +2230,139 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
     border-radius:24px;
   }
 }
+
+
+/* ===== Fan Art pages ===== */
+.home-main-actions{justify-content:flex-start;flex-wrap:wrap}
+.home-main-actions .adult-entry-link{border-color:rgba(112,39,57,.22);color:#713047;background:rgba(255,245,248,.78)}
+
+.fanart-page{background:linear-gradient(180deg,#f7f8f4 0%,#eef4f0 100%)}
+.fanart-page .hero h1{font-size:clamp(48px,8vw,96px)}
+.fanart-main{padding-top:30px;padding-bottom:100px}
+.fanart-page .register-back{display:flex;margin:0 0 54px}
+.fanart-gallery-section,.fanart-submit-section{position:relative;padding:74px 0;border-top:1px solid rgba(36,99,84,.16)}
+.fanart-section-heading{display:grid;grid-template-columns:minmax(180px,.55fr) minmax(0,1.45fr);gap:0 clamp(32px,6vw,90px);align-items:start;margin-bottom:46px}
+.fanart-section-heading .eyebrow{grid-column:1;margin-top:12px}
+.fanart-section-heading h2,.fanart-section-heading>p:not(.eyebrow){grid-column:2}
+.fanart-section-heading h2{margin-bottom:12px}
+.fanart-section-heading>p:not(.eyebrow){margin-top:0;color:#4b625b;font-size:17px}
+
+.fanart-viewer{min-height:540px;display:grid;place-items:center;padding:34px;background:linear-gradient(145deg,#102d28,#1c4b40);box-shadow:0 28px 90px rgba(13,48,41,.18);overflow:hidden}
+.fanart-display-card{width:100%;margin:0;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.5fr);gap:34px;align-items:center}
+.fanart-image-frame{min-height:440px;display:grid;place-items:center;background:rgba(0,0,0,.20);overflow:hidden}
+.fanart-image-frame img{display:block;max-width:100%;max-height:70vh;width:auto;height:auto;object-fit:contain}
+.fanart-display-card figcaption{padding:20px 20px 20px 0;color:#f5f7f3}
+.fanart-display-card h3{margin:8px 0 14px;font-family:"Yu Mincho",serif;font-size:clamp(28px,3vw,42px);font-weight:500}
+.fanart-activity{margin:0;color:#d7bd7f;font-size:12px;font-weight:800;letter-spacing:.18em}
+.fanart-author{font-weight:800;color:#dfe9e4}
+.fanart-note{color:rgba(255,255,255,.72);line-height:1.9}
+.fanart-empty{max-width:660px;text-align:center;color:#eef5f1}
+.fanart-empty h3{font-family:"Yu Mincho",serif;font-size:clamp(28px,4vw,44px);font-weight:500}
+.fanart-empty .empty-kicker{color:#d7bd7f;letter-spacing:.22em;text-transform:uppercase;font-size:11px}
+.fanart-view-actions{justify-content:center;margin-top:28px}
+
+.fanart-submit-section{margin-top:40px}
+.fanart-rules{border-radius:0;margin:0 0 36px}
+.fanart-form-grid{margin:0 0 28px;padding:34px;border-top:1px solid rgba(36,99,84,.13);border-bottom:1px solid rgba(36,99,84,.13);background:rgba(255,255,255,.48)}
+.fanart-author-choice{margin:0;padding:20px;border:1px solid rgba(36,99,84,.14)}
+.fanart-author-choice legend{padding:0 8px;color:var(--aoi-900);font-weight:800}
+.fanart-author-choice label{display:inline-flex;align-items:center;gap:8px;margin-right:28px;font-weight:700}
+.fanart-author-choice input{width:auto}
+.field-help{display:block;margin-top:8px;color:var(--muted);font-size:12px;font-weight:500}
+.fanart-upload-preview{padding:20px;background:rgba(237,245,242,.76);text-align:center}
+.fanart-upload-preview img{display:block;max-width:100%;max-height:420px;margin:0 auto 12px;object-fit:contain}
+.fanart-upload-preview p{margin:0;color:var(--muted);font-size:13px}
+.fanart-submit-rules{margin-top:22px}
+.fanart-form .submit:disabled{cursor:not-allowed;opacity:.42;filter:grayscale(.25);box-shadow:none}
+
+.adult-fanart-page{background:linear-gradient(180deg,#f6f3f3 0%,#eee7e9 100%)}
+.adult-fanart-hero{background:linear-gradient(135deg,#1f1016,#4d1f30 55%,#7d3c4e)}
+.adult-gate{padding:70px 0 84px;border-top:1px solid rgba(87,32,50,.18)}
+.adult-gate h2{color:#4c2030}
+.adult-warning{padding:30px 34px;border-left:4px solid #8c3f58;background:rgba(255,255,255,.60);color:#4f3940;line-height:1.9}
+.adult-warning ul{margin:18px 0 0;padding-left:22px}
+.adult-confirm{display:flex;align-items:center;gap:12px;margin-top:28px;padding:20px 24px;background:#3d1926;color:#fff;font-weight:800;cursor:pointer}
+.adult-confirm input{width:20px;height:20px}
+.adult-content{animation:fanartReveal .35s ease}
+.adult-fanart-viewer{background:linear-gradient(145deg,#241018,#542033)}
+.adult-submit-warning{border-left-color:#8c3f58;background:linear-gradient(90deg,rgba(255,240,245,.82),rgba(255,255,255,.32))}
+@keyframes fanartReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+@media(max-width:820px){
+  .fanart-section-heading{grid-template-columns:1fr;gap:10px}
+  .fanart-section-heading .eyebrow,.fanart-section-heading h2,.fanart-section-heading>p:not(.eyebrow){grid-column:1}
+  .fanart-display-card{grid-template-columns:1fr}
+  .fanart-image-frame{min-height:300px}
+  .fanart-display-card figcaption{padding:0 4px 8px}
+  .fanart-viewer{min-height:420px;padding:20px}
+}
+@media(max-width:560px){
+  .home-main-actions{align-items:stretch}
+  .home-main-actions .button{width:100%}
+  .fanart-gallery-section,.fanart-submit-section{padding:54px 0}
+  .fanart-form-grid{padding:22px 16px}
+  .fanart-author-choice label{display:flex;margin:10px 0}
+  .fanart-viewer{padding:14px;min-height:360px}
+  .fanart-image-frame{min-height:260px}
+  .adult-warning{padding:22px 20px}
+}
+
+
+/* ===== 2026-07-21 fan-art save deterrence ===== */
+.fanart-image-frame.protected-media{
+  position:relative;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+.fanart-image-frame.protected-media img{
+  pointer-events:none;
+  -webkit-user-drag:none;
+  user-drag:none;
+}
+.fanart-save-shield{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:block;
+  background:transparent;
+  cursor:default;
+}
+.fanart-watermark{
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:14px;
+  z-index:3;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px;
+  color:rgba(255,255,255,.80);
+  font-size:11px;
+  letter-spacing:.12em;
+  text-shadow:0 1px 4px rgba(0,0,0,.72);
+  pointer-events:none;
+}
+.fanart-watermark b{font-weight:800;text-transform:uppercase}
+.fanart-watermark em{font-style:normal;letter-spacing:.05em;text-align:right}
+.fanart-protection-copy{
+  margin:18px auto 0;
+  max-width:760px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.8;
+  text-align:center;
+}
+.fanart-upload-preview{
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+.fanart-upload-preview img{
+  -webkit-user-drag:none;
+  user-drag:none;
+}
+@media (max-width:600px){
+  .fanart-watermark{left:10px;right:10px;bottom:9px;font-size:9px}
+}

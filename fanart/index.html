@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FA画像 | Graduate History</title>
+  <meta name="description" content="Graduate Historyのファンアート閲覧・登録ページ">
+  <link rel="stylesheet" href="../styles.css?v=20260721-fa2">
+</head>
+<body class="fanart-page" data-fanart-category="general">
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Community Fan Art</p>
+    <h1>想いを、<br>絵にして残す。</h1>
+    <p class="subtitle">みんなのファンアートを共有</p>
+  </div>
+</header>
+<main class="wrap fanart-main">
+  <nav class="register-back" aria-label="トップページへ戻る"><a class="button ghost" href="../">Graduate Historyへ戻る</a></nav>
+
+  <section class="fanart-gallery-section">
+    <div class="fanart-section-heading">
+      <p class="eyebrow">Random Fan Art</p>
+      <h2>みんなのFA</h2>
+      <p>承認された作品の中から、ランダムで一枚を展示します。</p>
+    </div>
+    <div id="fanArtViewer" class="fanart-viewer" aria-live="polite">
+      <div class="fanart-empty"><p>作品を読み込んでいます。</p></div>
+    </div>
+    <div class="actions fanart-view-actions">
+      <button id="nextFanArtButton" class="button primary" type="button">別の作品を表示</button>
+    </div>
+    <p class="fanart-protection-copy">掲載画像の無断保存・無断転載・無断使用・AI学習への利用は禁止です。</p>
+  </section>
+
+  <section class="fanart-submit-section">
+    <div class="fanart-section-heading">
+      <p class="eyebrow">Fan Art Contribution</p>
+      <h2>FA画像を登録する</h2>
+      <p>送信された作品は、管理者の確認後に公開されます。</p>
+    </div>
+    <div class="notice fanart-rules">
+      <p class="notice-title">投稿ルール</p>
+      <p>自分で制作した作品、または掲載許可を得た作品のみ送信してください。無断転載、生成元や作者を偽る投稿、非公開情報を含む作品は禁止です。</p>
+    </div>
+    <form id="fanArtForm" class="fanart-form">
+      <div class="form-grid fanart-form-grid">
+        <label>VTuberの活動名<input name="activityName" type="text" required maxlength="100"></label>
+        <label>作品タイトル<input name="title" type="text" maxlength="120"></label>
+        <fieldset class="fanart-author-choice wide">
+          <legend>作者名の表示</legend>
+          <label><input type="radio" name="authorMode" value="anonymous" checked> 匿名で表示</label>
+          <label><input type="radio" name="authorMode" value="named"> 記入した名前で表示</label>
+        </fieldset>
+        <label id="authorNameField" class="wide fanart-conditional-field hidden">表示する作者名<input name="authorName" type="text" maxlength="80" placeholder="作者名・ハンドルネーム"></label>
+        <label class="wide">FA画像<input id="fanArtFile" name="fanArtFile" type="file" accept="image/jpeg,image/png,image/webp" required><span class="field-help">JPEG・PNG・WebP、5MBまで</span></label>
+        <div id="fanArtPreview" class="fanart-upload-preview wide hidden"></div>
+        <label class="wide">作品について・補足<textarea name="note" rows="4" maxlength="500"></textarea></label>
+      </div>
+      <label class="rules fanart-submit-rules"><input id="fanArtRulesAccepted" type="checkbox" required> 投稿ルールを確認し、公開可能な作品のみを送信します。</label>
+      <button id="fanArtSubmitButton" class="button primary submit" type="submit" disabled aria-disabled="true">FA画像を送信する</button>
+      <p id="fanArtFormMessage" class="form-message" aria-live="polite"></p>
+    </form>
+  </section>
+</main>
+<footer><div class="wrap">Graduate History Fan Art</div></footer>
+<script src="../config.js"></script>
+<script src="../fanart.js?v=20260721-fa2"></script>
+</body>
+</html>
