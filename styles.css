@@ -1219,3 +1219,39 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
   .home .profile-card .card-sub{grid-column:2;grid-row:2}
   .home .profile-card > p:last-child{grid-column:2;grid-row:3;text-align:left}
 }
+
+/* Memories section alignment fix: all contents share one stable inner column */
+.home .memories-panel{
+  padding-left:0;
+  padding-right:0;
+}
+
+.home .memories-panel .memories-inner{
+  position:relative;
+  z-index:1;
+  width:calc(var(--home-page-width) - (var(--home-content-inset) * 2));
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.home .memories-panel .split-head,
+.home .memories-panel .curation-band,
+.home .memories-panel .video-grid{
+  width:100%;
+  margin-left:0;
+  margin-right:0;
+}
+
+.home .memories-panel .empty-state{
+  width:100%;
+  box-sizing:border-box;
+  margin:0;
+  padding-left:0;
+  padding-right:0;
+}
+
+@media(max-width:720px){
+  .home .memories-panel .memories-inner{
+    width:var(--home-page-width);
+  }
+}
