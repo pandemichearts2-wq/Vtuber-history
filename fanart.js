@@ -215,6 +215,7 @@ function setRegistrationOpen(open, shouldScroll = false) {
   if (!section || !toggle) return;
 
   section.classList.toggle("hidden", !open);
+  section.hidden = !open;
   toggle.setAttribute("aria-expanded", String(open));
   toggle.textContent = open
     ? "画像登録フォームを閉じる"
@@ -333,9 +334,6 @@ function revealAdultContent() {
   syncSubmitState();
   if (confirmed) {
     loadFanArts().catch((error) => renderEmpty(error.message));
-    if (location.hash === "#adultFanArtRegistration") {
-      setRegistrationOpen(true, true);
-    }
   } else {
     setRegistrationOpen(false);
   }
@@ -359,9 +357,6 @@ function init() {
     revealAdultContent();
   } else {
     loadFanArts().catch((error) => renderEmpty(error.message));
-    if (location.hash === "#fanArtRegistration") {
-      setRegistrationOpen(true, true);
-    }
   }
 }
 
