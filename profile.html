@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Graduate History VTuberプロフィール詳細">
+  <title>プロフィール詳細 | Graduate History</title>
+  <link rel="stylesheet" href="styles.css?v=20260721-sync2">
+</head>
+<body class="profile-detail-page">
+<header class="profile-detail-hero">
+  <div class="wrap">
+    <p class="eyebrow">Profile Archive</p>
+    <h1 id="profileHeroName">記録を読み込んでいます</h1>
+    <p id="profileHeroReading" class="subtitle"></p>
+  </div>
+</header>
+<main class="wrap profile-detail-main">
+  <div class="profile-detail-nav">
+    <a class="button ghost" href="index.html#profileList">Graduate Historyへ戻る</a>
+    <a id="profileAddLink" class="button primary" href="register.html?mode=add">情報を追記する</a>
+    <a id="profileFixLink" class="button ghost" href="register.html?mode=fix">修正を申請する</a>
+  </div>
+  <section id="profileDetailStatus" class="profile-detail-status">プロフィールを読み込んでいます。</section>
+  <div id="profileDetailContent" hidden>
+    <section class="profile-detail-summary">
+      <div>
+        <p class="eyebrow">Graduate History</p>
+        <h2 id="profileDetailName"></h2>
+        <p id="profileDetailMeta" class="lead"></p>
+      </div>
+      <div id="profileOfficialLinks" class="profile-official-links"></div>
+    </section>
+    <div id="profileInfoGroups" class="profile-info-groups"></div>
+    <section class="profile-related-section">
+      <div class="profile-related-heading"><p class="eyebrow">Precious Memories</p><h2>登録動画</h2></div>
+      <div id="profileVideos" class="video-grid video-grid-premium"></div>
+    </section>
+    <section class="profile-related-section">
+      <div class="profile-related-heading"><p class="eyebrow">Community Fan Art</p><h2>ファンアート</h2></div>
+      <div id="profileFanArts" class="fanart-gallery-grid"></div>
+    </section>
+    <section class="profile-related-section">
+      <div class="profile-related-heading"><p class="eyebrow">Messages</p><h2>思い出メッセージ</h2></div>
+      <div id="profileLetters" class="profile-letter-list"></div>
+    </section>
+  </div>
+</main>
+<footer><div class="wrap">Graduate History</div></footer>
+<script src="config.js"></script>
+<script src="profile.js?v=20260721-sync2"></script>
+</body>
+</html>

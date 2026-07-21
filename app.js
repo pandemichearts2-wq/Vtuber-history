@@ -44,7 +44,8 @@ async function getInitialData() {
   url.searchParams.set("action", "publicData");
   url.searchParams.set("profileLimit", String(PAGE_SIZE));
   url.searchParams.set("videoLimit", String(PAGE_SIZE));
-  return requestJson(url.toString(), { method: "GET" });
+  url.searchParams.set("nonce", String(Date.now()));
+  return requestJson(url.toString(), { method: "GET", cache: "no-store" });
 }
 
 async function getProfilePage(query, offset) {
@@ -53,7 +54,8 @@ async function getProfilePage(query, offset) {
   url.searchParams.set("q", query || "");
   url.searchParams.set("offset", String(offset || 0));
   url.searchParams.set("limit", String(PAGE_SIZE));
-  return requestJson(url.toString(), { method: "GET" });
+  url.searchParams.set("nonce", String(Date.now()));
+  return requestJson(url.toString(), { method: "GET", cache: "no-store" });
 }
 
 async function getVideoPage(offset) {
@@ -61,7 +63,8 @@ async function getVideoPage(offset) {
   url.searchParams.set("action", "videos");
   url.searchParams.set("offset", String(offset || 0));
   url.searchParams.set("limit", String(PAGE_SIZE));
-  return requestJson(url.toString(), { method: "GET" });
+  url.searchParams.set("nonce", String(Date.now()));
+  return requestJson(url.toString(), { method: "GET", cache: "no-store" });
 }
 
 async function getHomeFanArtData() {
@@ -92,7 +95,8 @@ async function searchFeedbackProfiles(query) {
   url.searchParams.set("action", "profileSearch");
   url.searchParams.set("q", String(query).trim());
   url.searchParams.set("limit", "20");
-  const data = await requestJson(url.toString(), { method: "GET" });
+  url.searchParams.set("nonce", String(Date.now()));
+  const data = await requestJson(url.toString(), { method: "GET", cache: "no-store" });
   return Array.isArray(data.profiles) ? data.profiles : [];
 }
 
@@ -349,12 +353,16 @@ function renderVideos(videos, append = false) {
 }
 
 function profileCard(profile) {
+  const detailUrl = `profile.html?id=${encodeURIComponent(String(profile.profileId || ""))}`;
   return `
     <article class="profile-card premium-card">
-      <p class="card-label">Profile archive</p>
-      <h3>${esc(profile.activityName)}</h3>
-      <p class="card-sub">${esc(profile.reading || "")}</p>
-      <p>${esc(profile.affiliation || "所属情報なし")}</p>
+      <a class="profile-card-link" href="${esc(detailUrl)}" aria-label="${esc(profile.activityName || "VTuber")}の登録情報を見る">
+        <p class="card-label">Profile archive</p>
+        <h3>${esc(profile.activityName)}</h3>
+        <p class="card-sub">${esc(profile.reading || "")}</p>
+        <p>${esc(profile.affiliation || "所属情報なし")}</p>
+        <span class="profile-card-more">登録情報を見る</span>
+      </a>
     </article>`;
 }
 
