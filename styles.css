@@ -3093,3 +3093,68 @@ body.feedback-dialog-open{overflow:hidden}
   .feedback-dialog .feedback-form-footer{grid-template-columns:1fr auto}
   .feedback-dialog .feedback-form-footer .button{grid-column:1/-1;width:100%}
 }
+
+
+/* Keep section 03 clean and preserve the video registration button label. */
+@media(max-width:720px){
+  .home .memories-panel .editorial-section-label{border-bottom:0;padding-bottom:0}
+}
+.home .memories-panel a.video-register-link{font-size:15px!important;line-height:1.4;color:#173a32!important}
+.home .memories-panel a.video-register-link::before{content:none!important;display:none!important}
+
+
+/* ===== Feedback VTuber selector ===== */
+.feedback-profile-field{margin:0 0 22px}
+.feedback-field-help{margin:-3px 0 10px;font-size:12px;line-height:1.7;color:rgba(29,45,41,.62)}
+.feedback-profile-search-wrap{position:relative}
+.feedback-profile-search-wrap>input[type="search"]{width:100%;height:48px;border:1px solid rgba(30,68,59,.25);border-radius:0;padding:0 112px 0 15px;background:rgba(255,255,255,.62);font:inherit;color:#1d2d29;outline:none}
+.feedback-profile-search-wrap>input[type="search"]:focus{border-color:#b08a48;box-shadow:0 0 0 3px rgba(176,138,72,.12)}
+.feedback-profile-clear{position:absolute;right:8px;top:8px;height:32px;border:0;padding:0 10px;background:#244c42;color:#fff;font:inherit;font-size:12px;cursor:pointer}
+.feedback-profile-suggestions{position:absolute;z-index:8;left:0;right:0;top:calc(100% + 5px);max-height:260px;overflow:auto;border:1px solid rgba(30,68,59,.24);background:#fff;box-shadow:0 16px 38px rgba(0,0,0,.16)}
+.feedback-profile-suggestions button{display:grid;width:100%;gap:3px;border:0;border-bottom:1px solid rgba(30,68,59,.1);padding:12px 14px;text-align:left;background:#fff;color:#1d2d29;cursor:pointer}
+.feedback-profile-suggestions button:hover,.feedback-profile-suggestions button:focus{background:#f2eee4;outline:none}
+.feedback-profile-suggestions button strong{font-size:14px}.feedback-profile-suggestions button span{font-size:11px;color:rgba(29,45,41,.64)}
+.feedback-profile-no-result{margin:0;padding:14px;font-size:12px;color:rgba(29,45,41,.66)}
+.feedback-profile-selected{margin:8px 0 0;font-size:12px;color:#244c42}
+
+/* ===== Management site ===== */
+.admin-page{min-height:100vh;background:#f2efe7;color:#1d2d29}
+.admin-header{padding:54px 0 38px;background:#123d35;color:#fff;border-bottom:4px solid #b08a48}
+.admin-header h1{margin:8px 0 0;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-size:clamp(34px,6vw,70px);font-weight:400;line-height:1}
+.admin-header .eyebrow{color:#d6bd88}
+.admin-main{padding:clamp(30px,6vw,72px) 0 90px}
+.admin-login,.admin-shell{width:min(1180px,calc(100% - 32px));margin:auto}
+.admin-login-card{width:min(520px,100%);margin:36px auto 0;padding:clamp(26px,5vw,48px);background:#fff;border-top:3px solid #b08a48;box-shadow:0 20px 60px rgba(20,44,38,.12)}
+.admin-login-card h2{margin:0 0 10px;font-family:Georgia,"Yu Mincho",serif;font-size:30px}
+.admin-login-card label,.admin-field label{display:block;margin:18px 0 7px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#244c42}
+.admin-login-card input,.admin-toolbar input,.admin-toolbar select,.admin-field input,.admin-field select,.admin-field textarea{width:100%;border:1px solid rgba(30,68,59,.22);border-radius:0;background:#fff;padding:12px 13px;font:inherit;color:#1d2d29;outline:none}
+.admin-login-card input:focus,.admin-toolbar input:focus,.admin-toolbar select:focus,.admin-field input:focus,.admin-field select:focus,.admin-field textarea:focus{border-color:#b08a48;box-shadow:0 0 0 3px rgba(176,138,72,.12)}
+.admin-message{min-height:1.5em;margin:12px 0 0;font-size:13px;color:#8b2f2f}
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}
+.admin-user-state{font-size:12px;color:rgba(29,45,41,.65)}
+.admin-tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid rgba(30,68,59,.18);margin-bottom:24px}
+.admin-tab{border:0;border-bottom:3px solid transparent;padding:14px 20px;background:transparent;color:#244c42;font:inherit;font-weight:700;cursor:pointer}
+.admin-tab.active{border-bottom-color:#b08a48;color:#102f29;background:rgba(255,255,255,.55)}
+.admin-panel[hidden]{display:none!important}
+.admin-toolbar{display:grid;grid-template-columns:minmax(180px,1fr) 180px 180px auto;gap:10px;margin-bottom:18px}
+.admin-toolbar.content-toolbar{grid-template-columns:200px minmax(220px,1fr) auto}
+.admin-list{display:grid;gap:14px}
+.admin-card{background:#fff;border-left:4px solid #315f54;padding:20px;box-shadow:0 8px 28px rgba(20,44,38,.07)}
+.admin-card.is-pending{border-left-color:#b08a48}.admin-card.is-rejected{border-left-color:#9c4c4c}.admin-card.is-approved{border-left-color:#367b5e}
+.admin-card-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.admin-card h3{margin:0;font-family:Georgia,"Yu Mincho",serif;font-size:22px}.admin-card-meta{margin:5px 0 0;font-size:12px;color:rgba(29,45,41,.6)}
+.admin-badge{display:inline-flex;align-items:center;min-height:27px;padding:4px 9px;background:#e9e3d5;font-size:11px;font-weight:700;white-space:nowrap}
+.admin-card-body{margin-top:15px;line-height:1.8}.admin-card-body pre{max-height:300px;overflow:auto;padding:14px;background:#f4f1e9;font-size:12px;white-space:pre-wrap;word-break:break-word}
+.admin-card-actions{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin-top:16px}.admin-card-actions .admin-note{flex:1 1 300px}
+.admin-note textarea{width:100%;min-height:74px;border:1px solid rgba(30,68,59,.2);padding:10px;font:inherit;resize:vertical}
+.admin-button{border:1px solid #244c42;padding:10px 15px;background:#244c42;color:#fff;font:inherit;font-weight:700;cursor:pointer}.admin-button.secondary{background:#fff;color:#244c42}.admin-button.danger{border-color:#934848;background:#934848}.admin-button.gold{border-color:#b08a48;background:#b08a48;color:#142c27}.admin-button:disabled{opacity:.5;cursor:wait}
+.admin-empty{padding:36px;background:#fff;text-align:center;color:rgba(29,45,41,.65)}
+.admin-load-more{display:block;margin:22px auto 0}
+.admin-feedback-message{white-space:pre-wrap;word-break:break-word;padding:14px;background:#f4f1e9}
+.admin-feedback-controls{display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:end;margin-top:14px}
+.admin-edit-dialog[hidden]{display:none!important}.admin-edit-dialog{position:fixed;inset:0;z-index:2600;display:grid;place-items:center;padding:18px}.admin-edit-backdrop{position:absolute;inset:0;border:0;background:rgba(3,18,15,.72)}
+.admin-edit-panel{position:relative;z-index:1;width:min(760px,100%);max-height:90vh;overflow:auto;background:#f7f4ec;padding:clamp(24px,4vw,42px);box-shadow:0 30px 100px rgba(0,0,0,.4)}
+.admin-edit-close{position:absolute;right:14px;top:14px;width:40px;height:40px;border:1px solid rgba(30,68,59,.2);border-radius:50%;background:#fff;font-size:24px;cursor:pointer}
+.admin-edit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}.admin-field.full{grid-column:1/-1}.admin-field textarea{min-height:110px;resize:vertical}.admin-field textarea.json-editor{min-height:260px;font-family:Consolas,monospace;font-size:12px}
+.admin-edit-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+@media(max-width:760px){.admin-toolbar,.admin-toolbar.content-toolbar,.admin-feedback-controls{grid-template-columns:1fr}.admin-card-head{display:block}.admin-badge{margin-top:10px}.admin-edit-fields{grid-template-columns:1fr}.admin-field.full{grid-column:auto}.admin-tabs{display:grid;grid-template-columns:1fr}.admin-tab{text-align:left}.admin-topbar{align-items:flex-start;flex-direction:column}}

@@ -85,6 +85,17 @@ async function submitFeedback(payload) {
   });
 }
 
+
+async function searchFeedbackProfiles(query) {
+  if (!API_URL || !String(query || "").trim()) return [];
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "profileSearch");
+  url.searchParams.set("q", String(query).trim());
+  url.searchParams.set("limit", "20");
+  const data = await requestJson(url.toString(), { method: "GET" });
+  return Array.isArray(data.profiles) ? data.profiles : [];
+}
+
 function setupFeedbackForm() {
   const dialog = $("feedbackDialog");
   const openButton = $("feedbackToggle");
@@ -93,9 +104,87 @@ function setupFeedbackForm() {
   const count = $("feedbackCount");
   const submit = $("feedbackSubmit");
   const status = $("feedbackStatus");
+  const profileSearch = $("feedbackProfileSearch");
+  const profileSuggestions = $("feedbackProfileSuggestions");
+  const profileId = $("feedbackProfileId");
+  const activityName = $("feedbackActivityName");
+  const profileSelected = $("feedbackProfileSelected");
+  const profileClear = $("feedbackProfileClear");
   if (!dialog || !openButton || !form || !message || !count || !submit || !status) return;
 
   let lastFocusedElement = null;
+  let feedbackSearchTimer = 0;
+  let feedbackSearchRequest = 0;
+
+  const closeProfileSuggestions = () => {
+    if (!profileSuggestions) return;
+    profileSuggestions.hidden = true;
+    profileSuggestions.innerHTML = "";
+  };
+
+  const clearSelectedProfile = (clearText = true) => {
+    if (profileId) profileId.value = "";
+    if (activityName) activityName.value = "";
+    if (profileSelected) profileSelected.textContent = "該当VTuber：未選択";
+    if (profileClear) profileClear.hidden = true;
+    if (clearText && profileSearch) profileSearch.value = "";
+    closeProfileSuggestions();
+  };
+
+  const selectFeedbackProfile = (profile) => {
+    if (profileId) profileId.value = String(profile.profileId || "");
+    if (activityName) activityName.value = String(profile.activityName || "");
+    if (profileSearch) profileSearch.value = String(profile.activityName || "");
+    if (profileSelected) profileSelected.textContent = `該当VTuber：${profile.activityName || "未選択"}`;
+    if (profileClear) profileClear.hidden = false;
+    closeProfileSuggestions();
+  };
+
+  const renderProfileSuggestions = (profiles) => {
+    if (!profileSuggestions) return;
+    if (!profiles.length) {
+      profileSuggestions.innerHTML = '<p class="feedback-profile-no-result">一致する登録済みVTuberが見つかりません。</p>';
+      profileSuggestions.hidden = false;
+      return;
+    }
+    profileSuggestions.innerHTML = profiles.map((profile, index) => `
+      <button type="button" role="option" data-profile-index="${index}">
+        <strong>${esc(profile.activityName || "")}</strong>
+        <span>${esc([profile.reading, profile.affiliation].filter(Boolean).join(" / "))}</span>
+      </button>`).join("");
+    profileSuggestions.querySelectorAll("[data-profile-index]").forEach((button) => {
+      button.addEventListener("click", () => selectFeedbackProfile(profiles[Number(button.dataset.profileIndex)]));
+    });
+    profileSuggestions.hidden = false;
+  };
+
+  if (profileSearch) {
+    profileSearch.addEventListener("input", () => {
+      if (profileId && profileSearch.value !== activityName?.value) {
+        if (profileId.value) clearSelectedProfile(false);
+      }
+      clearTimeout(feedbackSearchTimer);
+      const query = profileSearch.value.trim();
+      if (!query) {
+        closeProfileSuggestions();
+        return;
+      }
+      feedbackSearchTimer = window.setTimeout(async () => {
+        const requestId = ++feedbackSearchRequest;
+        try {
+          const profiles = await searchFeedbackProfiles(query);
+          if (requestId === feedbackSearchRequest) renderProfileSuggestions(profiles);
+        } catch (error) {
+          console.error(error);
+          if (requestId === feedbackSearchRequest && profileSuggestions) {
+            profileSuggestions.innerHTML = '<p class="feedback-profile-no-result">候補を取得できませんでした。</p>';
+            profileSuggestions.hidden = false;
+          }
+        }
+      }, 280);
+    });
+  }
+  profileClear?.addEventListener("click", () => clearSelectedProfile(true));
 
   const setDialogOpen = (open) => {
     if (open) {
@@ -145,11 +234,14 @@ function setupFeedbackForm() {
       await submitFeedback({
         action: "submitFeedback",
         message: text,
+        relatedProfileId: String(profileId?.value || ""),
+        relatedActivityName: String(activityName?.value || ""),
         website: String(formData.get("website") || ""),
         pageUrl: location.href,
         userAgent: navigator.userAgent
       });
       form.reset();
+      clearSelectedProfile(true);
       status.textContent = "送信しました。ご協力ありがとうございます。";
     } catch (error) {
       console.error(error);
