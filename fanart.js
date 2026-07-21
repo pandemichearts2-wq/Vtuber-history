@@ -116,6 +116,32 @@ function syncSubmitState() {
   button.setAttribute("aria-disabled", String(!allowed));
 }
 
+function registrationSection() {
+  return isAdult ? $("adultFanArtRegistration") : $("fanArtRegistration");
+}
+
+function setRegistrationOpen(open, shouldScroll = false) {
+  const section = registrationSection();
+  const toggle = $("fanArtFormToggle");
+  if (!section || !toggle) return;
+
+  section.classList.toggle("hidden", !open);
+  toggle.setAttribute("aria-expanded", String(open));
+  toggle.textContent = open
+    ? "画像登録フォームを閉じる"
+    : (isAdult ? "成人向けFA画像を登録する" : "FA画像を登録する");
+
+  if (open && shouldScroll) {
+    window.setTimeout(() => section.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  }
+}
+
+function toggleRegistrationForm() {
+  const section = registrationSection();
+  if (!section) return;
+  setRegistrationOpen(section.classList.contains("hidden"), true);
+}
+
 function readImage(file) {
   return new Promise((resolve, reject) => {
     if (!file) return reject(new Error("画像を選択してください。"));
@@ -219,10 +245,10 @@ function revealAdultContent() {
   if (confirmed) {
     loadFanArts().catch((error) => renderEmpty(error.message));
     if (location.hash === "#adultFanArtRegistration") {
-      window.setTimeout(() => {
-        $("adultFanArtRegistration")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 80);
+      setRegistrationOpen(true, true);
     }
+  } else {
+    setRegistrationOpen(false);
   }
 }
 
@@ -232,15 +258,20 @@ function init() {
   $("fanArtRulesAccepted")?.addEventListener("change", syncSubmitState);
   $("fanArtForm")?.addEventListener("submit", submitFanArt);
   $("nextFanArtButton")?.addEventListener("click", showRandomFanArt);
+  $("fanArtFormToggle")?.addEventListener("click", toggleRegistrationForm);
   setupPreview();
   syncAuthorField();
   syncSubmitState();
+  setRegistrationOpen(false);
 
   if (isAdult) {
     $("adultConfirm")?.addEventListener("change", revealAdultContent);
     revealAdultContent();
   } else {
     loadFanArts().catch((error) => renderEmpty(error.message));
+    if (location.hash === "#fanArtRegistration") {
+      setRegistrationOpen(true, true);
+    }
   }
 }
 

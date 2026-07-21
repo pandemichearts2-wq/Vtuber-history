@@ -2459,3 +2459,71 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
   background: currentColor;
   opacity: .18;
 }
+
+
+/* ===== 2026-07-21 fan-art registration form toggle ===== */
+.fanart-registration-toggle-wrap{
+  justify-content:center;
+  margin:44px 0 10px;
+}
+.fanart-registration-toggle{
+  min-width:min(100%,320px);
+  padding:17px 30px;
+  font-size:16px;
+}
+.fanart-submit-section:not(.hidden){
+  animation:fanartFormReveal .32s ease both;
+}
+@keyframes fanartFormReveal{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:none}
+}
+@media(max-width:560px){
+  .fanart-registration-toggle-wrap{margin-top:32px}
+  .fanart-registration-toggle{width:100%;min-width:0}
+}
+
+
+/* ===== Home fan-art registration buttons ===== */
+.home .home-fanart-register-actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  align-self:end;
+  gap:10px;
+  margin-bottom:5px;
+}
+.home .home-fanart-register-actions .button{
+  white-space:nowrap;
+}
+.home .home-fanart-register-actions .adult-entry-link{
+  border-color:rgba(112,39,57,.26);
+  color:#713047;
+  background:rgba(255,245,248,.82);
+}
+.home .home-fanart-register-actions .adult-entry-link:hover{
+  background:#713047;
+  border-color:#713047;
+  color:#fff;
+}
+@media(max-width:1000px){
+  .home .home-fanart-register-actions{
+    grid-column:2;
+    justify-self:start;
+    justify-content:flex-start;
+    align-self:start;
+    margin-top:28px;
+    margin-bottom:0;
+  }
+}
+@media(max-width:720px){
+  .home .home-fanart-register-actions{
+    grid-column:1;
+    width:100%;
+    margin-top:22px;
+  }
+  .home .home-fanart-register-actions .button{
+    flex:1 1 220px;
+    text-align:center;
+  }
+}
