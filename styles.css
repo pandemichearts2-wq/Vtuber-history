@@ -2712,3 +2712,39 @@ body.fanart-lightbox-open{overflow:hidden}
   .fanart-gallery-meta h3{font-size:13px}
   .fanart-watermark-small{font-size:6px}
 }
+
+/* ===== Site statement above the contribution title ===== */
+.home .site-introduction{
+  max-width:860px;
+  margin:34px 0 42px;
+  padding:24px 0 24px 28px;
+  border-left:2px solid rgba(183,160,106,.72);
+}
+.home .site-introduction p{
+  margin:0;
+  color:#38554d;
+  font-size:clamp(15px,1.45vw,18px);
+  line-height:2.05;
+  letter-spacing:.035em;
+  text-wrap:pretty;
+}
+@media(max-width:720px){
+  .home .site-introduction{
+    margin:28px 0 34px;
+    padding:18px 0 18px 20px;
+  }
+  .home .site-introduction p{
+    font-size:14px;
+    line-height:1.95;
+  }
+}
+
+/* ===== Updated multi-paragraph site statement ===== */
+.home .site-introduction p + p{
+  margin-top:12px;
+}
+@media(max-width:720px){
+  .home .site-introduction p + p{
+    margin-top:9px;
+  }
+}
