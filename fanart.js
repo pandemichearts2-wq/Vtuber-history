@@ -218,6 +218,11 @@ function revealAdultContent() {
   syncSubmitState();
   if (confirmed) {
     loadFanArts().catch((error) => renderEmpty(error.message));
+    if (location.hash === "#adultFanArtRegistration") {
+      window.setTimeout(() => {
+        $("adultFanArtRegistration")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 80);
+    }
   }
 }
 

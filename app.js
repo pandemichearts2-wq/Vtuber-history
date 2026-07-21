@@ -1,5 +1,5 @@
 const API_URL = window.GH_CONFIG?.API_URL || "";
-const state = { profiles: [], videos: [], graduationMemories: [] };
+const state = { profiles: [], videos: [], graduationMemories: [], fanArts: [], currentFanArtIndex: -1 };
 const $ = (id) => document.getElementById(id);
 
 function esc(value) {
@@ -30,6 +30,83 @@ async function getData() {
   const data = await response.json();
   if (!data.ok) throw new Error(data.message || "公開データを取得できませんでした。");
   return data;
+}
+
+async function getHomeFanArtData() {
+  if (!API_URL) throw new Error("API URLが設定されていません。");
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "fanArtData");
+  url.searchParams.set("category", "general");
+  const response = await fetch(url.toString(), { method: "GET" });
+  if (!response.ok) throw new Error(`FA画像の取得に失敗しました（${response.status}）`);
+  const data = await response.json();
+  if (!data.ok) throw new Error(data.message || "FA画像を取得できませんでした。");
+  return Array.isArray(data.fanArts) ? data.fanArts : [];
+}
+
+function renderHomeFanArtEmpty(message) {
+  const viewer = $("homeFanArtViewer");
+  if (!viewer) return;
+  viewer.innerHTML = `
+    <div class="fanart-empty">
+      <p class="empty-kicker">Community Fan Art</p>
+      <h3>最初のファンアートを迎える準備中</h3>
+      <p>${esc(message || "承認されたFA画像はまだありません。")}</p>
+    </div>`;
+}
+
+function showRandomHomeFanArt() {
+  const viewer = $("homeFanArtViewer");
+  if (!viewer) return;
+  if (!state.fanArts.length) {
+    renderHomeFanArtEmpty("承認されたFA画像はまだありません。");
+    return;
+  }
+
+  let nextIndex = Math.floor(Math.random() * state.fanArts.length);
+  if (state.fanArts.length > 1 && nextIndex === state.currentFanArtIndex) {
+    nextIndex = (nextIndex + 1) % state.fanArts.length;
+  }
+  state.currentFanArtIndex = nextIndex;
+
+  const art = state.fanArts[nextIndex];
+  const imageUrl = safeHttpsUrl(art.imageUrl);
+  if (!imageUrl) {
+    renderHomeFanArtEmpty("画像を表示できませんでした。別の作品を表示してください。");
+    return;
+  }
+
+  const displayAuthor = art.authorName || "匿名";
+  viewer.innerHTML = `
+    <figure class="fanart-display-card">
+      <div class="fanart-image-frame protected-media" data-protected-media>
+        <img src="${esc(imageUrl)}" alt="${esc(art.title || `${art.activityName || "VTuber"}のファンアート`)}" loading="eager" draggable="false">
+        <span class="fanart-save-shield" aria-hidden="true"></span>
+        <span class="fanart-watermark" aria-hidden="true"><b>Graduate History</b><em>${esc(displayAuthor)}</em></span>
+      </div>
+      <figcaption>
+        <p class="fanart-activity">${esc(art.activityName || "活動名未設定")}</p>
+        <h3>${esc(art.title || "無題のファンアート")}</h3>
+        <p class="fanart-author">作者：${esc(displayAuthor)}</p>
+        ${art.note ? `<p class="fanart-note">${esc(art.note)}</p>` : ""}
+      </figcaption>
+    </figure>`;
+}
+
+async function loadHomeFanArts() {
+  if (!$("homeFanArtViewer")) return;
+  state.fanArts = await getHomeFanArtData();
+  showRandomHomeFanArt();
+}
+
+function installHomeFanArtSaveDeterrence() {
+  const isProtectedTarget = (target) => target instanceof Element && Boolean(target.closest("[data-protected-media]"));
+  document.addEventListener("contextmenu", (event) => {
+    if (isProtectedTarget(event.target)) event.preventDefault();
+  });
+  document.addEventListener("dragstart", (event) => {
+    if (isProtectedTarget(event.target)) event.preventDefault();
+  });
 }
 
 function renderVideos(videos) {
@@ -131,6 +208,12 @@ function searchProfiles() {
 }
 
 async function init() {
+  installHomeFanArtSaveDeterrence();
+  loadHomeFanArts().catch((error) => {
+    console.error(error);
+    renderHomeFanArtEmpty(error.message || "FA画像を取得できませんでした。");
+  });
+
   try {
     const data = await getData();
     state.profiles = Array.isArray(data.profiles) ? data.profiles : [];
@@ -146,6 +229,8 @@ async function init() {
     if ($("profileList")) $("profileList").innerHTML = message;
   }
 }
+
+$("nextHomeFanArtButton")?.addEventListener("click", showRandomHomeFanArt);
 
 $("randomVideoBtn")?.addEventListener("click", () => {
   const available = state.videos.filter((video) => safeHttpsUrl(video.url));
