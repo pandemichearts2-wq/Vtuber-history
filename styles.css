@@ -2863,3 +2863,11 @@ body.fanart-lightbox-open{overflow:hidden}
 .pagination-actions .button[hidden]{display:none!important}
 .pagination-actions .button:disabled{opacity:.55;cursor:wait}
 .fanart-upload-preview p{line-height:1.7}
+
+/* Remove the mobile divider directly below section number 03 only. */
+@media(max-width:720px){
+  .home .memories-panel .editorial-section-label{
+    border-bottom:0;
+    padding-bottom:0;
+  }
+}
