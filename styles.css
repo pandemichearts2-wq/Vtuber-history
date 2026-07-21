@@ -2209,3 +2209,24 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
     padding:22px 20px;
   }
 }
+
+
+/* ===== Registration tabs and main section refinement ===== */
+#registrationForm .main-registration-title{
+  margin-top:42px;
+}
+
+#registrationForm .main-form-grid{
+  margin:0 0 18px;
+  border:1px solid rgba(36,99,84,.10);
+  border-radius:30px;
+}
+
+@media(max-width:720px){
+  #registrationForm .main-registration-title{
+    margin-top:34px;
+  }
+  #registrationForm .main-form-grid{
+    border-radius:24px;
+  }
+}
