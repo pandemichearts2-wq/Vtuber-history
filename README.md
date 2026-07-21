@@ -1,11 +1,12 @@
-# Graduate History
+# Graduate History — Gallery Atmosphere Edition
 
-GitHubリポジトリの中身を、このフォルダの内容で置き換えてください。
+GitHubリポジトリ直下へ、このフォルダの中身を上書きしてください。
 
-- `index.html`: 公開ページ
-- `styles.css`: 共通スタイル
-- `app.js`: 公開ページ用JavaScript
-- `config.js`: Apps Script接続設定
-- `Milky_way.mp3`: BGM
-- `register/index.html`: 登録ページ
-- `register/register.js`: 登録ページ用JavaScript
+## 今回の変更
+
+- ヒーロー部分は変更なし
+- 下部を展示室と雑誌の中間のようなデザインへ再構成
+- 思い出動画は内容位置を変えず、背景だけ画面幅へ広げる方式に変更
+- 導入、今日の記録、検索に大きな装飾文字・罫線・奥行きを追加
+- 空の状態でも寂しく見えない展示ラベル風レイアウト
+- スマートフォン表示にも対応
