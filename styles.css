@@ -1959,3 +1959,135 @@ footer{padding:28px 0 70px;text-align:center;color:#60736d;font-family:Georgia,s
   .home .profile-list{padding:0 20px}
   .home footer::before{display:none}
 }
+
+/* ===== 2026-07-21 unified editorial section headings ===== */
+/* Reuse the successful 01 composition for Memories and Search. */
+.home .editorial-section-head{
+  display:grid;
+  grid-template-columns:minmax(150px,.58fr) minmax(0,1.45fr) auto;
+  column-gap:clamp(36px,6vw,92px);
+  align-items:start;
+}
+.home .editorial-section-label{
+  min-width:0;
+  padding-top:8px;
+}
+.home .editorial-section-label .eyebrow{
+  margin:0;
+}
+.home .editorial-section-number{
+  display:block;
+  margin-top:26px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(58px,6vw,76px);
+  font-weight:400;
+  line-height:1;
+  letter-spacing:-.05em;
+}
+.home .editorial-section-copy{
+  min-width:0;
+}
+.home .editorial-section-copy h2{
+  margin-top:0;
+}
+
+/* Memories keeps its gallery atmosphere, but its heading now follows 01. */
+.home .memories-panel::before,
+.home .memories-panel::after{
+  display:none;
+}
+.home .memories-panel .editorial-section-head{
+  padding-bottom:48px;
+}
+.home .memories-panel .editorial-section-number{
+  color:rgba(255,255,255,.17);
+  text-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+.home .memories-panel .editorial-section-copy .section-copy{
+  max-width:640px;
+}
+.home .memories-panel .editorial-section-head > .button{
+  align-self:end;
+  margin-bottom:5px;
+  white-space:nowrap;
+}
+
+/* Search uses the same hierarchy instead of the previous catalogue label. */
+.home .search-panel::before,
+.home .search-panel::after{
+  display:none;
+}
+.home .search-panel{
+  padding-top:118px;
+}
+.home .search-headline.editorial-section-head{
+  grid-template-columns:minmax(150px,.58fr) minmax(0,1.45fr) minmax(220px,.7fr);
+  gap:0 clamp(36px,6vw,92px);
+  align-items:start;
+  margin-bottom:58px;
+}
+.home .search-panel .editorial-section-number{
+  color:rgba(13,48,41,.18);
+  text-shadow:0 12px 30px rgba(13,48,41,.06);
+}
+.home .search-panel .editorial-section-copy .section-copy{
+  max-width:650px;
+}
+.home .search-panel .search-tags{
+  align-self:end;
+  margin-bottom:4px;
+}
+
+@media(max-width:1000px){
+  .home .editorial-section-head,
+  .home .search-headline.editorial-section-head{
+    grid-template-columns:minmax(130px,.45fr) minmax(0,1.55fr);
+    column-gap:clamp(28px,5vw,58px);
+  }
+  .home .memories-panel .editorial-section-head > .button,
+  .home .search-panel .search-tags{
+    grid-column:2;
+    justify-self:start;
+    align-self:start;
+    margin-top:28px;
+    margin-bottom:0;
+  }
+}
+
+@media(max-width:720px){
+  .home .editorial-section-head,
+  .home .search-headline.editorial-section-head{
+    grid-template-columns:1fr;
+    row-gap:24px;
+  }
+  .home .editorial-section-label{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:end;
+    gap:20px;
+    width:100%;
+    padding-bottom:18px;
+    border-bottom:1px solid currentColor;
+  }
+  .home .editorial-section-number{
+    margin-top:0;
+    font-size:48px;
+  }
+  .home .memories-panel .editorial-section-label{
+    border-bottom-color:rgba(255,255,255,.18);
+  }
+  .home .search-panel .editorial-section-label{
+    border-bottom-color:rgba(13,48,41,.16);
+  }
+  .home .memories-panel .editorial-section-head > .button,
+  .home .search-panel .search-tags{
+    grid-column:1;
+    margin-top:4px;
+  }
+  .home .search-panel{
+    padding-top:88px;
+  }
+  .home .search-headline.editorial-section-head{
+    margin-bottom:42px;
+  }
+}
