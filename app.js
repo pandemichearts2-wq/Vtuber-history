@@ -386,6 +386,48 @@ function renderVideos(videos, append = false) {
   syncPaginationButtons();
 }
 
+function japanDateKey() {
+  const parts = new Intl.DateTimeFormat("en", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function renderDailyRecommendation(profiles) {
+  const root = $("dailyRecommendation");
+  const link = $("dailyRecommendationLink");
+  const name = $("dailyRecommendationName");
+  const meta = $("dailyRecommendationMeta");
+  if (!root || !link || !name || !meta) return;
+
+  const available = [...profiles]
+    .filter((profile) => profile && profile.activityName && profile.profileId)
+    .sort((a, b) => String(a.profileId).localeCompare(String(b.profileId), "ja"));
+
+  if (!available.length) {
+    root.hidden = true;
+    return;
+  }
+
+  const seed = japanDateKey();
+  let hash = 2166136261;
+  for (const character of seed) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  const profile = available[(hash >>> 0) % available.length];
+  name.textContent = profile.activityName;
+  meta.textContent = [profile.reading, profile.affiliation].filter(Boolean).join(" / ") || "登録プロフィール";
+  link.href = `profile.html?id=${encodeURIComponent(String(profile.profileId))}`;
+  link.setAttribute("aria-label", `本日のおすすめVTuber、${profile.activityName}のプロフィールを見る`);
+  root.hidden = false;
+}
+
 function profileCard(profile) {
   const detailUrl = `profile.html?id=${encodeURIComponent(String(profile.profileId || ""))}`;
   return `
@@ -521,6 +563,7 @@ async function init() {
     state.videoHasMore = Boolean(data.videoHasMore);
     renderVideos(state.videos);
     renderProfiles(state.profiles);
+    renderDailyRecommendation(state.profiles);
     showMemory();
   } catch (error) {
     console.error(error);
