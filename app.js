@@ -319,15 +319,49 @@ function installHomeFanArtSaveDeterrence() {
   });
 }
 
+function youtubeVideoId(url) {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    let id = "";
+
+    if (host === "youtu.be") {
+      id = segments[0] || "";
+    } else if (["youtube.com", "m.youtube.com", "music.youtube.com", "youtube-nocookie.com"].includes(host)) {
+      if (parsed.pathname === "/watch") id = parsed.searchParams.get("v") || "";
+      else if (["shorts", "live", "embed"].includes(segments[0])) id = segments[1] || "";
+    }
+
+    return /^[A-Za-z0-9_-]{6,20}$/.test(id) ? id : "";
+  } catch (_) {
+    return "";
+  }
+}
+
 function videoCard(video) {
   const url = safeHttpsUrl(video.url);
   if (!url) return "";
+
+  const title = video.title || video.activityName || "思い出の動画";
+  const youtubeId = youtubeVideoId(url);
+  const thumbnail = youtubeId ? `
+      <a class="video-thumbnail-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(title)}をYouTubeで見る">
+        <span class="video-thumbnail-frame">
+          <img src="https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg" alt="${esc(title)}の動画サムネイル" loading="lazy" decoding="async">
+          <span class="video-thumbnail-play" aria-hidden="true">▶</span>
+        </span>
+      </a>` : "";
+
   return `
-    <article class="video-card premium-card">
-      <p class="card-label">${esc(video.videoType || "Precious Memories")}</p>
-      <h3>${esc(video.title || video.activityName || "思い出の動画")}</h3>
-      <p class="card-sub">${esc(video.activityName || "")}</p>
-      <a href="${esc(url)}" target="_blank" rel="noopener noreferrer">動画を見る</a>
+    <article class="video-card premium-card${youtubeId ? " has-thumbnail" : ""}">
+      <div class="video-card-copy">
+        <p class="card-label">${esc(video.videoType || "Precious Memories")}</p>
+        <h3>${esc(title)}</h3>
+        <p class="card-sub">${esc(video.activityName || "")}</p>
+        <a class="video-watch-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">動画を見る</a>
+      </div>
+      ${thumbnail}
     </article>`;
 }
 
