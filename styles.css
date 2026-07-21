@@ -3622,3 +3622,96 @@ body.feedback-dialog-open{overflow:hidden}
     max-width:none;
   }
 }
+
+/* ===== 本日のおすすめVTuber：一回り大きく ===== */
+.home .daily-recommendation{
+  width:min(790px,calc(100% - 32px));
+  margin:24px auto 32px;
+}
+.home .daily-recommendation-heading{
+  margin:0 7px 10px;
+}
+.home .daily-recommendation-label{
+  gap:9px;
+  font-size:12px;
+}
+.home .daily-recommendation-spark{
+  font-size:14px;
+}
+.home .daily-recommendation-date{
+  font-size:12px;
+}
+.home .daily-recommendation-card{
+  grid-template-columns:56px minmax(0,1fr) auto;
+  gap:19px;
+  min-height:94px;
+  padding:17px 19px;
+  border-radius:20px;
+}
+.home .daily-recommendation-card::before{
+  inset:9px;
+  border-radius:14px;
+}
+.home .daily-recommendation-seal{
+  width:54px;
+  height:54px;
+}
+.home .daily-recommendation-seal span{
+  font-size:15px;
+}
+.home .daily-recommendation-copy{
+  gap:2px;
+}
+.home .daily-recommendation-kicker{
+  font-size:10px!important;
+}
+.home .daily-recommendation-copy strong{
+  font-size:21px;
+}
+.home .daily-recommendation-copy>span:last-child{
+  font-size:12px;
+}
+.home .daily-recommendation-action{
+  gap:9px;
+  padding:10px 14px;
+  font-size:12px;
+}
+
+@media (max-width:600px){
+  .home .daily-recommendation{
+    width:calc(100% - 20px);
+    margin:19px auto 27px;
+  }
+  .home .daily-recommendation-heading{
+    margin-inline:4px;
+    margin-bottom:9px;
+  }
+  .home .daily-recommendation-label,
+  .home .daily-recommendation-date{
+    font-size:11px;
+  }
+  .home .daily-recommendation-card{
+    grid-template-columns:48px minmax(0,1fr);
+    min-height:84px;
+    padding:14px 15px;
+    gap:14px;
+    border-radius:18px;
+  }
+  .home .daily-recommendation-seal{
+    width:46px;
+    height:46px;
+  }
+  .home .daily-recommendation-seal span{
+    font-size:14px;
+  }
+  .home .daily-recommendation-copy strong{
+    font-size:18px;
+  }
+  .home .daily-recommendation-copy>span:last-child{
+    font-size:11px;
+  }
+  .home .daily-recommendation-action{
+    margin-top:6px;
+    font-size:11px;
+  }
+}
