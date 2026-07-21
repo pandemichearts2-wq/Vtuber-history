@@ -2817,3 +2817,40 @@ body.fanart-lightbox-open{overflow:hidden}
     margin:42px 0 28px;
   }
 }
+
+
+/* ===== Prominent video registration button ===== */
+.home .memories-panel .memories-copy-actions{
+  display:flex;
+  margin-top:28px;
+}
+.home .memories-panel .video-register-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:54px;
+  padding:15px 30px;
+  border:1px solid #c8b06f;
+  border-radius:999px;
+  background:#c8b06f;
+  color:#173a32;
+  font-weight:700;
+  letter-spacing:.06em;
+  box-shadow:0 12px 30px rgba(0,0,0,.18);
+  opacity:1;
+  visibility:visible;
+  text-decoration:none;
+}
+.home .memories-panel .video-register-link:hover{
+  transform:translateY(-2px);
+  background:#d6c183;
+  border-color:#d6c183;
+  color:#102f29;
+}
+@media(max-width:720px){
+  .home .memories-panel .video-register-link{
+    width:100%;
+    max-width:360px;
+    min-height:56px;
+  }
+}
