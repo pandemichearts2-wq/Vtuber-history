@@ -1,10 +1,43 @@
 const API_URL=window.GH_CONFIG?.API_URL||"";
 const $=id=>document.getElementById(id);
-const state={token:sessionStorage.getItem("ghAdminToken")||"",tab:"submissions",submissions:{offset:0,hasMore:false,selected:new Set()},feedback:{offset:0,hasMore:false},content:{offset:0,hasMore:false},edit:null};
+const state={token:sessionStorage.getItem("ghAdminToken")||"",tab:"submissions",submissions:{offset:0,hasMore:false,selected:new Set()},feedback:{offset:0,hasMore:false},content:{offset:0,hasMore:false},edit:null,notificationTimer:0};
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);}
 function fmtDate(v){if(!v)return"";const d=new Date(v);return isNaN(d)?String(v):d.toLocaleString("ja-JP");}
 async function api(action,payload={}){if(!API_URL)throw Error("API URLが設定されていません。");const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,adminToken:state.token,...payload})});if(!r.ok)throw Error(`通信に失敗しました（${r.status}）`);const data=await r.json();if(!data.ok)throw Error(data.message||"処理できませんでした。");return data;}
-function setLoggedIn(on){$("adminLogin").hidden=on;$("adminShell").hidden=!on;if(on)loadActiveTab();}
+function setNotificationBadge(id,count,label){
+  const badge=$(id);if(!badge)return;
+  const value=Math.max(0,Number(count)||0);
+  const countElement=badge.querySelector("[data-badge-count]");
+  const displayValue=value>99?"99+":String(value);
+  if(countElement)countElement.textContent=displayValue;else badge.textContent=displayValue;
+  badge.hidden=value===0;
+  badge.setAttribute("aria-label",`${label}${value}件`);
+}
+async function refreshAdminNotificationCounts(){
+  if(!state.token)return;
+  try{
+    const data=await api("adminNotificationCounts");
+    setNotificationBadge("submissionNotificationBadge",data.submissions,"確認待ちの申請");
+    const breakdown=data.breakdown||{};
+    setNotificationBadge("feedbackUnconfirmedBadge",breakdown.feedbackUnconfirmed,"未確認のお問い合わせ");
+    setNotificationBadge("feedbackInProgressBadge",breakdown.feedbackInProgress,"対応中のお問い合わせ");
+    const feedbackGroup=$("feedbackNotificationGroup");
+    if(feedbackGroup)feedbackGroup.hidden=!(Number(breakdown.feedbackUnconfirmed)||Number(breakdown.feedbackInProgress));
+  }catch(err){
+    if(/ログイン|セッション/.test(err.message)){logout();return;}
+    console.warn("件数バッジを更新できませんでした。",err);
+  }
+}
+function startNotificationPolling(){
+  clearInterval(state.notificationTimer);
+  state.notificationTimer=window.setInterval(()=>refreshAdminNotificationCounts(),60000);
+}
+function stopNotificationPolling(){clearInterval(state.notificationTimer);state.notificationTimer=0;}
+function setLoggedIn(on){
+  $("adminLogin").hidden=on;$("adminShell").hidden=!on;
+  if(on){loadActiveTab();refreshAdminNotificationCounts();startNotificationPolling();}
+  else stopNotificationPolling();
+}
 function logout(){state.token="";sessionStorage.removeItem("ghAdminToken");setLoggedIn(false);$("adminPassword").value="";}
 $("adminLoginForm").addEventListener("submit",async e=>{e.preventDefault();const msg=$("adminLoginMessage"),button=e.currentTarget.querySelector("button");msg.textContent="";button.disabled=true;try{const data=await api("adminLogin",{password:$("adminPassword").value});state.token=data.adminToken;sessionStorage.setItem("ghAdminToken",state.token);setLoggedIn(true);}catch(err){msg.textContent=err.message;}finally{button.disabled=false;}});
 $("adminLogout").addEventListener("click",logout);
@@ -45,6 +78,7 @@ async function loadSubmissions(reset){
     $("submissionMore").hidden=!data.hasMore;
     if(!box.children.length)box.innerHTML='<div class="admin-empty">該当する申請はありません。</div>';
     syncSubmissionBulkUi();
+    if(reset)refreshAdminNotificationCounts();
   }catch(err){
     if(/ログイン|セッション/.test(err.message)){logout();return;}
     box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;
@@ -159,7 +193,7 @@ $("submissionBulkApprove")?.addEventListener("click",()=>runSubmissionBulkAction
 $("submissionBulkDelete")?.addEventListener("click",()=>runSubmissionBulkAction("delete"));
 $("submissionSearch").addEventListener("click",()=>loadSubmissions(true));$("submissionMore").addEventListener("click",()=>loadSubmissions(false));$("submissionQuery").addEventListener("keydown",e=>{if(e.key==="Enter")loadSubmissions(true);});
 $("repairPublished")?.addEventListener("click",async e=>{if(!confirm("許可済みのプロフィール・動画・FAを公開シートへ再反映しますか？"))return;const button=e.currentTarget;button.disabled=true;try{const d=await api("adminRepairPublishedData");alert(`再反映しました。成功 ${d.success||0}件 / エラー ${d.errors||0}件`);await loadSubmissions(true);}catch(err){alert(err.message);}finally{button.disabled=false;}});
-async function loadFeedback(reset){const box=$("feedbackAdminList");if(reset){state.feedback.offset=0;box.innerHTML='<div class="admin-empty">読み込んでいます。</div>';}try{const data=await api("adminListFeedback",{q:$("feedbackAdminQuery").value,status:$("feedbackAdminStatus").value,offset:state.feedback.offset,limit:30});if(reset)box.innerHTML="";renderFeedback(data.items||[],box);state.feedback.offset=data.nextOffset||0;$("feedbackAdminMore").hidden=!data.hasMore;if(!box.children.length)box.innerHTML='<div class="admin-empty">該当するお問い合わせはありません。</div>';}catch(err){if(/ログイン|セッション/.test(err.message)){logout();return;}box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;}}
+async function loadFeedback(reset){const box=$("feedbackAdminList");if(reset){state.feedback.offset=0;box.innerHTML='<div class="admin-empty">読み込んでいます。</div>';}try{const data=await api("adminListFeedback",{q:$("feedbackAdminQuery").value,status:$("feedbackAdminStatus").value,offset:state.feedback.offset,limit:30});if(reset)box.innerHTML="";renderFeedback(data.items||[],box);state.feedback.offset=data.nextOffset||0;$("feedbackAdminMore").hidden=!data.hasMore;if(!box.children.length)box.innerHTML='<div class="admin-empty">該当するお問い合わせはありません。</div>';if(reset)refreshAdminNotificationCounts();}catch(err){if(/ログイン|セッション/.test(err.message)){logout();return;}box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;}}
 function renderFeedback(items,box){items.forEach(item=>{const card=document.createElement("article");card.className="admin-card";card.innerHTML=`<div class="admin-card-head"><div><h3>${esc(item.relatedActivityName||"サイト全般")}</h3><p class="admin-card-meta">${esc(item.feedbackId)} / ${esc(fmtDate(item.receivedAt))}</p></div><span class="admin-badge">${esc(item.status)}</span></div><div class="admin-card-body"><div class="admin-feedback-message">${esc(item.message)}</div>${item.pageUrl?`<p><small>送信ページ：${esc(item.pageUrl)}</small></p>`:""}</div><div class="admin-feedback-controls"><div class="admin-field"><label>対応状況</label><select><option>未確認</option><option>対応中</option><option>対応済み</option><option>対応不要</option></select></div><div class="admin-field"><label>対応メモ</label><textarea>${esc(item.reviewNote||"")}</textarea></div><button class="admin-button" type="button">保存</button></div>`;const select=card.querySelector("select");select.value=item.status||"未確認";card.querySelector("button.admin-button").addEventListener("click",async e=>{const button=e.currentTarget;button.disabled=true;try{await api("adminUpdateFeedback",{feedbackId:item.feedbackId,status:select.value,reviewNote:card.querySelector("textarea").value});await loadFeedback(true);}catch(err){alert(err.message);button.disabled=false;}});box.appendChild(card);});}
 $("feedbackAdminSearch").addEventListener("click",()=>loadFeedback(true));$("feedbackAdminMore").addEventListener("click",()=>loadFeedback(false));$("feedbackAdminQuery").addEventListener("keydown",e=>{if(e.key==="Enter")loadFeedback(true);});
 async function loadContent(reset){const box=$("contentList");if(reset){state.content.offset=0;box.innerHTML='<div class="admin-empty">読み込んでいます。</div>';}try{const data=await api("adminSearchContent",{contentType:$("contentType").value,q:$("contentQuery").value,offset:state.content.offset,limit:30});if(reset)box.innerHTML="";renderContent(data.items||[],box);state.content.offset=data.nextOffset||0;$("contentMore").hidden=!data.hasMore;if(!box.children.length)box.innerHTML='<div class="admin-empty">該当する登録内容はありません。</div>';}catch(err){if(/ログイン|セッション/.test(err.message)){logout();return;}box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;}}
@@ -247,4 +281,6 @@ $("adminEditForm").addEventListener("submit",async e=>{
   const btn=$("adminEditSave");btn.disabled=true;
   try{await api("adminUpdateContent",{contentType:state.edit.contentType,id:state.edit.id,data});closeEditor();loadContent(true);}catch(err){$("adminEditMessage").textContent=err.message;}finally{btn.disabled=false;}
 });
+window.addEventListener("focus",()=>refreshAdminNotificationCounts());
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshAdminNotificationCounts();});
 if(state.token)setLoggedIn(true);else setLoggedIn(false);

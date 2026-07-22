@@ -3753,3 +3753,57 @@ body.feedback-dialog-open{overflow:hidden}
   .admin-card-heading{display:grid;grid-template-columns:1fr;gap:10px}
   .admin-select-control{width:max-content}
 }
+
+
+/* ===== Graduate History admin notification badges ===== */
+.admin-tab{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;overflow:visible}
+.admin-notification-group{
+  position:absolute;
+  top:-7px;
+  right:-8px;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  pointer-events:none;
+}
+.admin-notification-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:20px;
+  height:20px;
+  padding:0 5px;
+  border:2px solid #f7f4ec;
+  border-radius:999px;
+  color:#fff;
+  font-family:system-ui,sans-serif;
+  font-size:11px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:0;
+  box-shadow:0 3px 9px rgba(53,35,24,.24);
+  pointer-events:none;
+}
+.admin-notification-badge-submission{
+  position:absolute;
+  top:2px;
+  right:2px;
+  background:#b84040;
+  box-shadow:0 3px 9px rgba(104,24,24,.28);
+}
+.admin-notification-badge-unconfirmed{background:#c23f3f}
+.admin-notification-badge-progress{background:#cf8b24}
+.admin-notification-mark{
+  margin-right:2px;
+  font-size:9px;
+  font-weight:900;
+  opacity:.9;
+}
+.admin-notification-badge[hidden],
+.admin-notification-group[hidden]{display:none!important}
+@media(max-width:760px){
+  .admin-tab{justify-content:flex-start;padding-right:72px}
+  .admin-notification-badge-submission{top:50%;right:14px;transform:translateY(-50%)}
+  .admin-notification-group{top:50%;right:12px;transform:translateY(-50%)}
+}
