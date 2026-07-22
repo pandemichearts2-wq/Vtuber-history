@@ -1,7 +1,8 @@
 const API_URL=window.GH_CONFIG?.API_URL||"";
 const $=id=>document.getElementById(id);
-const state={token:sessionStorage.getItem("ghAdminToken")||"",tab:"submissions",submissions:{offset:0,hasMore:false,selected:new Set()},feedback:{offset:0,hasMore:false},content:{offset:0,hasMore:false},edit:null,notificationTimer:0};
+const state={token:sessionStorage.getItem("ghAdminToken")||"",tab:"submissions",submissions:{offset:0,hasMore:false,selected:new Set()},feedback:{offset:0,hasMore:false},content:{offset:0,hasMore:false},featured:{items:[]},edit:null,notificationTimer:0};
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);}
+function safeHttpsUrl(value){try{const url=new URL(String(value||""));return url.protocol==="https:"?url.href:"";}catch(_){return"";}}
 function fmtDate(v){if(!v)return"";const d=new Date(v);return isNaN(d)?String(v):d.toLocaleString("ja-JP");}
 async function api(action,payload={}){if(!API_URL)throw Error("API URLが設定されていません。");const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,adminToken:state.token,...payload})});if(!r.ok)throw Error(`通信に失敗しました（${r.status}）`);const data=await r.json();if(!data.ok)throw Error(data.message||"処理できませんでした。");return data;}
 function safeDownloadName(name){return String(name||"fanart-image").replace(/[\\/:*?"<>|]/g,"_");}
@@ -60,8 +61,8 @@ function logout(){state.token="";sessionStorage.removeItem("ghAdminToken");setLo
 $("adminLoginForm").addEventListener("submit",async e=>{e.preventDefault();const msg=$("adminLoginMessage"),button=e.currentTarget.querySelector("button");msg.textContent="";button.disabled=true;try{const data=await api("adminLogin",{password:$("adminPassword").value});state.token=data.adminToken;sessionStorage.setItem("ghAdminToken",state.token);setLoggedIn(true);}catch(err){msg.textContent=err.message;}finally{button.disabled=false;}});
 $("adminLogout").addEventListener("click",logout);
 $("adminPageRefresh").addEventListener("click",()=>window.location.reload());
-document.querySelectorAll(".admin-tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".admin-tab").forEach(x=>x.classList.toggle("active",x===btn));state.tab=btn.dataset.adminTab;["Submissions","Feedback","Content"].forEach(n=>$("adminPanel"+n).hidden=n.toLowerCase()!==state.tab);loadActiveTab();}));
-function loadActiveTab(){if(state.tab==="submissions")loadSubmissions(true);else if(state.tab==="feedback")loadFeedback(true);else loadContent(true);}
+document.querySelectorAll(".admin-tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".admin-tab").forEach(x=>x.classList.toggle("active",x===btn));state.tab=btn.dataset.adminTab;["Submissions","Feedback","Content","Featured"].forEach(n=>$("adminPanel"+n).hidden=n.toLowerCase()!==state.tab);loadActiveTab();}));
+function loadActiveTab(){if(state.tab==="submissions")loadSubmissions(true);else if(state.tab==="feedback")loadFeedback(true);else if(state.tab==="content")loadContent(true);else loadFeaturedAdmin();}
 function typeLabel(t){return({new:"新規登録",add:"追記",fix:"修正",video:"動画",letter:"思い出投稿",fanartGeneral:"通常FA",fanartAdult:"成人向けFA"})[t]||t;}
 function syncSubmissionBulkUi(){
   const count=state.submissions.selected.size;
@@ -241,6 +242,62 @@ function renderContent(items,box){
   });
 }
 $("contentSearch").addEventListener("click",()=>loadContent(true));$("contentMore").addEventListener("click",()=>loadContent(false));$("contentType").addEventListener("change",()=>loadContent(true));$("contentQuery").addEventListener("keydown",e=>{if(e.key==="Enter")loadContent(true);});
+
+const FEATURED_CATEGORIES=["管理人おすすめ歌みた","管理人おすすめ歌枠"];
+function featuredCategoryOptions(selected){return FEATURED_CATEGORIES.map(value=>`<option value="${esc(value)}" ${value===selected?"selected":""}>${esc(value)}</option>`).join("");}
+function featuredStatusOptions(selected){return ["公開中","非公開"].map(value=>`<option value="${value}" ${value===selected?"selected":""}>${value}</option>`).join("");}
+function renderFeaturedAdmin(items){
+  const box=$("featuredAdminList");
+  box.innerHTML="";
+  state.featured.items=items;
+  items.forEach(item=>{
+    const data=item.data||{};
+    const card=document.createElement("article");
+    card.className="admin-card admin-featured-card";
+    const thumbnail=safeHttpsUrl(data.thumbnailUrl);
+    const videoUrl=safeHttpsUrl(data.videoUrl);
+    card.innerHTML=`
+      <div class="admin-featured-media">${thumbnail&&videoUrl?`<a href="${esc(videoUrl)}" target="_blank" rel="noopener noreferrer"><img src="${esc(thumbnail)}" alt="${esc(data.category||"管理人おすすめ")}のサムネイル"></a>`:""}</div>
+      <div class="admin-featured-controls">
+        <div class="admin-card-head"><div><h3>${esc(data.category||"管理人おすすめ")}</h3><p class="admin-card-meta">${esc(item.id||"")} / ${esc(fmtDate(data.updatedAt||data.createdAt))}</p></div><span class="admin-badge">${esc(data.publicStatus||"公開中")}</span></div>
+        <div class="admin-featured-edit-grid">
+          <label>表示名<select data-featured-category>${featuredCategoryOptions(data.category||FEATURED_CATEGORIES[0])}</select></label>
+          <label>公開状態<select data-featured-status>${featuredStatusOptions(data.publicStatus||"公開中")}</select></label>
+          <label class="admin-featured-url">YouTube動画リンク<input data-featured-url type="url" value="${esc(data.videoUrl||"")}"></label>
+        </div>
+        <div class="admin-card-actions"><button class="admin-button gold" data-featured-save type="button">更新する</button><button class="admin-button danger" data-featured-delete type="button">削除する</button></div>
+      </div>`;
+    card.querySelector("[data-featured-save]").addEventListener("click",async e=>{
+      const button=e.currentTarget;button.disabled=true;
+      try{
+        await api("adminUpdateFeaturedVideo",{id:item.id,data:{category:card.querySelector("[data-featured-category]").value,videoUrl:card.querySelector("[data-featured-url]").value,publicStatus:card.querySelector("[data-featured-status]").value}});
+        await loadFeaturedAdmin();
+      }catch(err){alert(err.message);button.disabled=false;}
+    });
+    card.querySelector("[data-featured-delete]").addEventListener("click",async e=>{
+      if(!confirm(`「${data.category||"管理人おすすめ"}」を削除しますか？`))return;
+      const button=e.currentTarget;button.disabled=true;
+      try{await api("adminDeleteFeaturedVideo",{id:item.id});await loadFeaturedAdmin();}catch(err){alert(err.message);button.disabled=false;}
+    });
+    box.appendChild(card);
+  });
+  if(!box.children.length)box.innerHTML='<div class="admin-empty">管理人おすすめはまだ登録されていません。</div>';
+}
+async function loadFeaturedAdmin(){
+  const box=$("featuredAdminList");
+  box.innerHTML='<div class="admin-empty">読み込んでいます。</div>';
+  try{const data=await api("adminListFeaturedVideos");renderFeaturedAdmin(data.items||[]);}catch(err){if(/ログイン|セッション/.test(err.message)){logout();return;}box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;}
+}
+$("featuredAdminForm")?.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const button=e.currentTarget.querySelector("button[type=submit]");
+  const message=$("featuredAdminMessage");message.textContent="";button.disabled=true;
+  try{
+    await api("adminCreateFeaturedVideo",{category:$("featuredAdminCategory").value,videoUrl:$("featuredAdminVideoUrl").value});
+    $("featuredAdminVideoUrl").value="";message.textContent="管理人おすすめに登録しました。";await loadFeaturedAdmin();
+  }catch(err){message.textContent=err.message;}finally{button.disabled=false;}
+});
+
 const PROFILE_TOP_LEVEL_KEYS=new Set(["activityName","reading","nickname","fanName","fanMark","affiliation","activityStartDate","graduationDate","youtubeUrl","xUrl"]);
 const PROFILE_LONG_KEYS=new Set(["otherOfficialLinks","past","reasonVtuber","reasonHumanWorld","activityHistory","activityGoal","collabHistory","workHistory","firstViewerGreeting","openingGreeting","endingGreeting","listenerCall","catchphraseHabit","costume","accessory","charmPoint","expressionFeatures","personality","voiceFeatures","strengths","weaknesses","specialSkill","badAt","angerPoint","happyThings","sadThings","excitedMoment","motto","likes","favoriteFood","favoriteDrink","favoriteSnack","favoriteGame","favoriteMusic","favoritePlace","favoriteCharacter","favoriteManga","favoriteAnime","favoriteMovie","favoriteStreamer","favoriteBrand","favoriteScent","favoriteWords","dislikes","dislikedFood","dislikedGame","dislikedGenre","dislikedInsect","dislikedSound","dislikedTexture","dislikedPlace","dislikedTopic","fears","streamCautions","secret","graduationReason","archiveStatus","memoriesLetter","sourceUrl","sourceTimestamp","note"]);
 const fieldDefs={profiles:[["activityName","活動名"],["reading","読み方"],["nickname","愛称"],["fanName","ファンネーム"],["fanMark","ファンマーク"],["affiliation","所属"],["activityStartDate","活動開始日"],["graduationDate","卒業日"],["youtubeUrl","YouTubeリンク"],["xUrl","Xリンク"],["status","公開状態"]],videos:[["activityName","VTuber名"],["profileId","プロフィールID"],["title","動画タイトル"],["url","動画リンク"],["videoType","動画種類"],["publicStatus","公開状態"],["note","補足","textarea"]],fanartGeneral:[["activityName","VTuber名"],["title","作品名"],["authorName","作者名"],["publicStatus","公開状態"],["note","補足","textarea"]],fanartAdult:[["activityName","VTuber名"],["title","作品名"],["authorName","作者名"],["publicStatus","公開状態"],["note","補足","textarea"]],letters:[["activityName","VTuber名"],["authorName","投稿者名"],["message","メッセージ","textarea"]]};

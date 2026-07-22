@@ -11,7 +11,8 @@ const state = {
   profileQuery: "",
   profileLoading: false,
   videoLoading: false,
-  homeFanArt: null
+  homeFanArt: null,
+  featured: { items: [], currentIndex: -1, timer: 0 }
 };
 const $ = (id) => document.getElementById(id);
 
@@ -76,6 +77,80 @@ async function getHomeFanArtData() {
   url.searchParams.set("nonce", String(Date.now()));
   const data = await requestJson(url.toString(), { method: "GET", cache: "no-store" });
   return Array.isArray(data.fanArts) ? data.fanArts[0] || null : null;
+}
+
+async function getFeaturedVideos() {
+  if (!API_URL) throw new Error("API URLが設定されていません。");
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "featuredVideos");
+  url.searchParams.set("nonce", `${Date.now()}-${Math.random()}`);
+  const data = await requestJson(url.toString(), { method: "GET", cache: "no-store" });
+  return Array.isArray(data.items) ? data.items : [];
+}
+
+function nextFeaturedIndex() {
+  const length = state.featured.items.length;
+  if (!length) return -1;
+  if (length === 1) return 0;
+  let next = state.featured.currentIndex;
+  while (next === state.featured.currentIndex) next = Math.floor(Math.random() * length);
+  return next;
+}
+
+function showNextFeaturedVideo() {
+  const stack = $("publicFeaturedStack");
+  if (!stack || !state.featured.items.length) return;
+  const nextIndex = nextFeaturedIndex();
+  if (nextIndex < 0) return;
+  state.featured.currentIndex = nextIndex;
+  const item = state.featured.items[nextIndex] || {};
+  const videoUrl = safeHttpsUrl(item.videoUrl);
+  const thumbnailUrl = safeHttpsUrl(item.thumbnailUrl);
+  if (!videoUrl || !thumbnailUrl) return;
+
+  stack.querySelectorAll(".gh-featured-slide").forEach((slide) => slide.classList.add("is-leaving"));
+  const link = document.createElement("a");
+  link.className = "gh-featured-slide is-entering";
+  link.href = videoUrl;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.setAttribute("aria-label", `${item.category || "管理人おすすめ"}をYouTubeで開く`);
+  link.innerHTML = `
+    <img src="${esc(thumbnailUrl)}" alt="${esc(item.category || "管理人おすすめ動画")}のサムネイル">
+    <span class="gh-featured-overlay">
+      <small>Administrator's Pick</small>
+      <strong>${esc(item.category || "管理人おすすめ")}</strong>
+      <em>動画を見る ↗</em>
+    </span>`;
+  stack.appendChild(link);
+  $("publicFeaturedEmpty")?.remove();
+  window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+    link.classList.remove("is-entering");
+    link.classList.add("is-active");
+  }));
+  window.setTimeout(() => {
+    stack.querySelectorAll(".gh-featured-slide.is-leaving").forEach((slide) => slide.remove());
+  }, 1500);
+}
+
+async function setupFeaturedShowcase() {
+  const stack = $("publicFeaturedStack");
+  if (!stack) return;
+  window.clearInterval(state.featured.timer);
+  try {
+    state.featured.items = await getFeaturedVideos();
+    state.featured.currentIndex = -1;
+    stack.querySelectorAll(".gh-featured-slide").forEach((slide) => slide.remove());
+    if (!state.featured.items.length) {
+      stack.innerHTML = `<div id="publicFeaturedEmpty" class="gh-featured-empty"><span>Administrator's Pick</span><strong>おすすめ表示スペース</strong></div>`;
+      return;
+    }
+    showNextFeaturedVideo();
+    state.featured.timer = window.setInterval(showNextFeaturedVideo, 5000);
+  } catch (error) {
+    console.error(error);
+    stack.innerHTML = `<div id="publicFeaturedEmpty" class="gh-featured-empty"><span>Administrator's Pick</span><strong>管理人おすすめを読み込めませんでした</strong></div>`;
+  }
 }
 
 
@@ -560,6 +635,7 @@ function showMemory(index = 0) {
 
 async function init() {
   installHomeFanArtSaveDeterrence();
+  setupFeaturedShowcase();
   setupFeedbackForm();
   refreshHomeFanArt();
   try {
@@ -634,5 +710,7 @@ if (audio && toggle) {
   audio.addEventListener("pause", updateBgmButton);
   updateBgmButton();
 }
+
+window.addEventListener("pagehide", () => window.clearInterval(state.featured.timer));
 
 init();

@@ -1,17 +1,16 @@
-# Graduate History FA循環保管・画像ダウンロード版
+# Graduate History 管理人おすすめ表示機能
 
 ## 追加内容
+- 公開トップのタイトル右側に「Administrator's Pick / おすすめ表示スペース」を追加
+- 管理人おすすめを5秒ごとにランダム表示
+- 新しいサムネイルが重なり、古い表示が徐々に消える切り替え
+- サムネイルクリックで該当YouTube動画を新しいタブで開く
+- スマートフォンでもタイトルとサムネイルを横並びで維持
+- 管理画面に「管理人おすすめ編集」タブを追加
+- 管理人おすすめ歌みた／管理人おすすめ歌枠の登録、編集、公開切替、削除
 
-- 通常FAと成人向けFAを合計2500件まで保管
-- 新しいFAの承認で2500件を超えた場合、承認日時が古いFAから超過分と同数を削除
-- 削除対象の公開FA行と承認済み申請履歴を整理し、Google Drive画像は完全削除を試行（失敗時はゴミ箱へ移動）
-- トップのFA欄へ再掲載のお願いを追加
-- 「みんなのファンアート」をスマホでも常に1行表示
-- 管理画面のFA申請と公開FAに「画像をダウンロード」ボタンを追加
-
-## GitHub
-`index.html`、`admin.html`、`admin.js`、`styles.css` を上書きしてください。
-
-## Apps Script
-`AppsScript-Code.gs` へ全部置き換え、既存ウェブアプリを新バージョンで再デプロイしてください。
-`setupSheets` の再実行は不要です。
+## 更新方法
+1. GitHubへ index.html / app.js / admin.html / admin.js / styles.css を上書き
+2. Apps Scriptを AppsScript-Code.gs に全置換
+3. setupSheets を一度実行（GH管理人おすすめシートを作成）
+4. Apps Scriptを新バージョンで再デプロイ
