@@ -41,6 +41,7 @@ function setLoggedIn(on){
 function logout(){state.token="";sessionStorage.removeItem("ghAdminToken");setLoggedIn(false);$("adminPassword").value="";}
 $("adminLoginForm").addEventListener("submit",async e=>{e.preventDefault();const msg=$("adminLoginMessage"),button=e.currentTarget.querySelector("button");msg.textContent="";button.disabled=true;try{const data=await api("adminLogin",{password:$("adminPassword").value});state.token=data.adminToken;sessionStorage.setItem("ghAdminToken",state.token);setLoggedIn(true);}catch(err){msg.textContent=err.message;}finally{button.disabled=false;}});
 $("adminLogout").addEventListener("click",logout);
+$("adminPageRefresh").addEventListener("click",()=>window.location.reload());
 document.querySelectorAll(".admin-tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".admin-tab").forEach(x=>x.classList.toggle("active",x===btn));state.tab=btn.dataset.adminTab;["Submissions","Feedback","Content"].forEach(n=>$("adminPanel"+n).hidden=n.toLowerCase()!==state.tab);loadActiveTab();}));
 function loadActiveTab(){if(state.tab==="submissions")loadSubmissions(true);else if(state.tab==="feedback")loadFeedback(true);else loadContent(true);}
 function typeLabel(t){return({new:"新規登録",add:"追記",fix:"修正",video:"動画",letter:"思い出投稿",fanartGeneral:"通常FA",fanartAdult:"成人向けFA"})[t]||t;}

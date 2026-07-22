@@ -3807,3 +3807,15 @@ body.feedback-dialog-open{overflow:hidden}
   .admin-notification-badge-submission{top:50%;right:14px;transform:translateY(-50%)}
   .admin-notification-group{top:50%;right:12px;transform:translateY(-50%)}
 }
+
+
+/* Admin page refresh button */
+.admin-page-refresh{
+  flex:0 0 auto;
+  align-self:center;
+  min-width:82px;
+  padding:10px 18px;
+}
+@media(max-width:760px){
+  .admin-page-refresh{width:100%;min-width:0;text-align:center}
+}
