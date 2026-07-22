@@ -3717,16 +3717,153 @@ body.feedback-dialog-open{overflow:hidden}
 }
 
 
-/* ===== 2026-07-22 Community Fan Art heading alignment ===== */
-/* Match section 02 to the same left/right editorial guide used by 01 and 03. */
+/* ===== Graduate History admin bulk submission actions ===== */
+.admin-bulk-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  margin:-4px 0 18px;
+  padding:14px;
+  border:1px solid rgba(30,68,59,.16);
+  background:rgba(255,255,255,.72);
+}
+.admin-bulk-selection,.admin-bulk-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.admin-bulk-count{min-width:78px;color:#37574f;font-weight:800}
+.admin-card-heading{display:flex;align-items:flex-start;gap:14px;min-width:0}
+.admin-select-control{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  flex:0 0 auto;
+  padding:8px 10px;
+  border:1px solid rgba(36,76,66,.20);
+  background:#fff;
+  color:#244c42;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+.admin-select-control input{width:19px;height:19px;margin:0;accent-color:#b08a48;cursor:pointer}
+.admin-card.is-selected{outline:3px solid rgba(176,138,72,.30);border-color:#b08a48;background:rgba(255,251,241,.94)}
+@media(max-width:760px){
+  .admin-bulk-toolbar,.admin-bulk-selection,.admin-bulk-actions{display:grid;grid-template-columns:1fr;width:100%}
+  .admin-bulk-count{text-align:center;padding:4px 0}
+  .admin-card-heading{display:grid;grid-template-columns:1fr;gap:10px}
+  .admin-select-control{width:max-content}
+}
+
+
+/* ===== Graduate History admin notification badges ===== */
+.admin-tab{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;overflow:visible}
+.admin-notification-group{
+  position:absolute;
+  top:-7px;
+  right:-8px;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  pointer-events:none;
+}
+.admin-notification-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:20px;
+  height:20px;
+  padding:0 5px;
+  border:2px solid #f7f4ec;
+  border-radius:999px;
+  color:#fff;
+  font-family:system-ui,sans-serif;
+  font-size:11px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:0;
+  box-shadow:0 3px 9px rgba(53,35,24,.24);
+  pointer-events:none;
+}
+.admin-notification-badge-submission{
+  position:absolute;
+  top:2px;
+  right:2px;
+  background:#b84040;
+  box-shadow:0 3px 9px rgba(104,24,24,.28);
+}
+.admin-notification-badge-unconfirmed{background:#c23f3f}
+.admin-notification-badge-progress{background:#cf8b24}
+.admin-notification-mark{
+  margin-right:2px;
+  font-size:9px;
+  font-weight:900;
+  opacity:.9;
+}
+.admin-notification-badge[hidden],
+.admin-notification-group[hidden]{display:none!important}
+@media(max-width:760px){
+  .admin-tab{justify-content:flex-start;padding-right:72px}
+  .admin-notification-badge-submission{top:50%;right:14px;transform:translateY(-50%)}
+  .admin-notification-group{top:50%;right:12px;transform:translateY(-50%)}
+}
+
+
+/* Admin page refresh button */
+.admin-page-refresh{
+  flex:0 0 auto;
+  align-self:center;
+  min-width:82px;
+  padding:10px 18px;
+}
+@media(max-width:760px){
+  .admin-page-refresh{width:100%;min-width:0;text-align:center}
+}
+
+
+/* ===== 2026-07-22 Community Fan Art alignment and retention notice ===== */
 .home .home-fanart-panel{
   padding-left:var(--home-content-inset);
   padding-right:var(--home-content-inset);
 }
-
+.home .home-fanart-heading .editorial-section-copy h2{
+  white-space:nowrap;
+  font-size:clamp(22px,4.3vw,48px);
+  letter-spacing:-.04em;
+}
+.fanart-retention-notice{
+  max-width:940px;
+  margin:12px auto 0;
+  color:rgba(43,67,60,.72);
+  font-size:12px;
+  line-height:1.8;
+  text-align:center;
+}
+.admin-content-image-preview{
+  margin:16px 0 4px;
+  padding:12px;
+  background:rgba(237,245,242,.7);
+  border:1px solid rgba(36,99,84,.12);
+}
+.admin-content-image-preview img{
+  display:block;
+  width:auto;
+  max-width:100%;
+  max-height:320px;
+  margin:0 auto;
+  object-fit:contain;
+}
 @media(max-width:720px){
   .home .home-fanart-panel{
     padding-left:0;
     padding-right:0;
+  }
+  .home .home-fanart-heading .editorial-section-copy h2{
+    font-size:clamp(20px,6.4vw,30px);
+  }
+  .fanart-retention-notice{
+    padding:0 8px;
+    font-size:11px;
+    text-align:left;
   }
 }

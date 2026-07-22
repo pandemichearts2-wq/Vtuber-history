@@ -4,6 +4,24 @@ const state={token:sessionStorage.getItem("ghAdminToken")||"",tab:"submissions",
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);}
 function fmtDate(v){if(!v)return"";const d=new Date(v);return isNaN(d)?String(v):d.toLocaleString("ja-JP");}
 async function api(action,payload={}){if(!API_URL)throw Error("API URLが設定されていません。");const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,adminToken:state.token,...payload})});if(!r.ok)throw Error(`通信に失敗しました（${r.status}）`);const data=await r.json();if(!data.ok)throw Error(data.message||"処理できませんでした。");return data;}
+function safeDownloadName(name){return String(name||"fanart-image").replace(/[\\/:*?"<>|]/g,"_");}
+async function downloadFanArtImage(fileId,button){
+  if(!fileId){alert("画像ファイルが見つかりません。");return;}
+  const original=button?.textContent||"画像をダウンロード";
+  if(button){button.disabled=true;button.textContent="準備中...";}
+  try{
+    const data=await api("adminDownloadFanArt",{fileId});
+    const binary=atob(data.base64||"");
+    const bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+    const blob=new Blob([bytes],{type:data.mimeType||"application/octet-stream"});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;link.download=safeDownloadName(data.fileName);document.body.appendChild(link);link.click();link.remove();
+    window.setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }catch(err){alert(err.message);}
+  finally{if(button){button.disabled=false;button.textContent=original;}}
+}
 function setNotificationBadge(id,count,label){
   const badge=$(id);if(!badge)return;
   const value=Math.max(0,Number(count)||0);
@@ -148,8 +166,11 @@ function renderSubmissions(items,box){
     card.className="admin-card "+(item.status==="確認待ち"?"is-pending":item.status.includes("非許可")?"is-rejected":"is-approved");
     const current=item.current?`<details class="admin-current-details"><summary>現在の登録内容</summary>${renderProfilePayload(item.current)}</details>`:"";
     const checked=state.submissions.selected.has(String(item.submissionId));
+    const isFanArt=item.submissionType==="fanartGeneral"||item.submissionType==="fanartAdult";
+    const fileId=String(item.payload?.fileId||"");
+    const downloadButton=isFanArt&&fileId?'<button class="admin-button secondary" data-download-fa type="button">画像をダウンロード</button>':"";
     card.classList.toggle("is-selected",checked);
-    card.innerHTML=`<div class="admin-card-head"><div class="admin-card-heading"><label class="admin-select-control"><input data-submission-check data-submission-id="${esc(item.submissionId)}" type="checkbox" ${checked?"checked":""}><span>選択</span></label><div><h3>${esc(item.activityName||"名称未設定")}</h3><p class="admin-card-meta">${esc(typeLabel(item.submissionType))} / ${esc(item.submissionId)} / ${esc(fmtDate(item.receivedAt))}</p></div></div><span class="admin-badge">${esc(item.status)}</span></div><div class="admin-card-body">${current}<details open class="admin-submission-details"><summary>申請内容</summary>${submissionPreview(item)}</details></div><div class="admin-card-actions"><div class="admin-note"><textarea placeholder="審査メモ（任意）">${esc(item.reviewNote||"")}</textarea></div>${item.status==="確認待ち"?'<button class="admin-button gold" data-decision="approve" type="button">許可（掲載）</button><button class="admin-button danger" data-decision="reject" type="button">非許可（掲載不可）</button>':""}</div>`;
+    card.innerHTML=`<div class="admin-card-head"><div class="admin-card-heading"><label class="admin-select-control"><input data-submission-check data-submission-id="${esc(item.submissionId)}" type="checkbox" ${checked?"checked":""}><span>選択</span></label><div><h3>${esc(item.activityName||"名称未設定")}</h3><p class="admin-card-meta">${esc(typeLabel(item.submissionType))} / ${esc(item.submissionId)} / ${esc(fmtDate(item.receivedAt))}</p></div></div><span class="admin-badge">${esc(item.status)}</span></div><div class="admin-card-body">${current}<details open class="admin-submission-details"><summary>申請内容</summary>${submissionPreview(item)}</details></div><div class="admin-card-actions"><div class="admin-note"><textarea placeholder="審査メモ（任意）">${esc(item.reviewNote||"")}</textarea></div>${downloadButton}${item.status==="確認待ち"?'<button class="admin-button gold" data-decision="approve" type="button">許可（掲載）</button><button class="admin-button danger" data-decision="reject" type="button">非許可（掲載不可）</button>':""}</div>`;
     const checkbox=card.querySelector("[data-submission-check]");
     checkbox.addEventListener("change",()=>{
       const id=String(item.submissionId);
@@ -157,6 +178,7 @@ function renderSubmissions(items,box){
       card.classList.toggle("is-selected",checkbox.checked);
       syncSubmissionBulkUi();
     });
+    card.querySelector("[data-download-fa]")?.addEventListener("click",e=>downloadFanArtImage(fileId,e.currentTarget));
     card.querySelectorAll("[data-decision]").forEach(btn=>btn.addEventListener("click",async()=>{
       const approve=btn.dataset.decision==="approve";
       if(!confirm(`${approve?"許可して掲載":"非許可"}にしますか？`))return;
@@ -198,7 +220,26 @@ async function loadFeedback(reset){const box=$("feedbackAdminList");if(reset){st
 function renderFeedback(items,box){items.forEach(item=>{const card=document.createElement("article");card.className="admin-card";card.innerHTML=`<div class="admin-card-head"><div><h3>${esc(item.relatedActivityName||"サイト全般")}</h3><p class="admin-card-meta">${esc(item.feedbackId)} / ${esc(fmtDate(item.receivedAt))}</p></div><span class="admin-badge">${esc(item.status)}</span></div><div class="admin-card-body"><div class="admin-feedback-message">${esc(item.message)}</div>${item.pageUrl?`<p><small>送信ページ：${esc(item.pageUrl)}</small></p>`:""}</div><div class="admin-feedback-controls"><div class="admin-field"><label>対応状況</label><select><option>未確認</option><option>対応中</option><option>対応済み</option><option>対応不要</option></select></div><div class="admin-field"><label>対応メモ</label><textarea>${esc(item.reviewNote||"")}</textarea></div><button class="admin-button" type="button">保存</button></div>`;const select=card.querySelector("select");select.value=item.status||"未確認";card.querySelector("button.admin-button").addEventListener("click",async e=>{const button=e.currentTarget;button.disabled=true;try{await api("adminUpdateFeedback",{feedbackId:item.feedbackId,status:select.value,reviewNote:card.querySelector("textarea").value});await loadFeedback(true);}catch(err){alert(err.message);button.disabled=false;}});box.appendChild(card);});}
 $("feedbackAdminSearch").addEventListener("click",()=>loadFeedback(true));$("feedbackAdminMore").addEventListener("click",()=>loadFeedback(false));$("feedbackAdminQuery").addEventListener("keydown",e=>{if(e.key==="Enter")loadFeedback(true);});
 async function loadContent(reset){const box=$("contentList");if(reset){state.content.offset=0;box.innerHTML='<div class="admin-empty">読み込んでいます。</div>';}try{const data=await api("adminSearchContent",{contentType:$("contentType").value,q:$("contentQuery").value,offset:state.content.offset,limit:30});if(reset)box.innerHTML="";renderContent(data.items||[],box);state.content.offset=data.nextOffset||0;$("contentMore").hidden=!data.hasMore;if(!box.children.length)box.innerHTML='<div class="admin-empty">該当する登録内容はありません。</div>';}catch(err){if(/ログイン|セッション/.test(err.message)){logout();return;}box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;}}
-function renderContent(items,box){items.forEach(item=>{const card=document.createElement("article");card.className="admin-card";card.innerHTML=`<div class="admin-card-head"><div><h3>${esc(item.title||"名称未設定")}</h3><p class="admin-card-meta">${esc(item.subtitle||"")} / ${esc(item.id)}</p></div><span class="admin-badge">${esc(item.status||"")}</span></div><div class="admin-card-actions"><button class="admin-button" data-edit type="button">修正する</button><button class="admin-button danger" data-delete type="button">削除する</button></div>`;card.querySelector("[data-edit]").addEventListener("click",()=>openEditor(item));card.querySelector("[data-delete]").addEventListener("click",async()=>{const extra=item.contentType==="profiles"?"\nこのVTuberに紐づく動画と思い出メッセージも削除されます。":"";if(!confirm(`「${item.title}」を削除しますか？${extra}\nこの操作は元に戻せません。`))return;try{const data=await api("adminDeleteContent",{contentType:item.contentType,id:item.id});alert(data.message||"削除しました。");loadContent(true);}catch(err){alert(err.message);}});box.appendChild(card);});}
+function renderContent(items,box){
+  items.forEach(item=>{
+    const card=document.createElement("article");
+    card.className="admin-card";
+    const isFanArt=item.contentType==="fanartGeneral"||item.contentType==="fanartAdult";
+    const fileId=String(item.data?.fileId||"");
+    const imageUrl=String(item.data?.imageUrl||"");
+    const preview=isFanArt&&imageUrl?`<div class="admin-content-image-preview"><img src="${esc(imageUrl)}" alt="${esc(item.title||"FA画像")}" loading="lazy"></div>`:"";
+    const downloadButton=isFanArt&&fileId?'<button class="admin-button secondary" data-download-fa type="button">画像をダウンロード</button>':"";
+    card.innerHTML=`<div class="admin-card-head"><div><h3>${esc(item.title||"名称未設定")}</h3><p class="admin-card-meta">${esc(item.subtitle||"")} / ${esc(item.id)}</p></div><span class="admin-badge">${esc(item.status||"")}</span></div>${preview}<div class="admin-card-actions">${downloadButton}<button class="admin-button" data-edit type="button">修正する</button><button class="admin-button danger" data-delete type="button">削除する</button></div>`;
+    card.querySelector("[data-download-fa]")?.addEventListener("click",e=>downloadFanArtImage(fileId,e.currentTarget));
+    card.querySelector("[data-edit]").addEventListener("click",()=>openEditor(item));
+    card.querySelector("[data-delete]").addEventListener("click",async()=>{
+      const extra=item.contentType==="profiles"?"\nこのVTuberに紐づく動画と思い出メッセージも削除されます。":"";
+      if(!confirm(`「${item.title}」を削除しますか？${extra}\nこの操作は元に戻せません。`))return;
+      try{const data=await api("adminDeleteContent",{contentType:item.contentType,id:item.id});alert(data.message||"削除しました。");loadContent(true);}catch(err){alert(err.message);}
+    });
+    box.appendChild(card);
+  });
+}
 $("contentSearch").addEventListener("click",()=>loadContent(true));$("contentMore").addEventListener("click",()=>loadContent(false));$("contentType").addEventListener("change",()=>loadContent(true));$("contentQuery").addEventListener("keydown",e=>{if(e.key==="Enter")loadContent(true);});
 const PROFILE_TOP_LEVEL_KEYS=new Set(["activityName","reading","nickname","fanName","fanMark","affiliation","activityStartDate","graduationDate","youtubeUrl","xUrl"]);
 const PROFILE_LONG_KEYS=new Set(["otherOfficialLinks","past","reasonVtuber","reasonHumanWorld","activityHistory","activityGoal","collabHistory","workHistory","firstViewerGreeting","openingGreeting","endingGreeting","listenerCall","catchphraseHabit","costume","accessory","charmPoint","expressionFeatures","personality","voiceFeatures","strengths","weaknesses","specialSkill","badAt","angerPoint","happyThings","sadThings","excitedMoment","motto","likes","favoriteFood","favoriteDrink","favoriteSnack","favoriteGame","favoriteMusic","favoritePlace","favoriteCharacter","favoriteManga","favoriteAnime","favoriteMovie","favoriteStreamer","favoriteBrand","favoriteScent","favoriteWords","dislikes","dislikedFood","dislikedGame","dislikedGenre","dislikedInsect","dislikedSound","dislikedTexture","dislikedPlace","dislikedTopic","fears","streamCautions","secret","graduationReason","archiveStatus","memoriesLetter","sourceUrl","sourceTimestamp","note"]);
