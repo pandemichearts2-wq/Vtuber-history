@@ -3715,3 +3715,41 @@ body.feedback-dialog-open{overflow:hidden}
     font-size:11px;
   }
 }
+
+
+/* ===== Graduate History admin bulk submission actions ===== */
+.admin-bulk-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  margin:-4px 0 18px;
+  padding:14px;
+  border:1px solid rgba(30,68,59,.16);
+  background:rgba(255,255,255,.72);
+}
+.admin-bulk-selection,.admin-bulk-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.admin-bulk-count{min-width:78px;color:#37574f;font-weight:800}
+.admin-card-heading{display:flex;align-items:flex-start;gap:14px;min-width:0}
+.admin-select-control{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  flex:0 0 auto;
+  padding:8px 10px;
+  border:1px solid rgba(36,76,66,.20);
+  background:#fff;
+  color:#244c42;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+.admin-select-control input{width:19px;height:19px;margin:0;accent-color:#b08a48;cursor:pointer}
+.admin-card.is-selected{outline:3px solid rgba(176,138,72,.30);border-color:#b08a48;background:rgba(255,251,241,.94)}
+@media(max-width:760px){
+  .admin-bulk-toolbar,.admin-bulk-selection,.admin-bulk-actions{display:grid;grid-template-columns:1fr;width:100%}
+  .admin-bulk-count{text-align:center;padding:4px 0}
+  .admin-card-heading{display:grid;grid-template-columns:1fr;gap:10px}
+  .admin-select-control{width:max-content}
+}

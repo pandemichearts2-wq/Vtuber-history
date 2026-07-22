@@ -1,6 +1,6 @@
 const API_URL=window.GH_CONFIG?.API_URL||"";
 const $=id=>document.getElementById(id);
-const state={token:sessionStorage.getItem("ghAdminToken")||"",tab:"submissions",submissions:{offset:0,hasMore:false},feedback:{offset:0,hasMore:false},content:{offset:0,hasMore:false},edit:null};
+const state={token:sessionStorage.getItem("ghAdminToken")||"",tab:"submissions",submissions:{offset:0,hasMore:false,selected:new Set()},feedback:{offset:0,hasMore:false},content:{offset:0,hasMore:false},edit:null};
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);}
 function fmtDate(v){if(!v)return"";const d=new Date(v);return isNaN(d)?String(v):d.toLocaleString("ja-JP");}
 async function api(action,payload={}){if(!API_URL)throw Error("API URLが設定されていません。");const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,adminToken:state.token,...payload})});if(!r.ok)throw Error(`通信に失敗しました（${r.status}）`);const data=await r.json();if(!data.ok)throw Error(data.message||"処理できませんでした。");return data;}
@@ -11,7 +11,45 @@ $("adminLogout").addEventListener("click",logout);
 document.querySelectorAll(".admin-tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".admin-tab").forEach(x=>x.classList.toggle("active",x===btn));state.tab=btn.dataset.adminTab;["Submissions","Feedback","Content"].forEach(n=>$("adminPanel"+n).hidden=n.toLowerCase()!==state.tab);loadActiveTab();}));
 function loadActiveTab(){if(state.tab==="submissions")loadSubmissions(true);else if(state.tab==="feedback")loadFeedback(true);else loadContent(true);}
 function typeLabel(t){return({new:"新規登録",add:"追記",fix:"修正",video:"動画",letter:"思い出投稿",fanartGeneral:"通常FA",fanartAdult:"成人向けFA"})[t]||t;}
-async function loadSubmissions(reset){const box=$("submissionList");if(reset){state.submissions.offset=0;box.innerHTML='<div class="admin-empty">読み込んでいます。</div>';}try{const data=await api("adminListSubmissions",{q:$("submissionQuery").value,status:$("submissionStatus").value,type:$("submissionType").value,offset:state.submissions.offset,limit:30});if(reset)box.innerHTML="";renderSubmissions(data.items||[],box);state.submissions.offset=data.nextOffset||0;state.submissions.hasMore=!!data.hasMore;$("submissionMore").hidden=!data.hasMore;if(!box.children.length)box.innerHTML='<div class="admin-empty">該当する申請はありません。</div>';}catch(err){if(/ログイン|セッション/.test(err.message)){logout();return;}box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;}}
+function syncSubmissionBulkUi(){
+  const count=state.submissions.selected.size;
+  const countEl=$("submissionSelectedCount");
+  if(countEl)countEl.textContent=`${count}件選択`;
+  const approve=$("submissionBulkApprove"),remove=$("submissionBulkDelete");
+  if(approve)approve.disabled=count===0;
+  if(remove)remove.disabled=count===0;
+}
+function clearSubmissionSelection(){
+  state.submissions.selected.clear();
+  document.querySelectorAll("#submissionList [data-submission-check]").forEach(input=>{input.checked=false;input.closest(".admin-card")?.classList.remove("is-selected");});
+  syncSubmissionBulkUi();
+}
+function setVisibleSubmissionSelection(checked){
+  document.querySelectorAll("#submissionList [data-submission-check]").forEach(input=>{
+    input.checked=checked;
+    const id=input.dataset.submissionId;
+    if(checked)state.submissions.selected.add(id);else state.submissions.selected.delete(id);
+    input.closest(".admin-card")?.classList.toggle("is-selected",checked);
+  });
+  syncSubmissionBulkUi();
+}
+async function loadSubmissions(reset){
+  const box=$("submissionList");
+  if(reset){state.submissions.offset=0;state.submissions.selected.clear();syncSubmissionBulkUi();box.innerHTML='<div class="admin-empty">読み込んでいます。</div>';}
+  try{
+    const data=await api("adminListSubmissions",{q:$("submissionQuery").value,status:$("submissionStatus").value,type:$("submissionType").value,offset:state.submissions.offset,limit:30});
+    if(reset)box.innerHTML="";
+    renderSubmissions(data.items||[],box);
+    state.submissions.offset=data.nextOffset||0;
+    state.submissions.hasMore=!!data.hasMore;
+    $("submissionMore").hidden=!data.hasMore;
+    if(!box.children.length)box.innerHTML='<div class="admin-empty">該当する申請はありません。</div>';
+    syncSubmissionBulkUi();
+  }catch(err){
+    if(/ログイン|セッション/.test(err.message)){logout();return;}
+    box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;
+  }
+}
 const PROFILE_FIELD_GROUPS=[
   ["メイン登録内容",[["activityName","活動名"],["reading","読み方"],["nickname","愛称"],["fanName","ファンネーム"],["fanMark","ファンマーク"],["xUrl","X（旧Twitter）アカウント","url"],["youtubeUrl","YouTubeアカウント","url"],["streamUrl","配信サイト（YouTube以外）","url"],["mama","ママ（イラストレーター様）"],["papa","パパ（2D・3Dモデラー様）"],["affiliation","所属企業名または個人"],["modelMotif","モデルモチーフ"],["streamStyle","配信スタイル"],["officialSite","公式サイトリンク","url"],["fanboxUrl","FANBOXリンク","url"],["boothUrl","BOOTHリンク","url"],["marshmallowUrl","マシュマロリンク","url"],["otherOfficialLinks","その他公式リンク","urlList"]]],
   ["基本情報",[["birthday","誕生日"],["age","年齢"],["height","身長"],["gender","性別"],["species","種族"],["birthplace","出身地"],["occupation","職業"],["debutDate","デビュー日"],["firstStreamDate","初配信日"],["graduationDate","卒業・引退日"]]],
@@ -69,7 +107,56 @@ function submissionPreview(item){
   if(item.submissionType==="letter")return `<dl class="admin-simple-list"><div><dt>投稿者</dt><dd>${esc(p.authorName||p.author||"匿名")}</dd></div><div><dt>メッセージ</dt><dd>${esc(p.message||p.memoriesLetter||"")}</dd></div></dl>`;
   return `<details open><summary>申請内容</summary><pre>${esc(JSON.stringify(p,null,2))}</pre></details>`;
 }
-function renderSubmissions(items,box){items.forEach(item=>{const card=document.createElement("article");card.className="admin-card "+(item.status==="確認待ち"?"is-pending":item.status.includes("非許可")?"is-rejected":"is-approved");const current=item.current?`<details class="admin-current-details"><summary>現在の登録内容</summary>${renderProfilePayload(item.current)}</details>`:"";card.innerHTML=`<div class="admin-card-head"><div><h3>${esc(item.activityName||"名称未設定")}</h3><p class="admin-card-meta">${esc(typeLabel(item.submissionType))} / ${esc(item.submissionId)} / ${esc(fmtDate(item.receivedAt))}</p></div><span class="admin-badge">${esc(item.status)}</span></div><div class="admin-card-body">${current}<details open class="admin-submission-details"><summary>申請内容</summary>${submissionPreview(item)}</details></div><div class="admin-card-actions"><div class="admin-note"><textarea placeholder="審査メモ（任意）">${esc(item.reviewNote||"")}</textarea></div>${item.status==="確認待ち"?'<button class="admin-button gold" data-decision="approve" type="button">許可（掲載）</button><button class="admin-button danger" data-decision="reject" type="button">非許可（掲載不可）</button>':""}</div>`;card.querySelectorAll("[data-decision]").forEach(btn=>btn.addEventListener("click",async()=>{const approve=btn.dataset.decision==="approve";if(!confirm(`${approve?"許可して掲載":"非許可"}にしますか？`))return;btn.disabled=true;try{await api("adminDecideSubmission",{submissionId:item.submissionId,decision:btn.dataset.decision,reviewNote:card.querySelector("textarea").value});await loadSubmissions(true);}catch(err){alert(err.message);btn.disabled=false;}}));box.appendChild(card);});}
+function renderSubmissions(items,box){
+  items.forEach(item=>{
+    const card=document.createElement("article");
+    card.className="admin-card "+(item.status==="確認待ち"?"is-pending":item.status.includes("非許可")?"is-rejected":"is-approved");
+    const current=item.current?`<details class="admin-current-details"><summary>現在の登録内容</summary>${renderProfilePayload(item.current)}</details>`:"";
+    const checked=state.submissions.selected.has(String(item.submissionId));
+    card.classList.toggle("is-selected",checked);
+    card.innerHTML=`<div class="admin-card-head"><div class="admin-card-heading"><label class="admin-select-control"><input data-submission-check data-submission-id="${esc(item.submissionId)}" type="checkbox" ${checked?"checked":""}><span>選択</span></label><div><h3>${esc(item.activityName||"名称未設定")}</h3><p class="admin-card-meta">${esc(typeLabel(item.submissionType))} / ${esc(item.submissionId)} / ${esc(fmtDate(item.receivedAt))}</p></div></div><span class="admin-badge">${esc(item.status)}</span></div><div class="admin-card-body">${current}<details open class="admin-submission-details"><summary>申請内容</summary>${submissionPreview(item)}</details></div><div class="admin-card-actions"><div class="admin-note"><textarea placeholder="審査メモ（任意）">${esc(item.reviewNote||"")}</textarea></div>${item.status==="確認待ち"?'<button class="admin-button gold" data-decision="approve" type="button">許可（掲載）</button><button class="admin-button danger" data-decision="reject" type="button">非許可（掲載不可）</button>':""}</div>`;
+    const checkbox=card.querySelector("[data-submission-check]");
+    checkbox.addEventListener("change",()=>{
+      const id=String(item.submissionId);
+      if(checkbox.checked)state.submissions.selected.add(id);else state.submissions.selected.delete(id);
+      card.classList.toggle("is-selected",checkbox.checked);
+      syncSubmissionBulkUi();
+    });
+    card.querySelectorAll("[data-decision]").forEach(btn=>btn.addEventListener("click",async()=>{
+      const approve=btn.dataset.decision==="approve";
+      if(!confirm(`${approve?"許可して掲載":"非許可"}にしますか？`))return;
+      btn.disabled=true;
+      try{await api("adminDecideSubmission",{submissionId:item.submissionId,decision:btn.dataset.decision,reviewNote:card.querySelector("textarea").value});await loadSubmissions(true);}catch(err){alert(err.message);btn.disabled=false;}
+    }));
+    box.appendChild(card);
+  });
+}
+async function runSubmissionBulkAction(operation){
+  const ids=[...state.submissions.selected];
+  if(!ids.length)return;
+  const approving=operation==="approve";
+  const message=approving
+    ?`${ids.length}件の申請を一括承認して公開へ反映しますか？`
+    :`${ids.length}件の申請履歴を一括削除しますか？\n\n確認待ちのFA画像はDriveのゴミ箱へ移動します。\nすでに公開済みの登録内容そのものは削除されません。\nこの操作は元に戻せません。`;
+  if(!confirm(message))return;
+  const buttons=[$("submissionBulkApprove"),$("submissionBulkDelete"),$("submissionSelectAll"),$("submissionClearAll")].filter(Boolean);
+  buttons.forEach(button=>button.disabled=true);
+  try{
+    const data=await api("adminBulkSubmissions",{submissionIds:ids,operation});
+    let result=`${approving?"一括承認":"一括削除"}が完了しました。\n成功 ${data.success||0}件 / 失敗 ${data.failed||0}件`;
+    if(Array.isArray(data.errors)&&data.errors.length){
+      result+="\n\n失敗した申請：\n"+data.errors.slice(0,10).map(error=>`${error.submissionId}: ${error.message}`).join("\n");
+      if(data.errors.length>10)result+=`\nほか ${data.errors.length-10}件`;
+    }
+    alert(result);
+    await loadSubmissions(true);
+  }catch(err){alert(err.message);}
+  finally{buttons.forEach(button=>button.disabled=false);syncSubmissionBulkUi();}
+}
+$("submissionSelectAll")?.addEventListener("click",()=>setVisibleSubmissionSelection(true));
+$("submissionClearAll")?.addEventListener("click",clearSubmissionSelection);
+$("submissionBulkApprove")?.addEventListener("click",()=>runSubmissionBulkAction("approve"));
+$("submissionBulkDelete")?.addEventListener("click",()=>runSubmissionBulkAction("delete"));
 $("submissionSearch").addEventListener("click",()=>loadSubmissions(true));$("submissionMore").addEventListener("click",()=>loadSubmissions(false));$("submissionQuery").addEventListener("keydown",e=>{if(e.key==="Enter")loadSubmissions(true);});
 $("repairPublished")?.addEventListener("click",async e=>{if(!confirm("許可済みのプロフィール・動画・FAを公開シートへ再反映しますか？"))return;const button=e.currentTarget;button.disabled=true;try{const d=await api("adminRepairPublishedData");alert(`再反映しました。成功 ${d.success||0}件 / エラー ${d.errors||0}件`);await loadSubmissions(true);}catch(err){alert(err.message);}finally{button.disabled=false;}});
 async function loadFeedback(reset){const box=$("feedbackAdminList");if(reset){state.feedback.offset=0;box.innerHTML='<div class="admin-empty">読み込んでいます。</div>';}try{const data=await api("adminListFeedback",{q:$("feedbackAdminQuery").value,status:$("feedbackAdminStatus").value,offset:state.feedback.offset,limit:30});if(reset)box.innerHTML="";renderFeedback(data.items||[],box);state.feedback.offset=data.nextOffset||0;$("feedbackAdminMore").hidden=!data.hasMore;if(!box.children.length)box.innerHTML='<div class="admin-empty">該当するお問い合わせはありません。</div>';}catch(err){if(/ログイン|セッション/.test(err.message)){logout();return;}box.innerHTML=`<div class="admin-empty">${esc(err.message)}</div>`;}}
