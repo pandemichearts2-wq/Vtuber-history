@@ -690,25 +690,43 @@ const audio = $("bgmAudio");
 const toggle = $("bgmToggle");
 if (audio && toggle) {
   audio.volume = 0.28;
+  let bgmEnabled = true;
+
   const updateBgmButton = () => {
-    toggle.textContent = audio.paused ? "BGMを再生" : "BGMを停止";
-    toggle.setAttribute("aria-pressed", String(!audio.paused));
+    toggle.textContent = bgmEnabled ? "BGMを停止" : "BGMを再生";
+    toggle.setAttribute("aria-pressed", String(bgmEnabled));
   };
-  toggle.addEventListener("click", async () => {
+
+  const startBgm = async () => {
+    if (!bgmEnabled || !audio.paused) return;
     try {
-      if (audio.paused) await audio.play();
-      else audio.pause();
+      await audio.play();
     } catch (error) {
-      console.error("BGMを再生できませんでした。", error);
+      console.info("ブラウザの自動再生制限により、最初の操作後にBGMを再生します。", error);
+    }
+  };
+
+  toggle.addEventListener("click", async () => {
+    if (bgmEnabled) {
+      bgmEnabled = false;
+      audio.pause();
+    } else {
+      bgmEnabled = true;
+      await startBgm();
     }
     updateBgmButton();
   });
-  document.addEventListener("pointerdown", () => {
-    if (audio.paused) audio.play().catch(() => {});
-  }, { once: true });
+
+  const resumeBgmAfterInteraction = () => {
+    startBgm();
+  };
+  document.addEventListener("pointerdown", resumeBgmAfterInteraction, { once: true });
+  document.addEventListener("keydown", resumeBgmAfterInteraction, { once: true });
+
   audio.addEventListener("play", updateBgmButton);
   audio.addEventListener("pause", updateBgmButton);
   updateBgmButton();
+  startBgm();
 }
 
 window.addEventListener("pagehide", () => window.clearInterval(state.featured.timer));

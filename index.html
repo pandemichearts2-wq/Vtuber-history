@@ -125,10 +125,10 @@
   <div class="actions pagination-actions"><button id="loadMoreProfilesBtn" class="button ghost" type="button" hidden>プロフィールをもっと見る</button></div>
 </section>
 </main><footer><div class="wrap">Graduate History</div></footer>
-<audio id="bgmAudio" src="Milky_way.mp3" loop preload="auto"></audio>
+<audio id="bgmAudio" src="Milky_way.mp3" loop preload="auto" autoplay></audio>
 <div class="floating-controls" aria-label="サイト操作">
   <button id="feedbackToggle" class="floating-control feedback-toggle" type="button" aria-haspopup="dialog" aria-controls="feedbackDialog" aria-expanded="false">お問い合わせ</button>
-  <button id="bgmToggle" class="floating-control bgm-toggle" type="button">BGMを再生</button>
+  <button id="bgmToggle" class="floating-control bgm-toggle" type="button" aria-pressed="true">BGMを停止</button>
 </div>
 <div id="feedbackDialog" class="feedback-dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle" hidden>
   <button class="feedback-dialog-backdrop" type="button" data-feedback-close aria-label="お問い合わせフォームを閉じる"></button>
@@ -162,4 +162,4 @@
     </form>
   </div>
 </div>
-<script src="config.js"></script><script src="app.js?v=20260722-gh-featured1"></script></body></html>
+<script src="config.js"></script><script src="app.js?v=20260728-bgm-default-on"></script></body></html>
