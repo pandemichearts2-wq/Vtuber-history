@@ -4184,3 +4184,205 @@ body.feedback-dialog-open{overflow:hidden}
   #registrationForm .registration-collapsible>.form-grid{padding:12px;border-radius:18px}
   #registrationForm .registration-detail-collapsible{padding:0}
 }
+
+
+/* ===== 2026-07-29 compact unified registration UI ===== */
+.registration-section-menu{
+  gap:10px;
+  margin:24px 0 16px;
+}
+.registration-section-toggle{
+  min-height:88px;
+  grid-template-columns:24px minmax(0,1fr) 30px;
+  gap:10px;
+  padding:13px 14px;
+  border-radius:18px;
+  box-shadow:0 9px 24px rgba(8,45,37,.055),inset 0 1px 0 rgba(255,255,255,.96);
+}
+.registration-section-toggle:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 30px rgba(8,45,37,.085),inset 0 1px 0 rgba(255,255,255,.98);
+}
+.registration-section-toggle.is-open{
+  box-shadow:0 14px 32px rgba(8,45,37,.10),0 0 0 3px rgba(58,127,109,.07);
+}
+.registration-section-number{
+  font-size:11px;
+  letter-spacing:.12em;
+}
+.registration-section-copy{
+  gap:3px;
+}
+.registration-section-copy strong{
+  font-size:clamp(16px,1.55vw,20px);
+  line-height:1.25;
+  letter-spacing:.035em;
+}
+.registration-section-copy small{
+  font-size:10.5px;
+  line-height:1.45;
+}
+.registration-section-icon{
+  width:30px;
+  height:30px;
+  font-size:17px;
+}
+.registration-collapsible{
+  margin:0 0 16px;
+  padding:14px;
+  border-radius:20px;
+  box-shadow:0 10px 28px rgba(8,45,37,.05),inset 0 1px 0 rgba(255,255,255,.92);
+}
+#registrationForm .registration-collapsible>.form-grid,
+#registrationForm .registration-collapsible .form-grid{
+  gap:10px;
+  padding:12px;
+  border-radius:16px;
+}
+#registrationForm .registration-collapsible .form-grid>label{
+  min-height:78px;
+  padding:11px 13px 9px;
+  border-radius:14px;
+  font-size:12px;
+  letter-spacing:.03em;
+}
+#registrationForm .registration-collapsible .form-grid>label::before{
+  right:11px;
+  top:9px;
+  font-size:26px;
+}
+#registrationForm .registration-collapsible .form-grid>label::after{
+  left:13px;
+  right:13px;
+  bottom:9px;
+}
+#registrationForm .registration-collapsible input,
+#registrationForm .registration-collapsible select,
+#registrationForm .registration-collapsible textarea{
+  margin-top:5px;
+  padding:7px 0 5px;
+  font-size:14px;
+  line-height:1.45;
+}
+#registrationForm .registration-collapsible textarea{
+  min-height:68px;
+  padding:7px 9px;
+  border-radius:10px;
+  line-height:24px;
+  background:rgba(255,255,255,.76);
+}
+#registrationForm .registration-collapsible .wide{
+  min-height:86px;
+}
+#registrationForm .registration-video-collapsible .integrated-video-rules{
+  margin:0 0 10px;
+  padding:12px 14px;
+  border-radius:14px;
+  font-size:12px;
+  line-height:1.65;
+}
+#registrationForm .registration-video-collapsible .integrated-video-rules p{
+  margin:2px 0;
+}
+#registrationForm .registration-detail-collapsible .form-section{
+  margin:9px 0;
+  border-radius:18px;
+}
+#registrationForm .registration-detail-collapsible .form-section summary{
+  min-height:52px;
+  padding:13px 52px 13px 16px;
+  border-radius:18px;
+  font-size:16px;
+  letter-spacing:.035em;
+}
+#registrationForm .registration-detail-collapsible .form-section[open] summary{
+  border-radius:18px 18px 0 0;
+}
+#registrationForm .registration-detail-collapsible .form-section summary::after{
+  right:14px;
+  width:28px;
+  height:28px;
+  font-size:16px;
+}
+#registrationForm .registration-detail-collapsible .form-section .form-grid{
+  padding:10px;
+  border-radius:0 0 18px 18px;
+}
+
+@media(max-width:900px) and (min-width:721px){
+  .registration-section-menu{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .registration-section-toggle{
+    min-height:92px;
+    grid-template-columns:20px minmax(0,1fr) 28px;
+    padding:12px 11px;
+  }
+  .registration-section-copy strong{font-size:16px}
+  .registration-section-copy small{font-size:10px}
+  .registration-section-icon{width:28px;height:28px;font-size:16px}
+}
+
+@media(max-width:720px){
+  .registration-section-menu{
+    margin:18px 0 12px;
+    gap:7px;
+  }
+  .registration-section-toggle{
+    min-height:0;
+    grid-template-columns:26px minmax(0,1fr) 28px;
+    gap:8px;
+    padding:11px 11px;
+    border-radius:15px;
+  }
+  .registration-section-copy strong{
+    font-size:15px;
+    line-height:1.25;
+  }
+  .registration-section-copy small{
+    font-size:10px;
+    line-height:1.4;
+  }
+  .registration-section-icon{
+    width:28px;
+    height:28px;
+    font-size:16px;
+  }
+  .registration-collapsible{
+    padding:8px;
+    border-radius:16px;
+    margin-bottom:12px;
+  }
+  #registrationForm .registration-collapsible>.form-grid,
+  #registrationForm .registration-collapsible .form-grid{
+    gap:8px;
+    padding:8px;
+    border-radius:13px;
+  }
+  #registrationForm .registration-collapsible .form-grid>label{
+    min-height:68px;
+    padding:9px 11px 7px;
+    border-radius:12px;
+    font-size:11.5px;
+  }
+  #registrationForm .registration-collapsible input,
+  #registrationForm .registration-collapsible select,
+  #registrationForm .registration-collapsible textarea{
+    margin-top:4px;
+    padding-top:6px;
+    padding-bottom:4px;
+    font-size:14px;
+  }
+  #registrationForm .registration-collapsible textarea{
+    min-height:58px;
+    line-height:22px;
+  }
+  #registrationForm .registration-detail-collapsible .form-section{
+    margin:7px 0;
+  }
+  #registrationForm .registration-detail-collapsible .form-section summary{
+    min-height:46px;
+    padding:11px 46px 11px 14px;
+    font-size:15px;
+  }
+}
