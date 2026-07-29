@@ -1,16 +1,24 @@
-# Graduate History 管理人おすすめ表示機能
+# Graduate History 情報登録ページ統合版
 
-## 追加内容
-- 公開トップのタイトル右側に「Administrator's Pick / おすすめ表示スペース」を追加
-- 管理人おすすめを5秒ごとにランダム表示
-- 新しいサムネイルが重なり、古い表示が徐々に消える切り替え
-- サムネイルクリックで該当YouTube動画を新しいタブで開く
-- スマートフォンでもタイトルとサムネイルを横並びで維持
-- 管理画面に「管理人おすすめ編集」タブを追加
-- 管理人おすすめ歌みた／管理人おすすめ歌枠の登録、編集、公開切替、削除
+## 変更内容
+- トップページの登録導線は「情報登録ページを開く」1つだけに統一
+- 情報登録ページへ「思い出の動画を登録する」タブを追加
+- 動画登録のVTuber検索、動画種別、URL、タイトル、補足、規約同意を統合
+- トップの「思い出の動画」は削除せず、公開済み動画のダイジェスト・おすすめ紹介ブロックとして維持
+- 「思い出の動画」内の「動画の登録をする」ボタンは削除
+- 旧 `video-register.html` は統合ページの動画タブへ自動転送
+- Apps Scriptの動画種類に「歌ってみた」「オリジナルソング」を追加
 
-## 更新方法
-1. GitHubへ index.html / app.js / admin.html / admin.js / styles.css を上書き
-2. Apps Scriptを AppsScript-Code.gs に全置換
-3. setupSheets を一度実行（GH管理人おすすめシートを作成）
-4. Apps Scriptを新バージョンで再デプロイ
+## GitHubへ上書き
+- `index.html`
+- `register.html`
+- `register.js`
+- `styles.css`
+- `video-register.html`
+
+## Apps Script
+1. `AppsScript-Code.gs` の内容で現在のコードを全置換
+2. 保存
+3. 新バージョンで再デプロイ
+
+`setupSheets` の再実行は、今回の変更だけなら必須ではありません。

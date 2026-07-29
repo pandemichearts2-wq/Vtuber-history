@@ -3956,3 +3956,112 @@ body.feedback-dialog-open{overflow:hidden}
     line-height:1.75;
   }
 }
+
+
+/* ===== 2026-07-29: integrate video registration into information registration ===== */
+.registration-form-panel[hidden],
+.registration-form-panel.hidden{display:none!important}
+
+.registration-content>.tabs{
+  margin-bottom:34px;
+}
+.registration-content>.tabs .tab[data-form="video"]{
+  border-color:rgba(183,160,106,.42);
+}
+.registration-content>.tabs .tab[data-form="video"].active{
+  background:linear-gradient(135deg,#725d2d,#b7a06a);
+  box-shadow:0 10px 24px rgba(114,93,45,.20);
+}
+.integrated-video-panel{
+  margin-top:10px;
+  padding:44px clamp(20px,4vw,54px) 54px;
+  border:1px solid rgba(36,99,84,.13);
+  border-radius:32px;
+  background:
+    radial-gradient(circle at 92% 3%,rgba(183,160,106,.13),transparent 28%),
+    linear-gradient(145deg,rgba(255,255,255,.88),rgba(237,245,242,.67));
+  box-shadow:0 24px 64px rgba(8,44,37,.08);
+}
+.integrated-video-intro{
+  display:grid;
+  grid-template-columns:minmax(170px,.38fr) minmax(0,1fr);
+  column-gap:54px;
+  align-items:start;
+  padding-bottom:38px;
+  border-bottom:1px solid rgba(20,58,50,.16);
+}
+.integrated-video-intro .eyebrow{margin-top:9px}
+.integrated-video-intro h3{
+  grid-column:2;
+  margin:0 0 18px;
+  color:var(--aoi-950);
+  font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+  font-size:clamp(34px,5vw,60px);
+  font-weight:500;
+  line-height:1.18;
+  letter-spacing:.035em;
+}
+.integrated-video-intro>p:last-child{
+  grid-column:2;
+  max-width:760px;
+  margin:0;
+  color:#557068;
+  line-height:1.95;
+}
+.integrated-video-rules{
+  margin:38px 0 34px;
+}
+.integrated-video-registration-form{
+  max-width:1080px;
+  margin:0 auto;
+}
+.integrated-video-registration-form .video-form-section:first-of-type{
+  border-top:0;
+  padding-top:16px;
+}
+.integrated-video-registration-form .video-submit-rules{
+  max-width:880px;
+  margin:30px auto 24px;
+}
+.integrated-video-registration-form>.submit{
+  display:block;
+  min-width:280px;
+  margin:0 auto;
+  padding:18px 32px;
+  font-size:16px;
+}
+.integrated-video-registration-form>.submit:disabled{
+  cursor:not-allowed;
+  opacity:.42;
+  filter:grayscale(.25);
+}
+.integrated-video-registration-form .form-message{
+  max-width:880px;
+  margin:22px auto 0;
+  text-align:center;
+}
+
+/* The memories section is now a public video digest, not a registration entrance. */
+.home .memories-panel .editorial-section-copy{
+  max-width:760px;
+}
+.home .memories-panel .curation-band{
+  margin-top:26px;
+}
+
+@media(max-width:720px){
+  .integrated-video-panel{
+    padding:30px 16px 40px;
+    border-radius:24px;
+  }
+  .integrated-video-intro{
+    grid-template-columns:1fr;
+    gap:10px;
+    padding-bottom:28px;
+  }
+  .integrated-video-intro h3,
+  .integrated-video-intro>p:last-child{grid-column:1}
+  .integrated-video-intro h3{font-size:34px}
+  .integrated-video-rules{margin:28px 0 20px}
+  .integrated-video-registration-form>.submit{width:100%;min-width:0}
+}

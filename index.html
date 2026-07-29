@@ -1,165 +1,367 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Graduate History</title><meta name="description" content="卒業・引退したVTuberの活動記録をみんなで残すサイト"><link rel="stylesheet" href="styles.css?v=20260729-layoutrestore1"></head><body class="home">
-<header class="hero"><div class="wrap gh-hero-layout">
-  <div class="gh-hero-copy">
-    <p class="eyebrow">A community archive of graduated VTubers</p>
-    <h1>Graduate<br>History</h1>
-    <p class="subtitle">あの日、あの時の思い出をもう一度</p>
-  </div>
-  <section class="gh-featured-showcase" aria-label="管理人おすすめ動画">
-    <div id="publicFeaturedStack" class="gh-featured-stack" aria-live="polite">
-      <div id="publicFeaturedEmpty" class="gh-featured-empty">
-        <span>Administrator's Pick</span>
-        <strong>おすすめ表示スペース</strong>
-      </div>
+<!DOCTYPE html>
+<html lang="ja">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <title>
+   Graduate History
+  </title>
+  <meta content="卒業・引退したVTuberの活動記録をみんなで残すサイト" name="description"/>
+  <link href="styles.css?v=20260729-registration-integrated1" rel="stylesheet"/>
+ </head>
+ <body class="home">
+  <header class="hero">
+   <div class="wrap gh-hero-layout">
+    <div class="gh-hero-copy">
+     <p class="eyebrow">
+      A community archive of graduated VTubers
+     </p>
+     <h1>
+      Graduate
+      <br/>
+      History
+     </h1>
+     <p class="subtitle">
+      あの日、あの時の思い出をもう一度
+     </p>
     </div>
-  </section>
-</div></header>
-<main class="wrap">
-<section class="site-introduction site-introduction-standalone" aria-label="サイトについて">
-  <p>当サイトは既に活動を終えられたVtuberの方々を「こんなにも素敵なVtuberの方がいたんだよ」と 沢山の人に知って欲しいと言う願いと、いつまでも彼ら彼女らがみんなの心で輝けますようにとの願いのもと運用しております。</p>
-  <p>皆様のご情報を元にさらに発展できます。</p>
-  <p>あなたの想い出や情報をお貸しいただけますと幸いです。</p>
-</section>
-<aside id="dailyRecommendation" class="daily-recommendation" aria-labelledby="dailyRecommendationLabel" hidden>
-  <div class="daily-recommendation-heading">
-    <p id="dailyRecommendationLabel" class="daily-recommendation-label">
-      <span class="daily-recommendation-spark" aria-hidden="true">✦</span>
-      本日のおすすめVTuber
+    <section aria-label="管理人おすすめ動画" class="gh-featured-showcase">
+     <div aria-live="polite" class="gh-featured-stack" id="publicFeaturedStack">
+      <div class="gh-featured-empty" id="publicFeaturedEmpty">
+       <span>
+        Administrator's Pick
+       </span>
+       <strong>
+        おすすめ表示スペース
+       </strong>
+      </div>
+     </div>
+    </section>
+   </div>
+  </header>
+  <main class="wrap">
+   <section aria-label="サイトについて" class="site-introduction site-introduction-standalone">
+    <p>
+     当サイトは既に活動を終えられたVtuberの方々を「こんなにも素敵なVtuberの方がいたんだよ」と 沢山の人に知って欲しいと言う願いと、いつまでも彼ら彼女らがみんなの心で輝けますようにとの願いのもと運用しております。
     </p>
-    <time id="dailyRecommendationDate" class="daily-recommendation-date"></time>
-  </div>
-  <a id="dailyRecommendationLink" class="daily-recommendation-card" href="profile.html">
-    <span class="daily-recommendation-seal" aria-hidden="true"><span>GH</span></span>
-    <span class="daily-recommendation-copy">
-      <span class="daily-recommendation-kicker">Today’s Archive Pick</span>
-      <strong id="dailyRecommendationName">おすすめVTuberを読み込んでいます</strong>
-      <span id="dailyRecommendationMeta"></span>
-    </span>
-    <span class="daily-recommendation-action">プロフィールを見る</span>
-  </a>
-</aside>
-<section class="panel home-intro">
-  <p class="eyebrow">Community Contribution</p>
-  <h2 class="intro-title"><span>記憶を</span><span class="intro-title-line" aria-hidden="true"></span><span>未来へ。</span></h2>
-  <p class="lead">あなたの想い出や感動を教えてください</p>
-  <div class="actions home-main-actions">
-    <a class="button primary" href="register.html">情報登録ページを開く</a>
-  </div>
-</section>
-<section class="panel panel-feature memories-panel home-section">
-  <div class="memories-inner">
-  <div class="section-head split-head editorial-section-head">
-    <div class="editorial-section-label">
-      <p class="eyebrow">Precious Memories</p>
-      <span class="editorial-section-number" aria-hidden="true">03</span>
+    <p>
+     皆様のご情報を元にさらに発展できます。
+    </p>
+    <p>
+     あなたの想い出や情報をお貸しいただけますと幸いです。
+    </p>
+   </section>
+   <aside aria-labelledby="dailyRecommendationLabel" class="daily-recommendation" hidden="" id="dailyRecommendation">
+    <div class="daily-recommendation-heading">
+     <p class="daily-recommendation-label" id="dailyRecommendationLabel">
+      <span aria-hidden="true" class="daily-recommendation-spark">
+       ✦
+      </span>
+      本日のおすすめVTuber
+     </p>
+     <time class="daily-recommendation-date" id="dailyRecommendationDate">
+     </time>
     </div>
-    <div class="editorial-section-copy">
-      <h2>思い出の動画</h2>
-      <p class="section-copy">みんなの想い出やお気に入りを共有できます</p>
-      <div class="memories-copy-actions"><a class="button primary video-register-link" href="video-register.html">動画の登録をする</a></div>
+    <a class="daily-recommendation-card" href="profile.html" id="dailyRecommendationLink">
+     <span aria-hidden="true" class="daily-recommendation-seal">
+      <span>
+       GH
+      </span>
+     </span>
+     <span class="daily-recommendation-copy">
+      <span class="daily-recommendation-kicker">
+       Today’s Archive Pick
+      </span>
+      <strong id="dailyRecommendationName">
+       おすすめVTuberを読み込んでいます
+      </strong>
+      <span id="dailyRecommendationMeta">
+      </span>
+     </span>
+     <span class="daily-recommendation-action">
+      プロフィールを見る
+     </span>
+    </a>
+   </aside>
+   <section class="panel home-intro">
+    <p class="eyebrow">
+     Community Contribution
+    </p>
+    <h2 class="intro-title">
+     <span>
+      記憶を
+     </span>
+     <span aria-hidden="true" class="intro-title-line">
+     </span>
+     <span>
+      未来へ。
+     </span>
+    </h2>
+    <p class="lead">
+     あなたの想い出や感動を教えてください
+    </p>
+    <div class="actions home-main-actions">
+     <a class="button primary" href="register.html">
+      情報登録ページを開く
+     </a>
     </div>
-    <button id="randomVideoBtn" class="button primary">ランダム視聴</button>
-  </div>
-  <div class="curation-band">
-    <span>Graduation Live</span>
-    <span>Memorial Clip</span>
-    <span>Favorite Stream</span>
-  </div>
-  <div id="videoSlider" class="video-grid video-grid-premium"><p class="muted">動画を読み込んでいます。</p></div>
-  <div class="actions pagination-actions"><button id="loadMoreVideosBtn" class="button ghost" type="button" hidden>動画をもっと見る</button></div>
-  </div>
-</section>
-<section class="panel home-fanart-panel home-section">
-  <div class="editorial-section-head home-fanart-heading">
-    <div class="editorial-section-label">
-      <p class="eyebrow">Community Fan Art</p>
-      <span class="editorial-section-number" aria-hidden="true">02</span>
-    </div>
-    <div class="editorial-section-copy">
-      <h2>みんなのファンアート</h2>
-      <p class="section-copy">みんなが残した想いや願いの込められた素敵なFAを表示いたします。</p>
-    </div>
-    <div class="home-fanart-register-actions">
-      <a class="button ghost" href="fanart.html">FAを登録する</a>
-      <a class="button ghost adult-entry-link" href="adult-fanart.html">成人向けFAを登録する</a>
-    </div>
-  </div>
-  <div id="homeFanArtViewer" class="fanart-viewer home-fanart-viewer" aria-live="polite">
-    <div class="fanart-empty"><p>ファンアートを読み込んでいます。</p></div>
-  </div>
-  <div class="actions fanart-view-actions home-fanart-actions">
-    <button id="nextHomeFanArtButton" class="button primary" type="button">別の作品を表示</button>
-    <a class="button ghost" href="fanart.html">FAページを見る</a>
-    <a class="button ghost adult-entry-link" href="adult-fanart.html">成人向けFAページを見る</a>
-  </div>
-  <p class="fanart-protection-copy">掲載画像の無断保存・無断転載・無断使用・AI学習への利用は禁止です。</p>
-  <p class="fanart-retention-notice">※FAの保管数が最大になりますと古い順で過去投稿分が消えてしまいます為、3～4か月おき程度で再掲載をして頂きます事をお勧め致します。</p>
-</section>
-<section id="graduationMemory" class="panel graduation-memory hidden"><p class="eyebrow">Today's Graduation Memory</p><h2 id="graduationTitle"></h2><p id="graduationText" class="lead"></p><div class="actions"><a id="graduationVideoBtn" class="button primary" target="_blank" rel="noopener">あの日の思い出を見る</a><button id="graduationNextBtn" class="button ghost">別の記録を見る</button></div></section>
-<section class="panel panel-feature search-panel home-section">
-  <div class="search-headline editorial-section-head">
-    <div class="editorial-section-label">
-      <p class="eyebrow">Search</p>
-      <span class="editorial-section-number" aria-hidden="true">04</span>
-    </div>
-    <div class="editorial-section-copy">
-      <h2>VTuberを探す</h2>
-      <p class="section-copy">活動名だけでなく、読み方・所属・配信スタイル。うろ覚えの記憶からでも、そっと辿れる検索に。</p>
-    </div>
-    <div class="search-tags" aria-hidden="true">
-      <span>卒業配信</span>
-      <span>個人勢</span>
-      <span>歌枠</span>
-      <span>企業勢</span>
-    </div>
-  </div>
-  <div class="search-shell">
-    <div class="search-row search-row-premium">
-      <span class="search-icon">⌕</span>
-      <input id="searchInput" type="search" placeholder="活動名・読み方・所属などで検索">
-      <button id="searchBtn" class="button primary">検索</button>
-    </div>
-    <p class="search-note">たとえば「歌枠」「個人勢」「活動名の一部」でも探せます。</p>
-  </div>
-  <div id="profileList" class="profile-list profile-list-premium"><p class="muted">プロフィールを読み込んでいます。</p></div>
-  <div class="actions pagination-actions"><button id="loadMoreProfilesBtn" class="button ghost" type="button" hidden>プロフィールをもっと見る</button></div>
-</section>
-</main><footer><div class="wrap"><div class="footer-brand">Graduate History</div><p class="footer-disclaimer">※当サイトはファンメイドサイトであり各タレント様及び企業様の公式ではございません。</p></div></footer>
-<audio id="bgmAudio" src="Milky_way.mp3" loop preload="auto" autoplay></audio>
-<div class="floating-controls" aria-label="サイト操作">
-  <button id="feedbackToggle" class="floating-control feedback-toggle" type="button" aria-haspopup="dialog" aria-controls="feedbackDialog" aria-expanded="false">お問い合わせ</button>
-  <button id="bgmToggle" class="floating-control bgm-toggle" type="button" aria-pressed="true">BGMを停止</button>
-</div>
-<div id="feedbackDialog" class="feedback-dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle" hidden>
-  <button class="feedback-dialog-backdrop" type="button" data-feedback-close aria-label="お問い合わせフォームを閉じる"></button>
-  <div class="feedback-dialog-panel" role="document">
-    <button id="feedbackClose" class="feedback-dialog-close" type="button" data-feedback-close aria-label="閉じる">×</button>
-    <p class="eyebrow">Report &amp; Feedback</p>
-    <h2 id="feedbackTitle">違反通報・ご意見・ご要望</h2>
-    <p class="feedback-dialog-copy">サイト内で気になったことや、改善してほしいことを自由にご記入ください。</p>
-    <form id="feedbackForm" class="feedback-form" novalidate>
-      <div class="feedback-profile-field">
-        <label for="feedbackProfileSearch" class="feedback-label">該当するVTuber（任意）</label>
-        <p class="feedback-field-help">活動名を入力し、登録済みの候補から選択できます。サイト全般のお問い合わせは未選択で構いません。</p>
-        <div class="feedback-profile-search-wrap">
-          <input id="feedbackProfileSearch" type="search" autocomplete="off" placeholder="活動名・読み方・所属で検索" aria-controls="feedbackProfileSuggestions" aria-autocomplete="list">
-          <button id="feedbackProfileClear" class="feedback-profile-clear" type="button" hidden>選択解除</button>
-          <div id="feedbackProfileSuggestions" class="feedback-profile-suggestions" role="listbox" hidden></div>
-        </div>
-        <input id="feedbackProfileId" name="relatedProfileId" type="hidden">
-        <input id="feedbackActivityName" name="relatedActivityName" type="hidden">
-        <p id="feedbackProfileSelected" class="feedback-profile-selected">該当VTuber：未選択</p>
+   </section>
+   <section class="panel panel-feature memories-panel home-section">
+    <div class="memories-inner">
+     <div class="section-head split-head editorial-section-head">
+      <div class="editorial-section-label">
+       <p class="eyebrow">
+        Precious Memories
+       </p>
+       <span aria-hidden="true" class="editorial-section-number">
+        03
+       </span>
       </div>
-      <label for="feedbackMessage" class="feedback-label">違反通報・ご意見・ご要望</label>
-      <textarea id="feedbackMessage" name="message" rows="7" maxlength="3000" placeholder="自由にご記入ください" required></textarea>
-      <input class="feedback-honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="feedback-form-footer">
-        <p class="feedback-note">送信内容はサイト上に公開されません。</p>
-        <span id="feedbackCount" class="feedback-count">0 / 3000</span>
-        <button id="feedbackSubmit" class="button primary" type="submit" disabled>送信する</button>
+      <div class="editorial-section-copy">
+       <h2>
+        思い出の動画
+       </h2>
+       <p class="section-copy">
+        みんなの想い出やお気に入りを共有できます
+       </p>
       </div>
-      <p id="feedbackStatus" class="feedback-status" role="status" aria-live="polite"></p>
+      <button class="button primary" id="randomVideoBtn">
+       ランダム視聴
+      </button>
+     </div>
+     <div class="curation-band">
+      <span>
+       Community Picks
+      </span>
+      <span>
+       Memory Digest
+      </span>
+      <span>
+       Recommended Archive
+      </span>
+     </div>
+     <div class="video-grid video-grid-premium" id="videoSlider">
+      <p class="muted">
+       動画を読み込んでいます。
+      </p>
+     </div>
+     <div class="actions pagination-actions">
+      <button class="button ghost" hidden="" id="loadMoreVideosBtn" type="button">
+       動画をもっと見る
+      </button>
+     </div>
+    </div>
+   </section>
+   <section class="panel home-fanart-panel home-section">
+    <div class="editorial-section-head home-fanart-heading">
+     <div class="editorial-section-label">
+      <p class="eyebrow">
+       Community Fan Art
+      </p>
+      <span aria-hidden="true" class="editorial-section-number">
+       02
+      </span>
+     </div>
+     <div class="editorial-section-copy">
+      <h2>
+       みんなのファンアート
+      </h2>
+      <p class="section-copy">
+       みんなが残した想いや願いの込められた素敵なFAを表示いたします。
+      </p>
+     </div>
+     <div class="home-fanart-register-actions">
+      <a class="button ghost" href="fanart.html">
+       FAを登録する
+      </a>
+      <a class="button ghost adult-entry-link" href="adult-fanart.html">
+       成人向けFAを登録する
+      </a>
+     </div>
+    </div>
+    <div aria-live="polite" class="fanart-viewer home-fanart-viewer" id="homeFanArtViewer">
+     <div class="fanart-empty">
+      <p>
+       ファンアートを読み込んでいます。
+      </p>
+     </div>
+    </div>
+    <div class="actions fanart-view-actions home-fanart-actions">
+     <button class="button primary" id="nextHomeFanArtButton" type="button">
+      別の作品を表示
+     </button>
+     <a class="button ghost" href="fanart.html">
+      FAページを見る
+     </a>
+     <a class="button ghost adult-entry-link" href="adult-fanart.html">
+      成人向けFAページを見る
+     </a>
+    </div>
+    <p class="fanart-protection-copy">
+     掲載画像の無断保存・無断転載・無断使用・AI学習への利用は禁止です。
+    </p>
+    <p class="fanart-retention-notice">
+     ※FAの保管数が最大になりますと古い順で過去投稿分が消えてしまいます為、3～4か月おき程度で再掲載をして頂きます事をお勧め致します。
+    </p>
+   </section>
+   <section class="panel graduation-memory hidden" id="graduationMemory">
+    <p class="eyebrow">
+     Today's Graduation Memory
+    </p>
+    <h2 id="graduationTitle">
+    </h2>
+    <p class="lead" id="graduationText">
+    </p>
+    <div class="actions">
+     <a class="button primary" id="graduationVideoBtn" rel="noopener" target="_blank">
+      あの日の思い出を見る
+     </a>
+     <button class="button ghost" id="graduationNextBtn">
+      別の記録を見る
+     </button>
+    </div>
+   </section>
+   <section class="panel panel-feature search-panel home-section">
+    <div class="search-headline editorial-section-head">
+     <div class="editorial-section-label">
+      <p class="eyebrow">
+       Search
+      </p>
+      <span aria-hidden="true" class="editorial-section-number">
+       04
+      </span>
+     </div>
+     <div class="editorial-section-copy">
+      <h2>
+       VTuberを探す
+      </h2>
+      <p class="section-copy">
+       活動名だけでなく、読み方・所属・配信スタイル。うろ覚えの記憶からでも、そっと辿れる検索に。
+      </p>
+     </div>
+     <div aria-hidden="true" class="search-tags">
+      <span>
+       卒業配信
+      </span>
+      <span>
+       個人勢
+      </span>
+      <span>
+       歌枠
+      </span>
+      <span>
+       企業勢
+      </span>
+     </div>
+    </div>
+    <div class="search-shell">
+     <div class="search-row search-row-premium">
+      <span class="search-icon">
+       ⌕
+      </span>
+      <input id="searchInput" placeholder="活動名・読み方・所属などで検索" type="search"/>
+      <button class="button primary" id="searchBtn">
+       検索
+      </button>
+     </div>
+     <p class="search-note">
+      たとえば「歌枠」「個人勢」「活動名の一部」でも探せます。
+     </p>
+    </div>
+    <div class="profile-list profile-list-premium" id="profileList">
+     <p class="muted">
+      プロフィールを読み込んでいます。
+     </p>
+    </div>
+    <div class="actions pagination-actions">
+     <button class="button ghost" hidden="" id="loadMoreProfilesBtn" type="button">
+      プロフィールをもっと見る
+     </button>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <div class="wrap">
+    <div class="footer-brand">
+     Graduate History
+    </div>
+    <p class="footer-disclaimer">
+     ※当サイトはファンメイドサイトであり各タレント様及び企業様の公式ではございません。
+    </p>
+   </div>
+  </footer>
+  <audio autoplay="" id="bgmAudio" loop="" preload="auto" src="Milky_way.mp3">
+  </audio>
+  <div aria-label="サイト操作" class="floating-controls">
+   <button aria-controls="feedbackDialog" aria-expanded="false" aria-haspopup="dialog" class="floating-control feedback-toggle" id="feedbackToggle" type="button">
+    お問い合わせ
+   </button>
+   <button aria-pressed="true" class="floating-control bgm-toggle" id="bgmToggle" type="button">
+    BGMを停止
+   </button>
+  </div>
+  <div aria-labelledby="feedbackTitle" aria-modal="true" class="feedback-dialog" hidden="" id="feedbackDialog" role="dialog">
+   <button aria-label="お問い合わせフォームを閉じる" class="feedback-dialog-backdrop" data-feedback-close="" type="button">
+   </button>
+   <div class="feedback-dialog-panel" role="document">
+    <button aria-label="閉じる" class="feedback-dialog-close" data-feedback-close="" id="feedbackClose" type="button">
+     ×
+    </button>
+    <p class="eyebrow">
+     Report &amp; Feedback
+    </p>
+    <h2 id="feedbackTitle">
+     違反通報・ご意見・ご要望
+    </h2>
+    <p class="feedback-dialog-copy">
+     サイト内で気になったことや、改善してほしいことを自由にご記入ください。
+    </p>
+    <form class="feedback-form" id="feedbackForm" novalidate="">
+     <div class="feedback-profile-field">
+      <label class="feedback-label" for="feedbackProfileSearch">
+       該当するVTuber（任意）
+      </label>
+      <p class="feedback-field-help">
+       活動名を入力し、登録済みの候補から選択できます。サイト全般のお問い合わせは未選択で構いません。
+      </p>
+      <div class="feedback-profile-search-wrap">
+       <input aria-autocomplete="list" aria-controls="feedbackProfileSuggestions" autocomplete="off" id="feedbackProfileSearch" placeholder="活動名・読み方・所属で検索" type="search"/>
+       <button class="feedback-profile-clear" hidden="" id="feedbackProfileClear" type="button">
+        選択解除
+       </button>
+       <div class="feedback-profile-suggestions" hidden="" id="feedbackProfileSuggestions" role="listbox">
+       </div>
+      </div>
+      <input id="feedbackProfileId" name="relatedProfileId" type="hidden"/>
+      <input id="feedbackActivityName" name="relatedActivityName" type="hidden"/>
+      <p class="feedback-profile-selected" id="feedbackProfileSelected">
+       該当VTuber：未選択
+      </p>
+     </div>
+     <label class="feedback-label" for="feedbackMessage">
+      違反通報・ご意見・ご要望
+     </label>
+     <textarea id="feedbackMessage" maxlength="3000" name="message" placeholder="自由にご記入ください" required="" rows="7"></textarea>
+     <input aria-hidden="true" autocomplete="off" class="feedback-honeypot" name="website" tabindex="-1" type="text"/>
+     <div class="feedback-form-footer">
+      <p class="feedback-note">
+       送信内容はサイト上に公開されません。
+      </p>
+      <span class="feedback-count" id="feedbackCount">
+       0 / 3000
+      </span>
+      <button class="button primary" disabled="" id="feedbackSubmit" type="submit">
+       送信する
+      </button>
+     </div>
+     <p aria-live="polite" class="feedback-status" id="feedbackStatus" role="status">
+     </p>
     </form>
+   </div>
   </div>
-</div>
-<script src="config.js"></script><script src="app.js?v=20260728-bgm-default-on"></script></body></html>
+  <script src="config.js">
+  </script>
+  <script src="app.js?v=20260728-bgm-default-on">
+  </script>
+ </body>
+</html>
