@@ -243,7 +243,7 @@ function renderContent(items,box){
 }
 $("contentSearch").addEventListener("click",()=>loadContent(true));$("contentMore").addEventListener("click",()=>loadContent(false));$("contentType").addEventListener("change",()=>loadContent(true));$("contentQuery").addEventListener("keydown",e=>{if(e.key==="Enter")loadContent(true);});
 
-const FEATURED_CATEGORIES=["管理人おすすめ歌みた","管理人おすすめ歌枠"];
+const FEATURED_CATEGORIES=["管理人おすすめ歌みた","管理人おすすめ歌枠","管理人おすすめオリジナルソング"];
 function featuredCategoryOptions(selected){return FEATURED_CATEGORIES.map(value=>`<option value="${esc(value)}" ${value===selected?"selected":""}>${esc(value)}</option>`).join("");}
 function featuredStatusOptions(selected){return ["公開中","非公開"].map(value=>`<option value="${value}" ${value===selected?"selected":""}>${value}</option>`).join("");}
 function renderFeaturedAdmin(items){
