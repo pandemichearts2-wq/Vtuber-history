@@ -3956,3 +3956,360 @@ body.feedback-dialog-open{overflow:hidden}
     line-height:1.75;
   }
 }
+
+/* ===== 2026-07-29 Public site: pale sage luxury palette ===== */
+body.home,
+body.register-page,
+body.video-register-page,
+body.fanart-page,
+body.profile-detail-page{
+  --aoi-950:#29483f;
+  --aoi-900:#3b6258;
+  --aoi-800:#557a70;
+  --aoi-700:#71968b;
+  --aoi-600:#8eaea4;
+  --aoi-500:#abc5bc;
+  --aoi-300:#d4e3de;
+  --aoi-200:#e3ece8;
+  --aoi-100:#f0f5f2;
+  --moon:#faf9f4;
+  --paper:#fffdf9;
+  --ink:#2d403a;
+  --muted:#788983;
+  --gold:#b59b68;
+  --gold-soft:#eadfc8;
+  --line:rgba(73,107,98,.14);
+  --shadow:0 30px 90px rgba(57,86,78,.10);
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 9% 10%,rgba(157,188,178,.18),transparent 29%),
+    radial-gradient(circle at 91% 28%,rgba(196,174,126,.12),transparent 25%),
+    linear-gradient(180deg,#fbfaf6 0%,#f1f6f3 52%,#faf9f5 100%);
+}
+
+body.home::before,
+body.register-page::before,
+body.video-register-page::before,
+body.fanart-page::before,
+body.profile-detail-page::before{
+  opacity:.16;
+}
+
+body.home .hero,
+body.register-page .hero,
+body.video-register-page .hero,
+body.fanart-page:not(.adult-fanart-page) .hero{
+  background:
+    radial-gradient(circle at 76% 22%,rgba(255,255,255,.18),transparent 34%),
+    linear-gradient(118deg,#355f55 0%,#587f74 54%,#86a69d 100%);
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.24);
+}
+
+body.home .hero::before,
+body.register-page .hero::before,
+body.video-register-page .hero::before,
+body.fanart-page:not(.adult-fanart-page) .hero::before{
+  border-color:rgba(255,255,255,.20);
+  box-shadow:0 0 0 7vw rgba(255,255,255,.035),0 0 0 14vw rgba(255,255,255,.022);
+}
+
+body.home .hero .eyebrow,
+body.register-page .hero .eyebrow,
+body.video-register-page .hero .eyebrow,
+body.fanart-page:not(.adult-fanart-page) .hero .eyebrow{
+  color:#edf5f1;
+}
+
+body.home .hero h1,
+body.register-page .hero h1,
+body.video-register-page .hero h1,
+body.fanart-page:not(.adult-fanart-page) .hero h1{
+  color:#fffdf7;
+  text-shadow:0 14px 46px rgba(38,70,62,.25);
+}
+
+body.home .hero .subtitle,
+body.register-page .hero .subtitle,
+body.video-register-page .hero .subtitle,
+body.fanart-page:not(.adult-fanart-page) .hero .subtitle{
+  color:#f6f4eb;
+}
+
+body.home .hero .subtitle::before,
+body.home .hero .subtitle::after,
+body.register-page .hero .subtitle::before,
+body.register-page .hero .subtitle::after,
+body.video-register-page .hero .subtitle::before,
+body.video-register-page .hero .subtitle::after,
+body.fanart-page:not(.adult-fanart-page) .hero .subtitle::before,
+body.fanart-page:not(.adult-fanart-page) .hero .subtitle::after{
+  background:#eadfc8;
+}
+
+body.home .panel,
+body.register-page .registration-content,
+body.video-register-page .video-registration-form,
+body.fanart-page .fanart-submit-section,
+body.profile-detail-page .profile-info-group{
+  border-color:rgba(181,155,104,.18);
+}
+
+body.home .primary,
+body.register-page .primary,
+body.video-register-page .primary,
+body.fanart-page .primary,
+body.profile-detail-page .primary{
+  color:#fff;
+  background:linear-gradient(135deg,#50786d,#88a99f);
+  box-shadow:0 16px 36px rgba(70,109,99,.18),inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+body.home .ghost,
+body.register-page .ghost,
+body.video-register-page .ghost,
+body.fanart-page .ghost,
+body.profile-detail-page .ghost{
+  color:#4c7167;
+  background:rgba(255,253,248,.84);
+  border-color:rgba(111,148,137,.20);
+  box-shadow:0 10px 28px rgba(63,92,84,.055);
+}
+
+body.home .primary:hover,
+body.register-page .primary:hover,
+body.video-register-page .primary:hover,
+body.fanart-page .primary:hover,
+body.profile-detail-page .primary:hover{
+  filter:saturate(.92) brightness(1.03);
+  box-shadow:0 20px 44px rgba(70,109,99,.22),0 0 0 1px rgba(181,155,104,.13);
+}
+
+body.home input,
+body.home select,
+body.home textarea,
+body.register-page input,
+body.register-page select,
+body.register-page textarea,
+body.video-register-page input,
+body.video-register-page select,
+body.video-register-page textarea,
+body.fanart-page input,
+body.fanart-page select,
+body.fanart-page textarea{
+  border-color:rgba(91,130,119,.19);
+  background:rgba(255,253,249,.90);
+}
+
+body.home input:focus,
+body.home select:focus,
+body.home textarea:focus,
+body.register-page input:focus,
+body.register-page select:focus,
+body.register-page textarea:focus,
+body.video-register-page input:focus,
+body.video-register-page select:focus,
+body.video-register-page textarea:focus,
+body.fanart-page input:focus,
+body.fanart-page select:focus,
+body.fanart-page textarea:focus{
+  border-color:#91afa5;
+  box-shadow:0 0 0 4px rgba(142,174,164,.14);
+}
+
+body.home .site-introduction,
+body.register-page .registration-rules,
+body.video-register-page .video-register-rules,
+body.fanart-page .fanart-rules{
+  border-left-color:#b59b68;
+}
+
+body.home .site-introduction{
+  color:#526c64;
+  background:linear-gradient(90deg,rgba(238,245,241,.72),rgba(255,253,248,.18));
+}
+
+body.home .daily-recommendation-card,
+body.home .profile-card,
+body.home .video-card,
+body.profile-detail-page .profile-info-group{
+  border-color:rgba(111,148,137,.15);
+  background:linear-gradient(155deg,rgba(255,254,250,.96),rgba(238,245,241,.76));
+  box-shadow:0 18px 46px rgba(66,96,87,.07);
+}
+
+body.home .home-fanart-panel,
+body.home .search-panel,
+body.home .home-intro,
+body.home .memories-panel,
+body.home .graduation-memory{
+  border-color:rgba(90,123,114,.14);
+}
+
+body.home .gh-featured-stack::before,
+body.home .gh-featured-stack::after{
+  border-color:rgba(255,255,255,.32);
+  background:rgba(255,255,255,.09);
+  box-shadow:0 22px 56px rgba(44,73,65,.18);
+}
+
+body.home .gh-featured-slide{
+  border-color:rgba(255,255,255,.45);
+  background:#456c61;
+  box-shadow:0 30px 72px rgba(39,68,60,.24),0 0 0 1px rgba(222,204,166,.13);
+}
+
+body.home .gh-featured-overlay{
+  background:linear-gradient(transparent,rgba(39,70,62,.91));
+}
+
+body.home .gh-featured-empty{
+  border-color:rgba(255,255,255,.36);
+  background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055));
+  box-shadow:0 28px 66px rgba(43,73,65,.17);
+  color:#fffdf8;
+}
+
+body.home .gh-featured-empty span{
+  color:#f0dfbc;
+}
+
+body.home .video-thumbnail-frame{
+  background:#587c72;
+  border-color:rgba(181,155,104,.24);
+  box-shadow:0 14px 34px rgba(64,94,85,.10);
+}
+
+body.home .search-shell,
+body.home .search-row,
+body.register-page #registrationForm .form-section,
+body.register-page #registrationForm .main-form-grid{
+  border-color:rgba(111,148,137,.14);
+  background:linear-gradient(145deg,rgba(255,254,250,.90),rgba(237,244,240,.66));
+  box-shadow:0 20px 58px rgba(62,91,83,.065),inset 0 1px 0 rgba(255,255,255,.94);
+}
+
+body.register-page #registrationForm .form-grid > label,
+body.fanart-page .fanart-form-grid{
+  border-color:rgba(111,148,137,.15);
+  background:linear-gradient(145deg,rgba(255,254,250,.94),rgba(241,246,243,.78));
+}
+
+body.register-page #registrationForm .form-grid > label:focus-within{
+  border-color:rgba(121,158,147,.42);
+  box-shadow:0 18px 40px rgba(63,94,85,.09),0 0 0 5px rgba(142,174,164,.12);
+}
+
+body.fanart-page:not(.adult-fanart-page){
+  background:
+    radial-gradient(circle at 8% 8%,rgba(157,188,178,.16),transparent 29%),
+    linear-gradient(180deg,#fbfaf6 0%,#eff5f1 100%);
+}
+
+body.fanart-page:not(.adult-fanart-page) .fanart-viewer{
+  background:
+    radial-gradient(circle at 78% 16%,rgba(255,255,255,.13),transparent 28%),
+    linear-gradient(145deg,#52766c,#78998f);
+  box-shadow:0 30px 84px rgba(67,98,89,.16),0 0 0 1px rgba(181,155,104,.12);
+}
+
+body.fanart-page:not(.adult-fanart-page) .fanart-activity,
+body.fanart-page:not(.adult-fanart-page) .fanart-empty .empty-kicker{
+  color:#f0dcb2;
+}
+
+body.fanart-page:not(.adult-fanart-page) .fanart-author{
+  color:#f1f6f3;
+}
+
+body.profile-detail-page{
+  background:
+    radial-gradient(circle at 10% 10%,rgba(157,188,178,.16),transparent 28%),
+    linear-gradient(180deg,#fbfaf6,#f0f5f2);
+}
+
+body.profile-detail-page .profile-detail-hero{
+  color:#fffdf8;
+  background:
+    radial-gradient(circle at 78% 20%,rgba(255,255,255,.16),transparent 31%),
+    linear-gradient(145deg,#466e63,#7c9c92);
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.24);
+}
+
+body.profile-detail-page .profile-hero-fanart{
+  border-color:rgba(255,255,255,.42);
+  background:rgba(255,255,255,.12);
+  box-shadow:0 28px 68px rgba(49,80,71,.21),0 0 0 1px rgba(226,207,168,.13);
+}
+
+body.profile-detail-page .profile-hero-fanart figcaption{
+  background:rgba(56,91,81,.84);
+}
+
+body.profile-detail-page .profile-official-links a{
+  border-color:rgba(89,127,116,.24);
+  background:rgba(255,253,248,.66);
+}
+
+body.profile-detail-page .profile-related-section,
+body.profile-detail-page .profile-detail-summary,
+body.profile-detail-page .profile-letter{
+  border-color:rgba(89,127,116,.15);
+}
+
+body.home .floating-control,
+body.register-page .floating-control,
+body.video-register-page .floating-control,
+body.fanart-page .floating-control,
+body.profile-detail-page .floating-control{
+  border-color:rgba(255,255,255,.34);
+  background:rgba(77,117,106,.90);
+  box-shadow:0 18px 42px rgba(52,82,73,.18);
+}
+
+body.home .feedback-toggle,
+body.register-page .feedback-toggle,
+body.video-register-page .feedback-toggle,
+body.fanart-page .feedback-toggle,
+body.profile-detail-page .feedback-toggle{
+  color:#334941;
+  background:rgba(205,184,139,.95);
+}
+
+body.home footer,
+body.register-page footer,
+body.video-register-page footer,
+body.fanart-page footer,
+body.profile-detail-page footer{
+  color:#71847d;
+  border-color:rgba(89,127,116,.13);
+}
+
+@media(max-width:720px){
+  body.home .hero,
+  body.register-page .hero,
+  body.video-register-page .hero,
+  body.fanart-page:not(.adult-fanart-page) .hero{
+    background:
+      radial-gradient(circle at 82% 16%,rgba(255,255,255,.15),transparent 30%),
+      linear-gradient(132deg,#426b60 0%,#73968b 100%);
+  }
+}
+
+/* Keep the adults-only page visually distinct while matching the softer luxury finish. */
+body.adult-fanart-page{
+  background:
+    radial-gradient(circle at 10% 10%,rgba(160,108,125,.11),transparent 28%),
+    linear-gradient(180deg,#fbf8f7 0%,#f3ecee 100%);
+}
+body.adult-fanart-page .primary{
+  background:linear-gradient(135deg,#6f394b,#9b6374);
+  box-shadow:0 16px 36px rgba(93,48,64,.17),inset 0 1px 0 rgba(255,255,255,.16);
+}
+body.adult-fanart-page .ghost{
+  color:#713f50;
+  border-color:rgba(126,67,87,.18);
+  background:rgba(255,251,250,.86);
+}
+body.adult-fanart-page .fanart-rules{
+  border-left-color:#9b6374;
+}
