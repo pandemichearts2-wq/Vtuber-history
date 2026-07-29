@@ -12,320 +12,215 @@ async function postData(data) {
   return response.json();
 }
 
-const profileForm = $("registrationForm");
-const profileRulesCheckbox = $("rulesAccepted");
-const profileSubmitButton = $("submitButton");
-const videoPanel = $("videoRegistrationPanel");
-const videoForm = $("videoRegistrationForm");
-const videoState = {
-  selectedProfile: null,
-  results: [],
-  searchCache: new Map(),
-  requestId: 0
-};
-let searchTimer = 0;
+const form = $("registrationForm");
+const rulesCheckbox = $("rulesAccepted");
+const submitButton = $("submitButton");
+const formType = $("formType");
+const VIDEO_FIELDS = new Set(["videoCategory", "videoUrl", "videoTitle", "videoNote"]);
+const NON_PROFILE_FIELDS = new Set(["submissionType", "rulesAccepted", "author", ...VIDEO_FIELDS]);
 
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  })[char]);
-}
-
-function normalizeSearch(value) {
-  try {
-    return String(value || "").normalize("NFKC").toLowerCase().replace(/[\s　]+/g, "").trim();
-  } catch (_) {
-    return String(value || "").toLowerCase().replace(/[\s　]+/g, "").trim();
-  }
+function textValue(value) {
+  return String(value ?? "").trim();
 }
 
 function isHttpsUrl(value) {
-  try { return new URL(String(value || "")).protocol === "https:"; }
-  catch (_) { return false; }
+  try {
+    return new URL(textValue(value)).protocol === "https:";
+  } catch (_) {
+    return false;
+  }
 }
 
-function syncProfileSubmitState() {
-  if (!profileSubmitButton) return;
-  const canSubmit = Boolean(profileRulesCheckbox?.checked);
-  profileSubmitButton.disabled = !canSubmit;
-  profileSubmitButton.setAttribute("aria-disabled", String(!canSubmit));
+function syncSubmitState() {
+  if (!submitButton) return;
+  const canSubmit = Boolean(rulesCheckbox?.checked);
+  submitButton.disabled = !canSubmit;
+  submitButton.setAttribute("aria-disabled", String(!canSubmit));
 }
 
-function setRegistrationMode(mode, { focus = false } = {}) {
-  const selectedMode = ["new", "add", "fix", "video"].includes(mode) ? mode : "new";
-  document.querySelectorAll(".tabs .tab[data-form]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.form === selectedMode);
-    button.setAttribute("aria-selected", String(button.dataset.form === selectedMode));
-  });
-
-  const isVideo = selectedMode === "video";
-  if (profileForm) {
-    profileForm.hidden = isVideo;
-    profileForm.classList.toggle("hidden", isVideo);
-  }
-  if (videoPanel) {
-    videoPanel.hidden = !isVideo;
-    videoPanel.classList.toggle("hidden", !isVideo);
-  }
-  if (!isVideo && $("formType")) $("formType").value = selectedMode;
-
-  if (focus) {
-    const target = isVideo ? $("vtuberSearchInput") : profileForm?.elements?.activityName;
+function setSectionOpen(sectionId, open, { focus = false } = {}) {
+  const section = $(sectionId);
+  const button = document.querySelector(`[data-registration-toggle="${sectionId}"]`);
+  if (!section || !button) return;
+  section.hidden = !open;
+  section.classList.toggle("is-open", open);
+  button.classList.toggle("is-open", open);
+  button.setAttribute("aria-expanded", String(open));
+  const icon = button.querySelector(".registration-section-icon");
+  if (icon) icon.textContent = open ? "−" : "＋";
+  if (open && focus) {
+    const target = section.querySelector("input:not([type=hidden]), select, textarea");
     window.requestAnimationFrame(() => target?.focus());
   }
+}
+
+function closeAllSections() {
+  document.querySelectorAll("[data-registration-toggle]").forEach((button) => {
+    setSectionOpen(button.dataset.registrationToggle, false);
+  });
+}
+
+function openSection(sectionId, options = {}) {
+  setSectionOpen(sectionId, true, options);
+  const button = document.querySelector(`[data-registration-toggle="${sectionId}"]`);
+  button?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+document.querySelectorAll("[data-registration-toggle]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const sectionId = button.dataset.registrationToggle;
+    setSectionOpen(sectionId, button.getAttribute("aria-expanded") !== "true", { focus: true });
+  });
+});
+
+function setRegistrationMode(mode, { focus = false } = {}) {
+  const selectedMode = ["new", "add", "fix"].includes(mode) ? mode : "new";
+  document.querySelectorAll(".tabs .tab[data-form]").forEach((button) => {
+    const active = button.dataset.form === selectedMode;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+  if (formType) formType.value = selectedMode;
+  if (focus) openSection("mainInfoSection", { focus: true });
 }
 
 document.querySelectorAll(".tabs .tab[data-form]").forEach((button) => {
   button.addEventListener("click", () => setRegistrationMode(button.dataset.form, { focus: true }));
 });
 
-profileRulesCheckbox?.addEventListener("change", syncProfileSubmitState);
+function formDataObject() {
+  return Object.fromEntries(new FormData(form).entries());
+}
 
-profileForm?.addEventListener("submit", async (event) => {
+function hasProfileInput(data) {
+  return Object.entries(data).some(([key, value]) => !NON_PROFILE_FIELDS.has(key) && textValue(value));
+}
+
+function hasAnyVideoInput(data) {
+  return [...VIDEO_FIELDS].some((key) => textValue(data[key]));
+}
+
+function syncActivityNameRequirement() {
+  const activityName = form?.elements?.activityName;
+  if (!activityName) return;
+  const required = hasProfileInput(formDataObject());
+  activityName.required = required;
+  activityName.setAttribute("aria-required", String(required));
+}
+
+function validateSubmission(data) {
+  const profileInput = hasProfileInput(data);
+  const videoInput = hasAnyVideoInput(data);
+  if (!profileInput && !videoInput) {
+    throw new Error("登録する内容のボタンを開き、情報または動画を入力してください。");
+  }
+
+  if (profileInput && !textValue(data.activityName)) {
+    openSection("mainInfoSection");
+    form?.elements?.activityName?.focus();
+    throw new Error("メイン情報または詳細情報を登録する場合は、活動名を入力してください。");
+  }
+
+  if (videoInput) {
+    if (!textValue(data.videoCategory)) {
+      openSection("videoInfoSection");
+      $("videoCategory")?.focus();
+      throw new Error("動画の種類を選択してください。");
+    }
+    if (!isHttpsUrl(data.videoUrl)) {
+      openSection("videoInfoSection");
+      $("videoUrl")?.focus();
+      throw new Error("動画リンクを https:// から入力してください。");
+    }
+  }
+
+  return { profileInput, videoInput };
+}
+
+form?.addEventListener("input", (event) => {
+  const field = event.target;
+  if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
+    syncActivityNameRequirement();
+  }
+});
+
+rulesCheckbox?.addEventListener("change", syncSubmitState);
+
+form?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const submittedForm = event.currentTarget;
-  const button = profileSubmitButton || submittedForm.querySelector('[type="submit"]');
   const message = $("formMessage");
-  if (!profileRulesCheckbox?.checked) {
+
+  if (!rulesCheckbox?.checked) {
     message.textContent = "登録ルールへの同意が必要です。";
-    syncProfileSubmitState();
-    profileRulesCheckbox?.focus();
+    syncSubmitState();
+    rulesCheckbox?.focus();
     return;
   }
 
-  button.disabled = true;
-  button.setAttribute("aria-disabled", "true");
-  button.textContent = "送信中…";
-  message.textContent = "";
-  const data = Object.fromEntries(new FormData(submittedForm).entries());
+  let data = formDataObject();
+  let kinds;
+  try {
+    kinds = validateSubmission(data);
+  } catch (error) {
+    message.textContent = error.message;
+    return;
+  }
+
+  // 動画だけの申請は、選択中の追記・修正タブに関係なく動画申請として送信します。
+  if (!kinds.profileInput && kinds.videoInput) data.submissionType = "video";
+  else data.submissionType = formType?.value || "new";
+
   data.action = "submit";
   data.author = "匿名ユーザー";
   data.rulesAccepted = true;
 
+  submitButton.disabled = true;
+  submitButton.setAttribute("aria-disabled", "true");
+  submitButton.textContent = "送信中…";
+  message.textContent = "";
+
   try {
     const result = await postData(data);
     if (!result.ok) throw new Error(result.message || "送信できませんでした。");
-    message.textContent = "送信しました。管理者の確認後に反映されます。";
+    message.textContent = data.submissionType === "video"
+      ? "動画の登録申請を送信しました。管理者の確認後に反映されます。"
+      : kinds.videoInput
+        ? "情報と動画の登録申請を送信しました。管理者の確認後に反映されます。"
+        : "情報の登録申請を送信しました。管理者の確認後に反映されます。";
+
     const activeMode = document.querySelector(".tabs .tab.active")?.dataset.form || "new";
-    submittedForm.reset();
-    $("formType").value = activeMode === "video" ? "new" : activeMode;
-    window.scrollTo({ top: message.getBoundingClientRect().top + scrollY - 140, behavior: "smooth" });
-  } catch (error) {
-    message.textContent = error.message;
-  } finally {
-    button.textContent = "匿名ユーザーとして送信";
-    syncProfileSubmitState();
-  }
-});
-
-async function searchProfiles(query) {
-  const normalized = normalizeSearch(query);
-  if (!normalized) return [];
-  if (videoState.searchCache.has(normalized)) return videoState.searchCache.get(normalized);
-  if (!API_URL) throw new Error("API URLが設定されていません。");
-  const url = new URL(API_URL);
-  url.searchParams.set("action", "profileSearch");
-  url.searchParams.set("q", String(query || "").trim());
-  url.searchParams.set("limit", "20");
-  url.searchParams.set("nonce", String(Date.now()));
-  const response = await fetch(url.toString(), { method: "GET", cache: "no-store" });
-  if (!response.ok) throw new Error(`登録済みVTuberの検索に失敗しました（${response.status}）`);
-  const data = await response.json();
-  if (!data.ok) throw new Error(data.message || "登録済みVTuberを検索できませんでした。");
-  const profiles = Array.isArray(data.profiles) ? data.profiles : [];
-  videoState.searchCache.set(normalized, profiles);
-  return profiles;
-}
-
-function renderSearchResults(query, profiles) {
-  const root = $("profileSearchResults");
-  const status = $("profileSearchStatus");
-  if (!root || !status) return;
-  const text = String(query || "").trim();
-  videoState.results = profiles;
-  status.classList.remove("error-message");
-
-  if (!text) {
-    root.classList.add("hidden");
-    root.innerHTML = "";
-    status.textContent = "名前を入力すると、一致する登録済みVTuberを最大20件表示します。";
-    return;
-  }
-  if (!profiles.length) {
-    root.innerHTML = '<p class="profile-search-empty">該当するVTuberが見つかりません。</p>';
-    root.classList.remove("hidden");
-    status.textContent = "別の表記でも検索してみてください。";
-    return;
-  }
-
-  root.innerHTML = profiles.map((profile) => `
-    <button class="profile-result-button" type="button" role="option" data-profile-id="${escapeHtml(profile.profileId)}">
-      <strong>${escapeHtml(profile.activityName || "活動名未設定")}</strong>
-      <span>${escapeHtml(profile.reading || "読み方未登録")}</span>
-      <small>${escapeHtml(profile.affiliation || "所属情報なし")}</small>
-    </button>`).join("");
-  root.classList.remove("hidden");
-  status.textContent = `${profiles.length}件の候補があります。`;
-}
-
-async function runProfileSearch(query) {
-  const text = String(query || "").trim();
-  if (!text) {
-    renderSearchResults("", []);
-    return;
-  }
-  const status = $("profileSearchStatus");
-  const currentRequest = ++videoState.requestId;
-  if (status) {
-    status.classList.remove("error-message");
-    status.textContent = "候補を検索しています…";
-  }
-  try {
-    const profiles = await searchProfiles(text);
-    if (currentRequest !== videoState.requestId) return;
-    renderSearchResults(text, profiles);
-  } catch (error) {
-    if (currentRequest !== videoState.requestId) return;
-    if (status) {
-      status.textContent = error.message;
-      status.classList.add("error-message");
-    }
-  }
-}
-
-function scheduleProfileSearch(query) {
-  window.clearTimeout(searchTimer);
-  searchTimer = window.setTimeout(() => runProfileSearch(query), 280);
-}
-
-function selectProfile(profile) {
-  videoState.selectedProfile = profile;
-  $("selectedProfileId").value = profile.profileId || "";
-  $("selectedActivityName").value = profile.activityName || "";
-  $("vtuberSearchInput").value = profile.activityName || "";
-  $("profileSearchResults").classList.add("hidden");
-
-  const card = $("selectedProfileCard");
-  card.innerHTML = `
-    <p class="selected-profile-label">選択中のVTuber</p>
-    <strong>${escapeHtml(profile.activityName || "活動名未設定")}</strong>
-    <span>${escapeHtml(profile.reading || "")}</span>
-    <small>${escapeHtml(profile.affiliation || "所属情報なし")}</small>
-    <button id="clearSelectedProfile" type="button">選び直す</button>`;
-  card.classList.remove("hidden");
-  $("clearSelectedProfile")?.addEventListener("click", () => clearSelectedProfile(true));
-  updateVideoSubmitState();
-}
-
-function clearSelectedProfile(focusSearch = false) {
-  videoState.selectedProfile = null;
-  if ($("selectedProfileId")) $("selectedProfileId").value = "";
-  if ($("selectedActivityName")) $("selectedActivityName").value = "";
-  if ($("vtuberSearchInput")) $("vtuberSearchInput").value = "";
-  const card = $("selectedProfileCard");
-  if (card) {
-    card.classList.add("hidden");
-    card.innerHTML = "";
-  }
-  renderSearchResults("", []);
-  if (focusSearch) $("vtuberSearchInput")?.focus();
-  updateVideoSubmitState();
-}
-
-function updateVideoSubmitState() {
-  const button = $("videoSubmitButton");
-  if (!button) return;
-  const enabled = Boolean(
-    videoState.selectedProfile &&
-    $("videoCategory")?.value &&
-    isHttpsUrl($("videoUrl")?.value) &&
-    $("videoRulesAccepted")?.checked
-  );
-  button.disabled = !enabled;
-  button.setAttribute("aria-disabled", String(!enabled));
-}
-
-videoForm?.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  updateVideoSubmitState();
-  const button = $("videoSubmitButton");
-  const message = $("videoFormMessage");
-  if (!button || !message) return;
-  if (button.disabled) {
-    message.textContent = "VTuber・動画の種類・https://から始まる動画リンク・登録ルールの確認が必要です。";
-    return;
-  }
-
-  const form = event.currentTarget;
-  const data = Object.fromEntries(new FormData(form).entries());
-  data.action = "submit";
-  data.submissionType = "video";
-  data.profileId = videoState.selectedProfile.profileId;
-  data.activityName = videoState.selectedProfile.activityName;
-  data.rulesAccepted = true;
-
-  button.disabled = true;
-  button.textContent = "送信中…";
-  message.textContent = "";
-  try {
-    const result = await postData(data);
-    if (!result.ok) throw new Error(result.message || "動画を申請できませんでした。");
-    message.textContent = "動画の登録申請を送信しました。管理者の確認後、トップページの「思い出の動画」に反映されます。";
     form.reset();
-    clearSelectedProfile(false);
+    if (formType) formType.value = activeMode;
+    syncActivityNameRequirement();
+    closeAllSections();
     window.scrollTo({ top: message.getBoundingClientRect().top + window.scrollY - 140, behavior: "smooth" });
   } catch (error) {
     message.textContent = error.message;
   } finally {
-    button.textContent = "動画の登録を申請する";
-    updateVideoSubmitState();
+    submitButton.textContent = "匿名ユーザーとして送信";
+    syncSubmitState();
   }
 });
 
-$("vtuberSearchInput")?.addEventListener("input", (event) => {
-  if (videoState.selectedProfile && normalizeSearch(event.target.value) !== normalizeSearch(videoState.selectedProfile.activityName)) {
-    videoState.selectedProfile = null;
-    $("selectedProfileId").value = "";
-    $("selectedActivityName").value = "";
-    $("selectedProfileCard").classList.add("hidden");
-  }
-  scheduleProfileSearch(event.target.value);
-  updateVideoSubmitState();
-});
-
-$("profileSearchResults")?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-profile-id]");
-  if (!button) return;
-  const profile = videoState.results.find((item) => String(item.profileId) === String(button.dataset.profileId));
-  if (profile) selectProfile(profile);
-});
-
-["videoCategory", "videoUrl"].forEach((id) => {
-  $(id)?.addEventListener(id === "videoCategory" ? "change" : "input", updateVideoSubmitState);
-});
-$("videoRulesAccepted")?.addEventListener("change", updateVideoSubmitState);
-
-document.addEventListener("click", (event) => {
-  if (!event.target.closest("#profilePicker")) $("profileSearchResults")?.classList.add("hidden");
-});
-
-async function applyQuery() {
+function applyQuery() {
   const params = new URLSearchParams(location.search);
-  const mode = params.get("mode") || "new";
+  const requestedMode = params.get("mode") || "new";
   const vtuber = params.get("vtuber") || "";
-  setRegistrationMode(mode);
 
-  if (mode === "video" && vtuber) {
-    $("vtuberSearchInput").value = vtuber;
-    await runProfileSearch(vtuber);
-    const exact = videoState.results.find((profile) => normalizeSearch(profile.activityName) === normalizeSearch(vtuber));
-    if (exact) selectProfile(exact);
-  } else if (vtuber && profileForm?.elements?.activityName) {
-    profileForm.elements.activityName.value = vtuber;
+  if (requestedMode === "video") {
+    setRegistrationMode("new");
+    openSection("videoInfoSection");
+  } else {
+    setRegistrationMode(requestedMode);
+  }
+
+  if (vtuber && form?.elements?.activityName) {
+    form.elements.activityName.value = vtuber;
+    openSection("mainInfoSection");
   }
 }
 
-renderSearchResults("", []);
-syncProfileSubmitState();
-updateVideoSubmitState();
+closeAllSections();
+syncSubmitState();
+syncActivityNameRequirement();
 applyQuery();

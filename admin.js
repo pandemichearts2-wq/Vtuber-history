@@ -144,8 +144,10 @@ function renderProfilePayload(payload){
     if(!rows.length)return"";
     return `<section class="admin-profile-section"><h4>${esc(title)}</h4><dl class="admin-profile-grid">${rows.map(([key,label,type])=>`<div><dt>${esc(label)}</dt><dd>${renderAdminValue(p[key],type)}</dd></div>`).join("")}</dl></section>`;
   }).filter(Boolean).join("");
+  const videoUrl=String(p.videoUrl||"");
+  const videoSection=videoUrl?`<section class="admin-profile-section"><h4>動画の登録</h4><dl class="admin-profile-grid"><div><dt>動画タイトル</dt><dd>${esc(p.videoTitle||"")}</dd></div><div><dt>種類</dt><dd>${esc(p.videoCategory||"")}</dd></div><div><dt>URL</dt><dd><a href="${esc(videoUrl)}" target="_blank" rel="noopener noreferrer">動画を開く</a></dd></div><div><dt>補足</dt><dd>${esc(p.videoNote||p.note||"")}</dd></div></dl></section>`:"";
   const author=isDisplayValue(p.author)?`<p class="admin-submission-author"><strong>申請者：</strong>${esc(p.author)}</p>`:"";
-  return `<div class="admin-profile-summary"><p class="admin-summary-note">入力された項目のみ表示しています。</p>${author}${groups||'<p class="admin-empty-inline">入力内容がありません。</p>'}</div>`;
+  return `<div class="admin-profile-summary"><p class="admin-summary-note">入力された項目のみ表示しています。</p>${author}${groups||videoSection?groups+videoSection:'<p class="admin-empty-inline">入力内容がありません。</p>'}</div>`;
 }
 function submissionPreview(item){
   const p=item.payload||{};
@@ -155,7 +157,7 @@ function submissionPreview(item){
   }
   if(item.submissionType==="video"){
     const url=String(p.videoUrl||"");
-    return `<div class="admin-media-preview"><dl><div><dt>動画タイトル</dt><dd>${esc(p.videoTitle||"")}</dd></div><div><dt>種類</dt><dd>${esc(p.videoCategory||"")}</dd></div><div><dt>URL</dt><dd>${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">動画を開く</a>`:""}</dd></div><div><dt>補足</dt><dd>${esc(p.note||"")}</dd></div></dl></div>`;
+    return `<div class="admin-media-preview"><dl><div><dt>動画タイトル</dt><dd>${esc(p.videoTitle||"")}</dd></div><div><dt>種類</dt><dd>${esc(p.videoCategory||"")}</dd></div><div><dt>URL</dt><dd>${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">動画を開く</a>`:""}</dd></div><div><dt>補足</dt><dd>${esc(p.videoNote||p.note||"")}</dd></div></dl></div>`;
   }
   if(["new","add","fix"].includes(item.submissionType))return renderProfilePayload(p);
   if(item.submissionType==="letter")return `<dl class="admin-simple-list"><div><dt>投稿者</dt><dd>${esc(p.authorName||p.author||"匿名")}</dd></div><div><dt>メッセージ</dt><dd>${esc(p.message||p.memoriesLetter||"")}</dd></div></dl>`;
