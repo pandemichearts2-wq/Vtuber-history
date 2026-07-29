@@ -4386,3 +4386,45 @@ body.feedback-dialog-open{overflow:hidden}
     font-size:15px;
   }
 }
+
+
+/* ===== 2026-07-29 思い出の動画：1件ランダム・ぼかし切り替え ===== */
+.home #videoSlider.memory-video-digest,
+.home #videoSlider{
+  position:relative;
+  display:block;
+  min-height:330px;
+  overflow:hidden;
+}
+.home #videoSlider .memory-video-digest-card{
+  width:100%;
+  opacity:1;
+  filter:blur(0);
+  transform:scale(1);
+  transition:opacity .85s ease,filter .85s ease,transform .85s ease;
+  will-change:opacity,filter,transform;
+}
+.home #videoSlider .memory-video-digest-card.is-entering{
+  opacity:0;
+  filter:blur(18px);
+  transform:scale(.985);
+}
+.home #videoSlider .memory-video-digest-card.is-leaving{
+  opacity:0;
+  filter:blur(18px);
+  transform:scale(1.015);
+  pointer-events:none;
+}
+.home #videoSlider .memory-video-digest-card > .video-card{
+  margin:0;
+}
+@media(max-width:720px){
+  .home #videoSlider{min-height:460px}
+}
+@media(prefers-reduced-motion:reduce){
+  .home #videoSlider .memory-video-digest-card{
+    transition:opacity .2s linear;
+    filter:none!important;
+    transform:none!important;
+  }
+}

@@ -12,7 +12,8 @@ const state = {
   profileLoading: false,
   videoLoading: false,
   homeFanArt: null,
-  featured: { items: [], currentIndex: -1, timer: 0 }
+  featured: { items: [], currentIndex: -1, timer: 0 },
+  memoryVideo: { currentId: "", timer: 0, loading: false }
 };
 const $ = (id) => document.getElementById(id);
 
@@ -66,6 +67,16 @@ async function getVideoPage(offset) {
   url.searchParams.set("limit", String(PAGE_SIZE));
   url.searchParams.set("nonce", String(Date.now()));
   return requestJson(url.toString(), { method: "GET", cache: "no-store" });
+}
+
+async function getRandomVideo(excludeId = "") {
+  if (!API_URL) throw new Error("API URLが設定されていません。");
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "randomVideo");
+  if (excludeId) url.searchParams.set("excludeId", excludeId);
+  url.searchParams.set("nonce", `${Date.now()}-${Math.random()}`);
+  const data = await requestJson(url.toString(), { method: "GET", cache: "no-store" });
+  return data.video || null;
 }
 
 async function getHomeFanArtData() {
@@ -461,6 +472,64 @@ function renderVideos(videos, append = false) {
   syncPaginationButtons();
 }
 
+function pickFallbackMemoryVideo() {
+  const available = state.videos.filter((video) => safeHttpsUrl(video.url));
+  if (!available.length) return null;
+  const alternatives = available.filter((video) => String(video.videoId || "") !== state.memoryVideo.currentId);
+  const pool = alternatives.length ? alternatives : available;
+  return pool[Math.floor(Math.random() * pool.length)] || null;
+}
+
+function showMemoryVideo(video, animate = true) {
+  const root = $("videoSlider");
+  if (!root || !video || !safeHttpsUrl(video.url)) return false;
+  const card = videoCard(video);
+  if (!card) return false;
+
+  const replace = () => {
+    root.innerHTML = `<div class="memory-video-digest-card${animate ? " is-entering" : ""}">${card}</div>`;
+    state.memoryVideo.currentId = String(video.videoId || "");
+    if (animate) {
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+        root.querySelector(".memory-video-digest-card")?.classList.remove("is-entering");
+      }));
+    }
+  };
+
+  const current = root.querySelector(".memory-video-digest-card");
+  if (!animate || !current) {
+    replace();
+    return true;
+  }
+
+  current.classList.add("is-leaving");
+  window.setTimeout(replace, 850);
+  return true;
+}
+
+async function rotateMemoryVideo() {
+  if (state.memoryVideo.loading) return;
+  state.memoryVideo.loading = true;
+  try {
+    const video = await getRandomVideo(state.memoryVideo.currentId);
+    if (video) showMemoryVideo(video, true);
+  } catch (error) {
+    console.error(error);
+    const fallback = pickFallbackMemoryVideo();
+    if (fallback) showMemoryVideo(fallback, true);
+  } finally {
+    state.memoryVideo.loading = false;
+  }
+}
+
+function setupMemoryVideoDigest() {
+  window.clearInterval(state.memoryVideo.timer);
+  const first = pickFallbackMemoryVideo();
+  if (first) showMemoryVideo(first, false);
+  else renderVideos([]);
+  state.memoryVideo.timer = window.setInterval(rotateMemoryVideo, 5000);
+}
+
 function japanDateKey() {
   const parts = new Intl.DateTimeFormat("en", {
     timeZone: "Asia/Tokyo",
@@ -647,7 +716,7 @@ async function init() {
     state.videoOffset = Number(data.videoNextOffset || state.videos.length);
     state.profileHasMore = Boolean(data.profileHasMore);
     state.videoHasMore = Boolean(data.videoHasMore);
-    renderVideos(state.videos);
+    setupMemoryVideoDigest();
     renderProfiles(state.profiles);
     renderDailyRecommendation(state.profiles);
     showMemory();
@@ -662,13 +731,6 @@ async function init() {
 $("nextHomeFanArtButton")?.addEventListener("click", refreshHomeFanArt);
 $("loadMoreVideosBtn")?.addEventListener("click", loadMoreVideos);
 $("loadMoreProfilesBtn")?.addEventListener("click", () => runProfileSearch(state.profileQuery, true));
-
-$("randomVideoBtn")?.addEventListener("click", () => {
-  const available = state.videos.filter((video) => safeHttpsUrl(video.url));
-  if (!available.length) return;
-  const video = available[Math.floor(Math.random() * available.length)];
-  window.open(safeHttpsUrl(video.url), "_blank", "noopener,noreferrer");
-});
 
 $("graduationNextBtn")?.addEventListener("click", (event) => {
   showMemory(Number(event.currentTarget.dataset.index || 0));
@@ -729,6 +791,9 @@ if (audio && toggle) {
   startBgm();
 }
 
-window.addEventListener("pagehide", () => window.clearInterval(state.featured.timer));
+window.addEventListener("pagehide", () => {
+  window.clearInterval(state.featured.timer);
+  window.clearInterval(state.memoryVideo.timer);
+});
 
 init();
